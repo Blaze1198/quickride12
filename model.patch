@@ -1,105 +1,155 @@
-diff --git a/frontend/store/authStore.ts b/frontend/store/authStore.ts
-index 73c68be..7a3124d 100644
---- a/frontend/store/authStore.ts
-+++ b/frontend/store/authStore.ts
-@@ -5,7 +5,7 @@ interface User {
-   email: string;
-   name: string;
-   picture?: string;
--  role: 'customer' | 'restaurant' | 'rider';
-+  role: 'customer' | 'restaurant' | 'rider' | 'admin';
-   phone?: string;
- }
- 
+diff --git a/backend/server.py b/backend/server.py
+index 78ecb4a..5afea79 100644
+--- a/backend/server.py
++++ b/backend/server.py
+@@ -240,8 +240,11 @@ async def register(request: Request):
+         await db.user_sessions.insert_one(user_session.dict())
+         
+         # Return user without password hash
+-        user_dict = user.dict()
++        user_dict = user.model_dump()
+         user_dict.pop("password_hash", None)
++        # Convert datetime to string
++        if "created_at" in user_dict and isinstance(user_dict["created_at"], datetime):
++            user_dict["created_at"] = user_dict["created_at"].isoformat()
+         
+         response = JSONResponse({
+             "user": user_dict,
+@@ -299,8 +302,11 @@ async def login(request: Request):
+         await db.user_sessions.insert_one(user_session.dict())
+         
+         # Return user without password hash
+-        user_dict = user.dict()
++        user_dict = user.model_dump()
+         user_dict.pop("password_hash", None)
++        # Convert datetime to string
++        if "created_at" in user_dict and isinstance(user_dict["created_at"], datetime):
++            user_dict["created_at"] = user_dict["created_at"].isoformat()
+         
+         response = JSONResponse({
+             "user": user_dict,
+@@ -374,8 +380,13 @@ async def create_session(request: Request):
+         await db.user_sessions.insert_one(user_session.dict())
+         
+         # Set cookie
++        user_dict = user.model_dump()
++        # Convert datetime to string
++        if "created_at" in user_dict and isinstance(user_dict["created_at"], datetime):
++            user_dict["created_at"] = user_dict["created_at"].isoformat()
++        
+         response = JSONResponse({
+-            "user": user.dict(),
++            "user": user_dict,
+             "session_token": session_token
+         })
+         response.set_cookie(
 diff --git a/model.patch b/model.patch
-index 249be45..e69de29 100644
+index 46f7896..e69de29 100644
 --- a/model.patch
 +++ b/model.patch
-@@ -1,87 +0,0 @@
--diff --git a/frontend/app/(auth)/login.tsx b/frontend/app/(auth)/login.tsx
--index 965082a..166b088 100644
----- a/frontend/app/(auth)/login.tsx
--+++ b/frontend/app/(auth)/login.tsx
--@@ -181,6 +181,27 @@ export default function LoginScreen() {
--             <Ionicons name="logo-google" size={24} color="#FFF" />
--             <Text style={styles.loginButtonText}>Sign in with Google</Text>
--           </TouchableOpacity>
--+
--+          <View style={styles.divider}>
--+            <View style={styles.dividerLine} />
--+            <Text style={styles.dividerText}>OR</Text>
--+            <View style={styles.dividerLine} />
--+          </View>
--+
--+          <TouchableOpacity
--+            style={styles.emailButton}
--+            onPress={() => router.push('/(auth)/signin' as any)}
--+          >
--+            <Ionicons name="mail" size={24} color="#FF6B6B" />
--+            <Text style={styles.emailButtonText}>Sign in with Email</Text>
--+          </TouchableOpacity>
--+
--+          <TouchableOpacity
--+            style={styles.registerButton}
--+            onPress={() => router.push('/(auth)/register' as any)}
--+          >
--+            <Text style={styles.registerButtonText}>Create New Account</Text>
--+          </TouchableOpacity>
--         </View>
--       </ScrollView>
--     </SafeAreaView>
--@@ -284,4 +305,54 @@ const styles = StyleSheet.create({
--     fontWeight: '600',
--     marginLeft: 12,
--   },
--+  divider: {
--+    flexDirection: 'row',
--+    alignItems: 'center',
--+    marginVertical: 24,
--+  },
--+  dividerLine: {
--+    flex: 1,
--+    height: 1,
--+    backgroundColor: '#E0E0E0',
--+  },
--+  dividerText: {
--+    marginHorizontal: 16,
--+    fontSize: 14,
--+    color: '#999',
--+    fontWeight: '500',
--+  },
--+  emailButton: {
--+    flexDirection: 'row',
--+    alignItems: 'center',
--+    justifyContent: 'center',
--+    backgroundColor: '#FFF',
--+    borderWidth: 2,
--+    borderColor: '#FF6B6B',
--+    padding: 18,
--+    borderRadius: 16,
--+    marginBottom: 16,
--+    shadowColor: '#000',
--+    shadowOffset: { width: 0, height: 2 },
--+    shadowOpacity: 0.1,
--+    shadowRadius: 8,
--+    elevation: 4,
--+  },
--+  emailButtonText: {
--+    color: '#FF6B6B',
--+    fontSize: 18,
--+    fontWeight: '600',
--+    marginLeft: 12,
--+  },
--+  registerButton: {
--+    alignItems: 'center',
--+    justifyContent: 'center',
--+    padding: 18,
--+    borderRadius: 16,
--+  },
--+  registerButtonText: {
--+    color: '#FF6B6B',
--+    fontSize: 16,
--+    fontWeight: '600',
--+    textDecorationLine: 'underline',
--+  },
-- });
+@@ -1,105 +0,0 @@
+-diff --git a/frontend/store/authStore.ts b/frontend/store/authStore.ts
+-index 73c68be..7a3124d 100644
+---- a/frontend/store/authStore.ts
+-+++ b/frontend/store/authStore.ts
+-@@ -5,7 +5,7 @@ interface User {
+-   email: string;
+-   name: string;
+-   picture?: string;
+--  role: 'customer' | 'restaurant' | 'rider';
+-+  role: 'customer' | 'restaurant' | 'rider' | 'admin';
+-   phone?: string;
+- }
+- 
+-diff --git a/model.patch b/model.patch
+-index 249be45..e69de29 100644
+---- a/model.patch
+-+++ b/model.patch
+-@@ -1,87 +0,0 @@
+--diff --git a/frontend/app/(auth)/login.tsx b/frontend/app/(auth)/login.tsx
+--index 965082a..166b088 100644
+----- a/frontend/app/(auth)/login.tsx
+--+++ b/frontend/app/(auth)/login.tsx
+--@@ -181,6 +181,27 @@ export default function LoginScreen() {
+--             <Ionicons name="logo-google" size={24} color="#FFF" />
+--             <Text style={styles.loginButtonText}>Sign in with Google</Text>
+--           </TouchableOpacity>
+--+
+--+          <View style={styles.divider}>
+--+            <View style={styles.dividerLine} />
+--+            <Text style={styles.dividerText}>OR</Text>
+--+            <View style={styles.dividerLine} />
+--+          </View>
+--+
+--+          <TouchableOpacity
+--+            style={styles.emailButton}
+--+            onPress={() => router.push('/(auth)/signin' as any)}
+--+          >
+--+            <Ionicons name="mail" size={24} color="#FF6B6B" />
+--+            <Text style={styles.emailButtonText}>Sign in with Email</Text>
+--+          </TouchableOpacity>
+--+
+--+          <TouchableOpacity
+--+            style={styles.registerButton}
+--+            onPress={() => router.push('/(auth)/register' as any)}
+--+          >
+--+            <Text style={styles.registerButtonText}>Create New Account</Text>
+--+          </TouchableOpacity>
+--         </View>
+--       </ScrollView>
+--     </SafeAreaView>
+--@@ -284,4 +305,54 @@ const styles = StyleSheet.create({
+--     fontWeight: '600',
+--     marginLeft: 12,
+--   },
+--+  divider: {
+--+    flexDirection: 'row',
+--+    alignItems: 'center',
+--+    marginVertical: 24,
+--+  },
+--+  dividerLine: {
+--+    flex: 1,
+--+    height: 1,
+--+    backgroundColor: '#E0E0E0',
+--+  },
+--+  dividerText: {
+--+    marginHorizontal: 16,
+--+    fontSize: 14,
+--+    color: '#999',
+--+    fontWeight: '500',
+--+  },
+--+  emailButton: {
+--+    flexDirection: 'row',
+--+    alignItems: 'center',
+--+    justifyContent: 'center',
+--+    backgroundColor: '#FFF',
+--+    borderWidth: 2,
+--+    borderColor: '#FF6B6B',
+--+    padding: 18,
+--+    borderRadius: 16,
+--+    marginBottom: 16,
+--+    shadowColor: '#000',
+--+    shadowOffset: { width: 0, height: 2 },
+--+    shadowOpacity: 0.1,
+--+    shadowRadius: 8,
+--+    elevation: 4,
+--+  },
+--+  emailButtonText: {
+--+    color: '#FF6B6B',
+--+    fontSize: 18,
+--+    fontWeight: '600',
+--+    marginLeft: 12,
+--+  },
+--+  registerButton: {
+--+    alignItems: 'center',
+--+    justifyContent: 'center',
+--+    padding: 18,
+--+    borderRadius: 16,
+--+  },
+--+  registerButtonText: {
+--+    color: '#FF6B6B',
+--+    fontSize: 16,
+--+    fontWeight: '600',
+--+    textDecorationLine: 'underline',
+--+  },
+-- });
