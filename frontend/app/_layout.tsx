@@ -59,6 +59,8 @@ export default function RootLayout() {
         router.replace('/(restaurant)');
       } else if (user.role === 'rider') {
         router.replace('/(rider)');
+      } else if (user.role === 'admin') {
+        router.replace('/(admin)');
       }
     }
   }, [user, segments, isLoading]);
