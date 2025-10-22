@@ -181,6 +181,27 @@ export default function LoginScreen() {
             <Ionicons name="logo-google" size={24} color="#FFF" />
             <Text style={styles.loginButtonText}>Sign in with Google</Text>
           </TouchableOpacity>
+
+          <View style={styles.divider}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>OR</Text>
+            <View style={styles.dividerLine} />
+          </View>
+
+          <TouchableOpacity
+            style={styles.emailButton}
+            onPress={() => router.push('/(auth)/signin' as any)}
+          >
+            <Ionicons name="mail" size={24} color="#FF6B6B" />
+            <Text style={styles.emailButtonText}>Sign in with Email</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.registerButton}
+            onPress={() => router.push('/(auth)/register' as any)}
+          >
+            <Text style={styles.registerButtonText}>Create New Account</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
