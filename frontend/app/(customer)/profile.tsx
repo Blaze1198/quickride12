@@ -21,51 +21,53 @@ export default function ProfileScreen() {
   const { user, logout: authLogout } = useAuthStore();
   const { clearCart } = useCartStore();
 
+  const showAlert = (title: string, message: string) => {
+    if (Platform.OS === 'web') {
+      window.alert(`${title}\n\n${message}`);
+    } else {
+      Alert.alert(title, message, [{ text: 'OK' }]);
+    }
+  };
+
   const handleEditProfile = () => {
-    Alert.alert(
+    showAlert(
       'Edit Profile',
-      'Update your name, phone number, and profile picture.',
-      [{ text: 'OK' }]
+      'Update your name, phone number, and profile picture.'
     );
   };
 
   const handleSavedAddresses = () => {
-    Alert.alert(
+    showAlert(
       'Saved Addresses',
-      'Manage your delivery addresses for faster checkout.',
-      [{ text: 'OK' }]
+      'Manage your delivery addresses for faster checkout.'
     );
   };
 
   const handlePaymentMethods = () => {
-    Alert.alert(
+    showAlert(
       'Payment Methods',
-      'Add and manage your payment methods including GCash, Credit Cards, and Cash on Delivery.',
-      [{ text: 'OK' }]
+      'Add and manage your payment methods including GCash, Credit Cards, and Cash on Delivery.'
     );
   };
 
   const handleNotifications = () => {
-    Alert.alert(
+    showAlert(
       'Notifications',
-      'Manage your notification preferences for orders, promotions, and updates.',
-      [{ text: 'OK' }]
+      'Manage your notification preferences for orders, promotions, and updates.'
     );
   };
 
   const handleHelpSupport = () => {
-    Alert.alert(
+    showAlert(
       'Help & Support',
-      'Contact us:\n\nEmail: support@quickbite.ph\nPhone: +63 917 123 4567\n\nOperating Hours:\n9:00 AM - 9:00 PM (Mon-Sun)',
-      [{ text: 'OK' }]
+      'Contact us:\n\nEmail: support@quickbite.ph\nPhone: +63 917 123 4567\n\nOperating Hours:\n9:00 AM - 9:00 PM (Mon-Sun)'
     );
   };
 
   const handleAbout = () => {
-    Alert.alert(
+    showAlert(
       'About QuickBite',
-      'Version 1.0.0\n\nQuickBite is your favorite food delivery platform in the Philippines. Order from the best restaurants and get your food delivered fast!\n\n© 2025 QuickBite Philippines',
-      [{ text: 'OK' }]
+      'Version 1.0.0\n\nQuickBite is your favorite food delivery platform in the Philippines. Order from the best restaurants and get your food delivered fast!\n\n© 2025 QuickBite Philippines'
     );
   };
 
