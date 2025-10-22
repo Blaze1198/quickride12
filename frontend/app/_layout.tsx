@@ -8,7 +8,6 @@ export default function RootLayout() {
   const { user, isLoading, setUser, setLoading, sessionToken } = useAuthStore();
   const segments = useSegments();
   const router = useRouter();
-  const colorScheme = useColorScheme();
 
   useEffect(() => {
     // Check for existing session
