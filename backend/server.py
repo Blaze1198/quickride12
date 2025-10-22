@@ -240,8 +240,11 @@ async def register(request: Request):
         await db.user_sessions.insert_one(user_session.dict())
         
         # Return user without password hash
-        user_dict = user.dict()
+        user_dict = user.model_dump()
         user_dict.pop("password_hash", None)
+        # Convert datetime to string
+        if "created_at" in user_dict and isinstance(user_dict["created_at"], datetime):
+            user_dict["created_at"] = user_dict["created_at"].isoformat()
         
         response = JSONResponse({
             "user": user_dict,
@@ -299,8 +302,11 @@ async def login(request: Request):
         await db.user_sessions.insert_one(user_session.dict())
         
         # Return user without password hash
-        user_dict = user.dict()
+        user_dict = user.model_dump()
         user_dict.pop("password_hash", None)
+        # Convert datetime to string
+        if "created_at" in user_dict and isinstance(user_dict["created_at"], datetime):
+            user_dict["created_at"] = user_dict["created_at"].isoformat()
         
         response = JSONResponse({
             "user": user_dict,
