@@ -38,24 +38,42 @@ export default function CheckoutScreen() {
   const total = subtotal + deliveryFee;
 
   const handlePlaceOrder = async () => {
+    console.log('Place Order clicked');
+    
     if (!deliveryAddress.trim()) {
+      const msg = 'Please enter your delivery address';
+      console.log('Validation error:', msg);
       if (Platform.OS === 'web') {
-        window.alert('Please enter your delivery address');
+        window.alert(msg);
       } else {
-        Alert.alert('Required', 'Please enter your delivery address');
+        Alert.alert('Required', msg);
       }
       return;
     }
 
     if (!phoneNumber.trim()) {
+      const msg = 'Please enter your phone number';
+      console.log('Validation error:', msg);
       if (Platform.OS === 'web') {
-        window.alert('Please enter your phone number');
+        window.alert(msg);
       } else {
-        Alert.alert('Required', 'Please enter your phone number');
+        Alert.alert('Required', msg);
       }
       return;
     }
 
+    if (!restaurantId) {
+      const msg = 'Restaurant ID is missing';
+      console.error('Error:', msg);
+      if (Platform.OS === 'web') {
+        window.alert(msg);
+      } else {
+        Alert.alert('Error', msg);
+      }
+      return;
+    }
+
+    console.log('Starting order placement...');
     setLoading(true);
 
     try {
@@ -69,29 +87,47 @@ export default function CheckoutScreen() {
           address: deliveryAddress.trim(),
         },
         customer_phone: phoneNumber.trim(),
-        special_instructions: specialInstructions.trim(),
+        special_instructions: specialInstructions.trim() || undefined,
         subtotal: subtotal,
         delivery_fee: deliveryFee,
         rider_fee: riderFee,
         app_fee: appFee,
       };
 
+      console.log('Sending order data:', JSON.stringify(orderData, null, 2));
+
       const response = await api.post('/orders', orderData);
 
+      console.log('Order created successfully:', response.data);
+
       if (Platform.OS === 'web') {
-        window.alert('Order placed successfully! Redirecting to payment...');
+        window.alert('Order placed successfully! Check your Orders tab.');
       } else {
-        Alert.alert('Success', 'Order placed successfully! Redirecting to payment...');
+        Alert.alert('Success', 'Order placed successfully! Check your Orders tab.');
       }
 
       clearCart();
       
-      // In a real app, redirect to payment page here
-      // For now, redirect to orders page
-      router.replace('/(customer)/orders');
+      // Redirect to orders page
+      setTimeout(() => {
+        router.replace('/(customer)/orders');
+      }, 1000);
     } catch (error: any) {
       console.error('Error placing order:', error);
-      const message = error.response?.data?.detail || 'Failed to place order';
+      console.error('Error response:', error.response?.data);
+      console.error('Error status:', error.response?.status);
+      
+      let message = 'Failed to place order. ';
+      
+      if (error.response?.data?.detail) {
+        message += error.response.data.detail;
+      } else if (error.response?.status === 401) {
+        message += 'Please login again.';
+      } else if (error.message) {
+        message += error.message;
+      } else {
+        message += 'Please try again.';
+      }
       
       if (Platform.OS === 'web') {
         window.alert(message);
