@@ -299,8 +299,12 @@ export default function CheckoutScreen() {
         <View style={styles.footer}>
           <TouchableOpacity
             style={[styles.placeOrderButton, loading && styles.placeOrderButtonDisabled]}
-            onPress={handlePlaceOrder}
+            onPress={() => {
+              console.log('Button pressed!');
+              handlePlaceOrder();
+            }}
             disabled={loading}
+            activeOpacity={0.7}
           >
             {loading ? (
               <ActivityIndicator color="#FFF" />
