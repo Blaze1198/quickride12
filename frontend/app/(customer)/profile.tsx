@@ -30,10 +30,7 @@ export default function ProfileScreen() {
   };
 
   const handleEditProfile = () => {
-    showAlert(
-      'Edit Profile',
-      'Update your name, phone number, and profile picture.'
-    );
+    router.push('/edit-profile' as any);
   };
 
   const handleSavedAddresses = () => {
