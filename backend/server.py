@@ -130,6 +130,10 @@ class Order(BaseModel):
     restaurant_name: str
     items: List[OrderItem]
     total_amount: float
+    subtotal: Optional[float] = None
+    delivery_fee: Optional[float] = None
+    rider_fee: Optional[float] = None
+    app_fee: Optional[float] = None
     delivery_address: Location
     status: OrderStatus = OrderStatus.PENDING
     rider_id: Optional[str] = None
