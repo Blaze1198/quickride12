@@ -632,9 +632,19 @@ async def accept_delivery(order_id: str, request: Request):
     if user.role != UserRole.RIDER:
         raise HTTPException(status_code=403, detail="Only riders can accept deliveries")
     
+    # Check if rider profile exists, create if not
     rider = await db.riders.find_one({"user_id": user.id})
     if not rider:
-        raise HTTPException(status_code=404, detail="Rider profile not found")
+        # Auto-create rider profile
+        new_rider = Rider(
+            user_id=user.id,
+            name=user.name,
+            phone=user.phone or "",
+            vehicle_type="Motorcycle"
+        )
+        await db.riders.insert_one(new_rider.dict())
+        rider = new_rider.dict()
+        logger.info(f"Auto-created rider profile for user {user.email}")
     
     order = await db.orders.find_one({"id": order_id})
     if not order:
