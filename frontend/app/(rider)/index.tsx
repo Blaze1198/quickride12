@@ -59,40 +59,75 @@ export default function RiderAvailableScreen() {
   };
 
   const handlePickup = async (orderId: string) => {
-    console.log('Accept delivery clicked for order:', orderId);
+    console.log('Mark pickup clicked for order:', orderId);
     
     // Cross-platform confirmation
     const confirmed = Platform.OS === 'web' 
-      ? window.confirm('Accept this delivery?')
+      ? window.confirm('Mark this order as picked up?')
       : await new Promise((resolve) => {
-          Alert.alert('Accept Delivery', 'Accept this delivery?', [
+          Alert.alert('Pickup Confirmation', 'Mark this order as picked up?', [
             { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
-            { text: 'Accept', onPress: () => resolve(true) },
+            { text: 'Confirm', onPress: () => resolve(true) },
           ]);
         });
 
     if (!confirmed) {
-      console.log('Delivery acceptance cancelled');
+      console.log('Pickup cancelled');
       return;
     }
 
-    console.log('Processing delivery acceptance...');
+    console.log('Processing pickup...');
     try {
-      const response = await api.post(`/orders/${orderId}/accept-delivery`);
-      console.log('Delivery accepted successfully:', response.data);
+      await api.put(`/orders/${orderId}/status`, { status: 'picked_up' });
+      console.log('Order marked as picked up');
       
       if (Platform.OS === 'web') {
-        window.alert('Delivery accepted! Check your Active tab.');
+        window.alert('Order picked up! Now delivering to customer.');
       } else {
-        Alert.alert('Success', 'Delivery accepted! Check your Active tab.');
+        Alert.alert('Success', 'Order picked up! Now delivering to customer.');
       }
       
       fetchOrders();
     } catch (error: any) {
-      console.error('Error accepting delivery:', error);
+      console.error('Error marking pickup:', error);
       console.error('Error response:', error.response?.data);
       
-      const message = error.response?.data?.detail || 'Failed to accept delivery. Please try again.';
+      const message = error.response?.data?.detail || 'Failed to mark as picked up. Please try again.';
+      
+      if (Platform.OS === 'web') {
+        window.alert(`Error: ${message}`);
+      } else {
+        Alert.alert('Error', message);
+      }
+    }
+  };
+
+  const handleDeliver = async (orderId: string) => {
+    const confirmed = Platform.OS === 'web' 
+      ? window.confirm('Mark this order as delivered?')
+      : await new Promise((resolve) => {
+          Alert.alert('Delivery Confirmation', 'Mark this order as delivered?', [
+            { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
+            { text: 'Confirm', onPress: () => resolve(true) },
+          ]);
+        });
+
+    if (!confirmed) return;
+
+    try {
+      await api.put(`/orders/${orderId}/status`, { status: 'delivered' });
+      
+      if (Platform.OS === 'web') {
+        window.alert('Order delivered successfully!');
+      } else {
+        Alert.alert('Success', 'Order delivered successfully!');
+      }
+      
+      fetchOrders();
+    } catch (error: any) {
+      console.error('Error marking delivery:', error);
+      
+      const message = error.response?.data?.detail || 'Failed to mark as delivered.';
       
       if (Platform.OS === 'web') {
         window.alert(`Error: ${message}`);
@@ -122,13 +157,33 @@ export default function RiderAvailableScreen() {
         </Text>
       </View>
 
-      <TouchableOpacity
-        style={styles.acceptButton}
-        onPress={() => handleAcceptDelivery(item.id)}
-      >
-        <Ionicons name="checkmark-circle" size={24} color="#FFF" />
-        <Text style={styles.acceptButtonText}>Accept Delivery</Text>
-      </TouchableOpacity>
+      <View style={styles.statusBadge}>
+        <Text style={styles.statusText}>
+          {item.status === 'rider_assigned' ? 'ASSIGNED - Ready for Pickup' :
+           item.status === 'picked_up' ? 'PICKED UP - On the Way' :
+           item.status}
+        </Text>
+      </View>
+
+      {item.status === 'rider_assigned' && (
+        <TouchableOpacity
+          style={styles.pickupButton}
+          onPress={() => handlePickup(item.id)}
+        >
+          <Ionicons name="cube" size={24} color="#FFF" />
+          <Text style={styles.pickupButtonText}>Mark as Picked Up</Text>
+        </TouchableOpacity>
+      )}
+
+      {item.status === 'picked_up' && (
+        <TouchableOpacity
+          style={styles.deliverButton}
+          onPress={() => handleDeliver(item.id)}
+        >
+          <Ionicons name="checkmark-done-circle" size={24} color="#FFF" />
+          <Text style={styles.deliverButtonText}>Mark as Delivered</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 
