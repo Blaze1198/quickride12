@@ -116,13 +116,8 @@ export default function OrderDetailScreen() {
 
   const getStatusSteps = (currentStatus: string) => {
     const allSteps = [
-      { key: 'pending', label: 'Order Placed' },
-      { key: 'paid', label: 'Payment Confirmed' },
-      { key: 'accepted', label: 'Restaurant Accepted' },
       { key: 'preparing', label: 'Preparing Food' },
-      { key: 'ready_for_pickup', label: 'Ready for Pickup' },
       { key: 'rider_assigned', label: 'Rider Assigned' },
-      { key: 'picked_up', label: 'Picked Up' },
       { key: 'out_for_delivery', label: 'Out for Delivery' },
       { key: 'delivered', label: 'Delivered' },
     ];
