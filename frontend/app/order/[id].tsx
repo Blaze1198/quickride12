@@ -187,6 +187,22 @@ export default function OrderDetailScreen() {
           <Text style={styles.orderId}>Order #{order.id.substring(0, 8)}</Text>
         </View>
 
+        {/* Rider Info for rider_assigned status */}
+        {order.status === 'rider_assigned' && order.rider_name && (
+          <View style={styles.riderInfoCard}>
+            <View style={styles.riderInfoHeader}>
+              <Ionicons name="bicycle" size={24} color="#4CAF50" />
+              <Text style={styles.riderInfoTitle}>Your Rider</Text>
+            </View>
+            <View style={styles.riderInfoBody}>
+              <Text style={styles.riderNameText}>{order.rider_name}</Text>
+              {order.rider_phone && (
+                <Text style={styles.riderPhoneText}>📞 {order.rider_phone}</Text>
+              )}
+            </View>
+          </View>
+        )}
+
         {/* Status Timeline */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Order Status</Text>
