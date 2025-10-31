@@ -30,6 +30,9 @@ export default function OrdersScreen() {
 
   useEffect(() => {
     fetchOrders();
+    // Auto-refresh every 5 seconds for real-time updates
+    const interval = setInterval(fetchOrders, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchOrders = async () => {
