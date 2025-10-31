@@ -112,7 +112,10 @@ export default function LoginScreen() {
                 styles.roleCard,
                 selectedRole === 'customer' && styles.roleCardSelected,
               ]}
-              onPress={() => setSelectedRole('customer')}
+              onPress={() => {
+                setSelectedRole('customer');
+                router.push('/(auth)/signin' as any);
+              }}
             >
               <Ionicons
                 name="person"
@@ -135,7 +138,10 @@ export default function LoginScreen() {
                 styles.roleCard,
                 selectedRole === 'restaurant' && styles.roleCardSelected,
               ]}
-              onPress={() => setSelectedRole('restaurant')}
+              onPress={() => {
+                setSelectedRole('restaurant');
+                router.push('/(auth)/signin' as any);
+              }}
             >
               <Ionicons
                 name="restaurant"
@@ -158,7 +164,10 @@ export default function LoginScreen() {
                 styles.roleCard,
                 selectedRole === 'rider' && styles.roleCardSelected,
               ]}
-              onPress={() => setSelectedRole('rider')}
+              onPress={() => {
+                setSelectedRole('rider');
+                router.push('/(auth)/signin' as any);
+              }}
             >
               <Ionicons
                 name="bicycle"
