@@ -51,6 +51,12 @@ export default function RestaurantLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="history"
+        options={{
+          href: null, // Hide from tab bar
+        }}
+      />
     </Tabs>
   );
 }
