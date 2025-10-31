@@ -88,7 +88,6 @@ export default function RestaurantOrdersScreen() {
 
   const getNextStatus = (currentStatus: string) => {
     const statusFlow: Record<string, string> = {
-      accepted: 'preparing',
       preparing: 'ready_for_pickup',
     };
     return statusFlow[currentStatus];
@@ -96,8 +95,7 @@ export default function RestaurantOrdersScreen() {
 
   const getStatusText = (status: string) => {
     const statusMap: Record<string, string> = {
-      accepted: 'Start Preparing',
-      preparing: 'Mark Ready',
+      preparing: 'Mark Ready for Pickup',
     };
     return statusMap[status] || 'Update Status';
   };
