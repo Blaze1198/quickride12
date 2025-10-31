@@ -500,6 +500,76 @@ async def get_my_restaurant(request: Request):
     
     return Restaurant(**restaurant)
 
+# ============= MENU ITEM ENDPOINTS =============
+@api_router.post("/restaurants/{restaurant_id}/menu-items")
+async def add_menu_item(restaurant_id: str, menu_item_data: Dict[str, Any], request: Request):
+    """Add a menu item to restaurant"""
+    user = await require_auth(request)
+    
+    restaurant = await db.restaurants.find_one({"id": restaurant_id})
+    if not restaurant:
+        raise HTTPException(status_code=404, detail="Restaurant not found")
+    
+    if restaurant["owner_id"] != user.id:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    
+    menu_item = MenuItem(**menu_item_data)
+    
+    await db.restaurants.update_one(
+        {"id": restaurant_id},
+        {"$push": {"menu": menu_item.dict()}}
+    )
+    
+    logger.info(f"Menu item {menu_item.name} added to restaurant {restaurant_id}")
+    return menu_item
+
+@api_router.put("/restaurants/{restaurant_id}/menu-items/{item_id}")
+async def update_menu_item(restaurant_id: str, item_id: str, updates: Dict[str, Any], request: Request):
+    """Update a menu item"""
+    user = await require_auth(request)
+    
+    restaurant = await db.restaurants.find_one({"id": restaurant_id})
+    if not restaurant:
+        raise HTTPException(status_code=404, detail="Restaurant not found")
+    
+    if restaurant["owner_id"] != user.id:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    
+    # Update the specific menu item in the array
+    update_dict = {f"menu.$[item].{k}": v for k, v in updates.items()}
+    
+    result = await db.restaurants.update_one(
+        {"id": restaurant_id},
+        {"$set": update_dict},
+        array_filters=[{"item.id": item_id}]
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Menu item not found")
+    
+    logger.info(f"Menu item {item_id} updated in restaurant {restaurant_id}")
+    return {"message": "Menu item updated"}
+
+@api_router.delete("/restaurants/{restaurant_id}/menu-items/{item_id}")
+async def delete_menu_item(restaurant_id: str, item_id: str, request: Request):
+    """Delete a menu item"""
+    user = await require_auth(request)
+    
+    restaurant = await db.restaurants.find_one({"id": restaurant_id})
+    if not restaurant:
+        raise HTTPException(status_code=404, detail="Restaurant not found")
+    
+    if restaurant["owner_id"] != user.id:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    
+    await db.restaurants.update_one(
+        {"id": restaurant_id},
+        {"$pull": {"menu": {"id": item_id}}}
+    )
+    
+    logger.info(f"Menu item {item_id} deleted from restaurant {restaurant_id}")
+    return {"message": "Menu item deleted"}
+
 # ============= ORDER ENDPOINTS =============
 @api_router.post("/orders")
 async def create_order(order_data: Dict[str, Any], request: Request):
