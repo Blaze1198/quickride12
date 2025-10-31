@@ -155,7 +155,7 @@ export default function RestaurantOrdersScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={orders.filter((o) => !['delivered', 'cancelled'].includes(o.status))}
+        data={orders.filter((o) => !['delivered', 'cancelled', 'picked_up', 'out_for_delivery'].includes(o.status))}
         renderItem={renderOrder}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
