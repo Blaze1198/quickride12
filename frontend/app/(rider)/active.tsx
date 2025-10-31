@@ -120,11 +120,11 @@ export default function RiderActiveScreen() {
 
       <View style={styles.statusBadge}>
         <Text style={styles.statusText}>
-          {item.status === 'picked_up' ? '🚴 ON THE WAY' : '📦 AT RESTAURANT'}
+          {item.status === 'out_for_delivery' ? '🚴 ON THE WAY' : '📦 AT RESTAURANT'}
         </Text>
       </View>
 
-      {item.status === 'picked_up' && (
+      {item.status === 'out_for_delivery' && (
         <TouchableOpacity
           style={styles.completeButton}
           onPress={() => handleCompleteDelivery(item.id)}
