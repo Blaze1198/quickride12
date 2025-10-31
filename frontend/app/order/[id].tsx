@@ -111,6 +111,10 @@ export default function OrderDetailScreen() {
   };
 
   const formatStatus = (status: string) => {
+    // Show "Ready for Pickup" when rider is assigned
+    if (status === 'rider_assigned') {
+      return 'Ready for Pickup';
+    }
     return status.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
