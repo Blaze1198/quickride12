@@ -110,39 +110,48 @@ user_problem_statement: |
 backend:
   - task: "Menu Item CRUD API - Add menu item"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Added POST /api/restaurants/{restaurant_id}/menu-items endpoint to add new menu items to a restaurant. Uses MongoDB $push to append to menu array."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED SUCCESSFULLY: POST /api/restaurants/{restaurant_id}/menu-items endpoint working correctly. Successfully added 3 test menu items (Chicken Adobo, Halo-Halo, Lumpia Shanghai) with different categories and availability statuses. All items were properly stored in restaurant's menu array with correct UUIDs generated."
 
   - task: "Menu Item CRUD API - Update menu item"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Added PUT /api/restaurants/{restaurant_id}/menu-items/{item_id} endpoint to update menu items. Uses MongoDB array_filters to update specific item in menu array."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED SUCCESSFULLY: PUT /api/restaurants/{restaurant_id}/menu-items/{item_id} endpoint working correctly. Successfully tested multiple update scenarios: price updates (250.00 → 275.00 → 300.00), availability toggling (true → false → true), description updates, name changes, and multiple field updates simultaneously. MongoDB array_filters working properly to target specific menu items."
 
   - task: "Menu Item CRUD API - Delete menu item"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Added DELETE /api/restaurants/{restaurant_id}/menu-items/{item_id} endpoint to remove menu items from restaurant. Uses MongoDB $pull operator."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED SUCCESSFULLY: DELETE /api/restaurants/{restaurant_id}/menu-items/{item_id} endpoint working correctly. Successfully deleted 'Lumpia Shanghai' menu item (ID: 6c2ffd9a-073a-4ed7-8eb1-5df175c60b6b) from restaurant menu. MongoDB $pull operator properly removed the item from the menu array."
 
   - task: "Restaurant Profile Update API"
     implemented: true
@@ -150,11 +159,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Existing PUT /api/restaurants/{restaurant_id} endpoint is already available and functional. Will be tested with new profile management features."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED SUCCESSFULLY: PUT /api/restaurants/{restaurant_id} endpoint working correctly. Successfully tested all restaurant profile updates: name changes, description updates, phone number updates, operating hours modifications, is_open status toggling, and multiple field updates simultaneously. All changes are properly persisted to MongoDB."
 
 frontend:
   - task: "Menu Management Screen - Full Implementation"
