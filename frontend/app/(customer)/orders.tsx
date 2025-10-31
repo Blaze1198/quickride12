@@ -211,6 +211,9 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginBottom: 12,
   },
+  headerLeft: {
+    flex: 1,
+  },
   restaurantName: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -220,6 +223,36 @@ const styles = StyleSheet.create({
   orderDate: {
     fontSize: 12,
     color: '#999',
+  },
+  riderInfoBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E8F5E9',
+    padding: 12,
+    borderRadius: 12,
+    marginBottom: 12,
+  },
+  riderDetails: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 8,
+    flexWrap: 'wrap',
+    flex: 1,
+  },
+  riderLabel: {
+    fontSize: 13,
+    color: '#666',
+    marginRight: 4,
+  },
+  riderName: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#4CAF50',
+    marginRight: 4,
+  },
+  riderPhone: {
+    fontSize: 13,
+    color: '#66BB6A',
   },
   statusBadge: {
     flexDirection: 'row',
