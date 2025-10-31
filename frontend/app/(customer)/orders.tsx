@@ -100,7 +100,11 @@ export default function OrdersScreen() {
     }
   };
 
-  const formatStatus = (status: string) => {
+  const formatStatus = (status: string, order: Order) => {
+    // Show "Ready for Pickup" when rider is assigned
+    if (status === 'rider_assigned' && order.rider_name) {
+      return 'Ready for Pickup';
+    }
     return status.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
@@ -110,7 +114,7 @@ export default function OrdersScreen() {
       onPress={() => router.push(`/order/${item.id}` as any)}
     >
       <View style={styles.orderHeader}>
-        <View>
+        <View style={styles.headerLeft}>
           <Text style={styles.restaurantName}>{item.restaurant_name}</Text>
           <Text style={styles.orderDate}>
             {new Date(item.created_at).toLocaleString()}
@@ -118,9 +122,24 @@ export default function OrdersScreen() {
         </View>
         <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
           <Ionicons name={getStatusIcon(item.status) as any} size={16} color="#FFF" />
-          <Text style={styles.statusText}>{formatStatus(item.status)}</Text>
+          <Text style={styles.statusText}>{formatStatus(item.status, item)}</Text>
         </View>
       </View>
+      
+      {/* Show rider info for rider_assigned status */}
+      {item.status === 'rider_assigned' && item.rider_name && (
+        <View style={styles.riderInfoBanner}>
+          <Ionicons name="bicycle" size={18} color="#4CAF50" />
+          <View style={styles.riderDetails}>
+            <Text style={styles.riderLabel}>Rider:</Text>
+            <Text style={styles.riderName}>{item.rider_name}</Text>
+            {item.rider_phone && (
+              <Text style={styles.riderPhone}>• {item.rider_phone}</Text>
+            )}
+          </View>
+        </View>
+      )}
+      
       <View style={styles.orderBody}>
         <Text style={styles.itemsText}>
           {item.items.length} item{item.items.length !== 1 ? 's' : ''}
