@@ -101,3 +101,147 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: |
+  User requested to add functional features to Restaurant Menu Management and Restaurant Profile screens.
+  Both screens were showing "Coming soon" placeholders. The requirement was to provide fully functional 
+  buttons and management features for restaurant owners to manage their menu items and restaurant profiles.
+
+backend:
+  - task: "Menu Item CRUD API - Add menu item"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added POST /api/restaurants/{restaurant_id}/menu-items endpoint to add new menu items to a restaurant. Uses MongoDB $push to append to menu array."
+
+  - task: "Menu Item CRUD API - Update menu item"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added PUT /api/restaurants/{restaurant_id}/menu-items/{item_id} endpoint to update menu items. Uses MongoDB array_filters to update specific item in menu array."
+
+  - task: "Menu Item CRUD API - Delete menu item"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added DELETE /api/restaurants/{restaurant_id}/menu-items/{item_id} endpoint to remove menu items from restaurant. Uses MongoDB $pull operator."
+
+  - task: "Restaurant Profile Update API"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Existing PUT /api/restaurants/{restaurant_id} endpoint is already available and functional. Will be tested with new profile management features."
+
+frontend:
+  - task: "Menu Management Screen - Full Implementation"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/(restaurant)/menu.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Fully rebuilt menu management screen with:
+          - List all menu items with images, price, category, availability status
+          - Category filtering (All, Appetizers, Main Course, Desserts, Drinks, Sides, Snacks)
+          - Add new menu items with bottom sheet modal
+          - Edit existing menu items
+          - Toggle item availability (in-stock/out-of-stock)
+          - Delete menu items with confirmation
+          - Image picker for menu item photos
+          - Pull-to-refresh functionality
+          - Empty states with helpful messages
+          - Real-time updates after operations
+
+  - task: "Restaurant Profile Management Screen"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/(restaurant)/profile.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Fully rebuilt restaurant profile screen with:
+          - View and edit restaurant name, description
+          - Update phone number
+          - Manage operating hours
+          - Edit restaurant address
+          - Upload/change restaurant image/logo
+          - Toggle restaurant open/closed status
+          - Display info cards (rating, prep time)
+          - Edit mode with save/cancel actions
+          - Form validation for required fields
+          - Image picker for restaurant photo
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Menu Item CRUD API - Add menu item"
+    - "Menu Item CRUD API - Update menu item"
+    - "Menu Item CRUD API - Delete menu item"
+    - "Restaurant Profile Update API"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: |
+      I have implemented full restaurant management features:
+      
+      Backend Changes:
+      1. Added three new API endpoints for menu item management (POST, PUT, DELETE)
+      2. All endpoints include owner authorization checks
+      3. Backend service was restarted successfully
+      
+      Frontend Changes:
+      1. Rebuilt menu.tsx from scratch with full CRUD functionality
+      2. Rebuilt profile.tsx from scratch with complete profile management
+      3. Both screens now have real UI with forms, actions, and state management
+      
+      Testing Priority:
+      - HIGH: Please test all menu item CRUD operations (add, edit, delete, toggle availability)
+      - HIGH: Test restaurant profile updates (name, description, hours, address, image)
+      - MEDIUM: Test authorization (only restaurant owners can manage their own restaurant)
+      - MEDIUM: Test image upload functionality for both menu items and restaurant profile
+      
+      Authentication Required:
+      - Use restaurant role user account for testing
+      - Menu and Profile tabs should be accessible from restaurant dashboard
+      
+      Please test the backend APIs first to ensure they're working correctly before frontend testing.
