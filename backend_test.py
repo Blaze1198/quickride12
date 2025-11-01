@@ -101,7 +101,7 @@ class GCashPaymentTester:
         
         # First, verify customer authentication
         headers = {"Authorization": f"Bearer {self.customer_token}"}
-        auth_check = self.session.get(f"{BACKEND_URL}/auth/me", headers=headers)
+        auth_check = self.customer_session.get(f"{BACKEND_URL}/auth/me", headers=headers)
         
         if auth_check.status_code != 200:
             self.log(f"❌ Customer authentication failed: {auth_check.status_code} - {auth_check.text}")
@@ -143,7 +143,7 @@ class GCashPaymentTester:
             "special_instructions": "Extra rice please"
         }
         
-        response = self.session.post(f"{BACKEND_URL}/orders", json=order_data, headers=headers)
+        response = self.customer_session.post(f"{BACKEND_URL}/orders", json=order_data, headers=headers)
         
         if response.status_code == 200:
             order = response.json()
