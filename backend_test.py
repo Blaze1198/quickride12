@@ -256,7 +256,7 @@ class GCashPaymentTester:
         self.log("📋 Testing payment details retrieval...")
         
         headers = {"Authorization": f"Bearer {self.customer_token}"}
-        response = self.session.get(f"{BACKEND_URL}/payments/order/{self.order_id}", headers=headers)
+        response = self.customer_session.get(f"{BACKEND_URL}/payments/order/{self.order_id}", headers=headers)
         
         if response.status_code == 200:
             payment = response.json()
