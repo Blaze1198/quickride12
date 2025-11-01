@@ -17,27 +17,20 @@ BACKEND_URL = "https://foodrush-app-1.preview.emergentagent.com/api"
 class GCashPaymentTester:
     def __init__(self):
         self.session = requests.Session()
-        self.session_token = None
-        self.user_id = None
+        self.customer_token = None
+        self.restaurant_token = None
+        self.customer_user = None
+        self.restaurant_user = None
         self.restaurant_id = None
-        self.test_results = []
+        self.order_id = None
+        self.payment_id = None
         
-    def log_result(self, test_name, success, message, details=None):
-        """Log test result"""
-        result = {
-            "test": test_name,
-            "success": success,
-            "message": message,
-            "details": details,
-            "timestamp": datetime.now().isoformat()
-        }
-        self.test_results.append(result)
-        status = "✅ PASS" if success else "❌ FAIL"
-        print(f"{status}: {test_name} - {message}")
-        if details:
-            print(f"   Details: {details}")
-    
-    def register_restaurant_owner(self):
+    def log(self, message):
+        """Log test messages with timestamp"""
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        print(f"[{timestamp}] {message}")
+        
+    def register_customer(self):
         """Register a new restaurant owner for testing"""
         try:
             # Generate unique test data
