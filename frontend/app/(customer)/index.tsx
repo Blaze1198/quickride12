@@ -1166,4 +1166,77 @@ const styles = StyleSheet.create({
     color: '#999',
     marginTop: 8,
   },
+
+  // Notification Dropdown Styles
+  notificationDropdownContainer: {
+    position: 'absolute',
+    top: 60,
+    right: 16,
+    zIndex: 1000,
+  },
+  notificationDropdown: {
+    backgroundColor: '#FFF',
+    borderRadius: 16,
+    width: 320,
+    maxHeight: 400,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  notificationHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
+  notificationTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  notificationList: {
+    maxHeight: 300,
+  },
+  notificationItem: {
+    flexDirection: 'row',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F5F5F5',
+  },
+  notificationIcon: {
+    marginRight: 12,
+  },
+  notificationContent: {
+    flex: 1,
+  },
+  notificationItemTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 4,
+  },
+  notificationItemText: {
+    fontSize: 12,
+    color: '#666',
+    marginBottom: 4,
+  },
+  notificationTime: {
+    fontSize: 11,
+    color: '#999',
+  },
+  viewAllNotifications: {
+    padding: 16,
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderTopColor: '#E0E0E0',
+  },
+  viewAllNotificationsText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FF6B6B',
+  },
 });
