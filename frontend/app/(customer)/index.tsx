@@ -628,6 +628,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
   },
+  activeFilter: {
+    fontSize: 12,
+    color: '#FF6B6B',
+    marginTop: 4,
+    fontWeight: '600',
+  },
   seeAllText: {
     fontSize: 14,
     fontWeight: '600',
