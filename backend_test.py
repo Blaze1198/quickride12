@@ -367,7 +367,7 @@ class GCashPaymentTester:
         
         # Check order status
         headers = {"Authorization": f"Bearer {self.customer_token}"}
-        response = self.session.get(f"{BACKEND_URL}/orders/{self.order_id}", headers=headers)
+        response = self.customer_session.get(f"{BACKEND_URL}/orders/{self.order_id}", headers=headers)
         
         if response.status_code == 200:
             order = response.json()
