@@ -1100,6 +1100,48 @@ async def get_recent_activities(request: Request):
     
     return activities[:30]
 
+# ============= ADMIN RESTAURANT MANAGEMENT =============
+@api_router.delete("/admin/restaurants/{restaurant_id}")
+async def admin_delete_restaurant(restaurant_id: str, request: Request):
+    """Admin can delete any restaurant"""
+    await require_admin(request)
+    
+    restaurant = await db.restaurants.find_one({"id": restaurant_id})
+    if not restaurant:
+        raise HTTPException(status_code=404, detail="Restaurant not found")
+    
+    # Delete the restaurant
+    await db.restaurants.delete_one({"id": restaurant_id})
+    
+    # Also delete all orders related to this restaurant
+    await db.orders.delete_many({"restaurant_id": restaurant_id})
+    
+    logger.info(f"Admin deleted restaurant {restaurant.get('name')} (ID: {restaurant_id})")
+    
+    return {"message": "Restaurant deleted successfully"}
+
+@api_router.put("/admin/restaurants/{restaurant_id}/status")
+async def admin_update_restaurant_status(restaurant_id: str, status_update: Dict[str, Any], request: Request):
+    """Admin can open/close any restaurant"""
+    await require_admin(request)
+    
+    restaurant = await db.restaurants.find_one({"id": restaurant_id})
+    if not restaurant:
+        raise HTTPException(status_code=404, detail="Restaurant not found")
+    
+    is_open = status_update.get("is_open")
+    if is_open is None:
+        raise HTTPException(status_code=400, detail="is_open field is required")
+    
+    await db.restaurants.update_one(
+        {"id": restaurant_id},
+        {"$set": {"is_open": is_open}}
+    )
+    
+    logger.info(f"Admin updated restaurant {restaurant.get('name')} status to {'open' if is_open else 'closed'}")
+    
+    return {"message": "Restaurant status updated"}
+
 # ============= USER PROFILE ENDPOINTS =============
 @api_router.put("/users/{user_id}")
 async def update_user_profile(user_id: str, updates: Dict[str, Any], request: Request):
