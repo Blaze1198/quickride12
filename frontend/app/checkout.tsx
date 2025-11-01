@@ -309,13 +309,53 @@ export default function CheckoutScreen() {
           {/* Payment Method */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Payment Method</Text>
-            <View style={styles.paymentCard}>
+            
+            {/* GCash Option */}
+            <TouchableOpacity
+              style={[
+                styles.paymentCard,
+                paymentMethod === 'gcash' && styles.paymentCardSelected
+              ]}
+              onPress={() => setPaymentMethod('gcash')}
+            >
+              <View style={styles.radioButton}>
+                {paymentMethod === 'gcash' && <View style={styles.radioButtonInner} />}
+              </View>
+              <View style={styles.paymentIcon}>
+                <Text style={styles.gcashText}>G</Text>
+              </View>
+              <View style={styles.paymentInfo}>
+                <Text style={styles.paymentMethod}>GCash Payment</Text>
+                <Text style={styles.paymentSubtext}>Pay securely via GCash</Text>
+              </View>
+            </TouchableOpacity>
+
+            {/* Cash on Delivery Option */}
+            <TouchableOpacity
+              style={[
+                styles.paymentCard,
+                paymentMethod === 'cash' && styles.paymentCardSelected
+              ]}
+              onPress={() => setPaymentMethod('cash')}
+            >
+              <View style={styles.radioButton}>
+                {paymentMethod === 'cash' && <View style={styles.radioButtonInner} />}
+              </View>
               <Ionicons name="cash-outline" size={24} color="#4CAF50" />
               <View style={styles.paymentInfo}>
                 <Text style={styles.paymentMethod}>Cash on Delivery</Text>
                 <Text style={styles.paymentSubtext}>Pay when your order arrives</Text>
               </View>
-            </View>
+            </TouchableOpacity>
+
+            {paymentMethod === 'gcash' && (
+              <View style={styles.gcashInfo}>
+                <Ionicons name="information-circle-outline" size={20} color="#0066CC" />
+                <Text style={styles.gcashInfoText}>
+                  You'll be directed to complete payment via GCash after placing your order
+                </Text>
+              </View>
+            )}
           </View>
         </ScrollView>
 
