@@ -84,13 +84,36 @@ export default function HomeScreen() {
   const handleCategorySelect = (categoryId: string) => {
     console.log('📂 Category selected:', categoryId);
     setSelectedCategory(categoryId);
-    // In future, you can filter by actual category
+    
+    // Show alert with category name
+    const category = CATEGORIES.find(c => c.id === categoryId);
+    if (category) {
+      if (Platform.OS === 'web') {
+        window.alert(`${category.icon} ${category.name} category selected!\n\nFiltering by ${category.name} will be implemented soon.`);
+      } else {
+        Alert.alert(
+          `${category.icon} ${category.name}`,
+          `Filtering by ${category.name} category`,
+          [{ text: 'OK' }]
+        );
+      }
+    }
   };
 
   const handleLocationPress = () => {
     console.log('📍 Location button pressed');
     setShowLocationPicker(!showLocationPicker);
-    // In future, open location picker modal
+    
+    // Show location picker alert
+    if (Platform.OS === 'web') {
+      window.alert('📍 Location Picker\n\nCurrent location: Metro Manila, Philippines\n\nLocation selection feature coming soon!');
+    } else {
+      Alert.alert(
+        '📍 Location Picker',
+        'Current location: Metro Manila, Philippines\n\nLocation selection feature coming soon!',
+        [{ text: 'OK' }]
+      );
+    }
   };
 
   const handleNotificationPress = () => {
@@ -100,17 +123,47 @@ export default function HomeScreen() {
 
   const handleFilterPress = () => {
     console.log('🎚️ Filter button pressed');
-    // In future, open filter modal
+    
+    // Show filter options
+    if (Platform.OS === 'web') {
+      window.alert('🎚️ Filters\n\n• Price Range\n• Delivery Fee\n• Rating\n• Cuisine Type\n• Distance\n\nFilter options coming soon!');
+    } else {
+      Alert.alert(
+        '🎚️ Filters',
+        'Filter options:\n\n• Price Range\n• Delivery Fee\n• Rating\n• Cuisine Type\n• Distance\n\nComing soon!',
+        [{ text: 'OK' }]
+      );
+    }
   };
 
   const handleBannerPress = () => {
     console.log('🎉 Banner pressed - show deals');
-    // Navigate to featured/deals section
+    
+    // Show promotion details
+    if (Platform.OS === 'web') {
+      window.alert('🎉 Special Offer!\n\nGet 50% OFF on your first order!\n\nUse code: FIRST50\n\nValid for all restaurants\nMinimum order: ₱200');
+    } else {
+      Alert.alert(
+        '🎉 Special Offer!',
+        'Get 50% OFF on your first order!\n\nUse code: FIRST50\n\nValid for all restaurants\nMinimum order: ₱200',
+        [{ text: 'Order Now' }, { text: 'Later' }]
+      );
+    }
   };
 
   const handleSeeAllPress = () => {
     console.log('👀 See all pressed');
-    // Show all restaurants or navigate to full list
+    
+    // Show message that all restaurants are displayed
+    if (Platform.OS === 'web') {
+      window.alert('👀 All Restaurants\n\nShowing all ' + restaurants.length + ' restaurants!\n\nScroll down to see more.');
+    } else {
+      Alert.alert(
+        '👀 All Restaurants',
+        `Showing all ${restaurants.length} restaurants!\n\nScroll down to see more.`,
+        [{ text: 'OK' }]
+      );
+    }
   };
 
   const filteredRestaurants = restaurants.filter((r) =>
