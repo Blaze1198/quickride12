@@ -331,7 +331,14 @@ export default function HomeScreen() {
 
         {/* Top Picks Section */}
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Top picks on delivery™</Text>
+          <View>
+            <Text style={styles.sectionTitle}>Top picks on delivery™</Text>
+            {selectedCategory !== 'all' && (
+              <Text style={styles.activeFilter}>
+                Showing: {CATEGORIES.find(c => c.id === selectedCategory)?.name} {CATEGORIES.find(c => c.id === selectedCategory)?.icon}
+              </Text>
+            )}
+          </View>
           <TouchableOpacity onPress={handleSeeAllPress} activeOpacity={0.7}>
             <Text style={styles.seeAllText}>See all</Text>
           </TouchableOpacity>
