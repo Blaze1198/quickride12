@@ -617,6 +617,84 @@ export default function HomeScreen() {
           </View>
         </View>
       )}
+
+      {/* Notifications Dropdown */}
+      {showNotifications && (
+        <View style={styles.notificationDropdownContainer}>
+          <View style={styles.notificationDropdown}>
+            <View style={styles.notificationHeader}>
+              <Text style={styles.notificationTitle}>🔔 Notifications</Text>
+              <TouchableOpacity onPress={() => setShowNotifications(false)}>
+                <Ionicons name="close" size={20} color="#666" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.notificationList}>
+              {/* Sample Notifications */}
+              <TouchableOpacity 
+                style={styles.notificationItem}
+                onPress={() => {
+                  setShowNotifications(false);
+                  router.push('/(customer)/orders');
+                }}
+              >
+                <View style={styles.notificationIcon}>
+                  <Ionicons name="checkmark-circle" size={24} color="#4CAF50" />
+                </View>
+                <View style={styles.notificationContent}>
+                  <Text style={styles.notificationItemTitle}>Order Delivered! 🎉</Text>
+                  <Text style={styles.notificationItemText}>Your order #1234 has been delivered</Text>
+                  <Text style={styles.notificationTime}>5 min ago</Text>
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={styles.notificationItem}
+                onPress={() => {
+                  setShowNotifications(false);
+                  router.push('/(customer)/orders');
+                }}
+              >
+                <View style={styles.notificationIcon}>
+                  <Ionicons name="bicycle" size={24} color="#FF6B6B" />
+                </View>
+                <View style={styles.notificationContent}>
+                  <Text style={styles.notificationItemTitle}>Out for Delivery 🚴</Text>
+                  <Text style={styles.notificationItemText}>Your rider is on the way</Text>
+                  <Text style={styles.notificationTime}>15 min ago</Text>
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={styles.notificationItem}
+                onPress={() => {
+                  setShowNotifications(false);
+                  router.push('/deals');
+                }}
+              >
+                <View style={styles.notificationIcon}>
+                  <Ionicons name="gift" size={24} color="#9C27B0" />
+                </View>
+                <View style={styles.notificationContent}>
+                  <Text style={styles.notificationItemTitle}>Special Offer! 🎁</Text>
+                  <Text style={styles.notificationItemText}>Get 50% off on your next order</Text>
+                  <Text style={styles.notificationTime}>1 hour ago</Text>
+                </View>
+              </TouchableOpacity>
+            </ScrollView>
+
+            <TouchableOpacity
+              style={styles.viewAllNotifications}
+              onPress={() => {
+                setShowNotifications(false);
+                router.push('/(customer)/orders');
+              }}
+            >
+              <Text style={styles.viewAllNotificationsText}>View All Orders</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
