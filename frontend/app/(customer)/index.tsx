@@ -780,6 +780,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginTop: 20,
   },
+  bannerCarouselContainer: {
+    overflow: 'hidden',
+  },
+  bannerTrack: {
+    flexDirection: 'row',
+  },
   heroBanner: {
     borderRadius: 20,
     padding: 24,
@@ -787,6 +793,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     minHeight: 160,
+    marginRight: 0,
   },
   bannerContent: {
     flex: 1,
