@@ -303,7 +303,7 @@ export default function HomeScreen() {
         {/* Top Picks Section */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Top picks on delivery™</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleSeeAllPress} activeOpacity={0.7}>
             <Text style={styles.seeAllText}>See all</Text>
           </TouchableOpacity>
         </View>
