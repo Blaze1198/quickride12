@@ -98,6 +98,21 @@ class GCashPaymentTester:
         """Create an order for testing payment"""
         self.log("📝 Creating test order...")
         
+        # First, verify customer authentication
+        headers = {"Authorization": f"Bearer {self.customer_token}"}
+        auth_check = self.session.get(f"{BACKEND_URL}/auth/me", headers=headers)
+        
+        if auth_check.status_code != 200:
+            self.log(f"❌ Customer authentication failed: {auth_check.status_code} - {auth_check.text}")
+            return False
+            
+        customer_info = auth_check.json()
+        self.log(f"🔍 Customer authenticated: {customer_info['name']} (Role: {customer_info['role']})")
+        
+        if customer_info['role'] != 'customer':
+            self.log(f"❌ User role is not customer: {customer_info['role']}")
+            return False
+        
         order_data = {
             "restaurant_id": self.restaurant_id,
             "items": [
@@ -127,7 +142,6 @@ class GCashPaymentTester:
             "special_instructions": "Extra rice please"
         }
         
-        headers = {"Authorization": f"Bearer {self.customer_token}"}
         response = self.session.post(f"{BACKEND_URL}/orders", json=order_data, headers=headers)
         
         if response.status_code == 200:
@@ -137,6 +151,9 @@ class GCashPaymentTester:
             return True
         else:
             self.log(f"❌ Order creation failed: {response.status_code} - {response.text}")
+            # Debug: Check if the issue is with the session
+            self.log(f"🔍 Debug - Customer token: {self.customer_token[:20]}...")
+            self.log(f"🔍 Debug - Customer user ID: {self.customer_user['id']}")
             return False
             
     def test_initiate_gcash_payment(self):
