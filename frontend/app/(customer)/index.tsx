@@ -364,31 +364,45 @@ export default function HomeScreen() {
           <View>
             {/* Hero Banner */}
             <View style={styles.bannerContainer}>
-          <TouchableOpacity 
-            activeOpacity={0.9}
-            onPress={handleBannerPress}
-          >
-            <LinearGradient
-              colors={['#FF6B6B', '#FF8E53']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.heroBanner}
-            >
-              <View style={styles.bannerContent}>
-                <View style={styles.bannerBadge}>
-                  <Text style={styles.bannerBadgeText}>🎉 Special</Text>
-                </View>
-                <Text style={styles.bannerTitle}>Get 50% Off{'\n'}Your First Order!</Text>
-                <View style={styles.bannerButton}>
-                  <Text style={styles.bannerButtonText}>Order Now</Text>
-                </View>
+              <TouchableOpacity 
+                activeOpacity={0.9}
+                onPress={handleBannerPress}
+              >
+                <LinearGradient
+                  colors={banners[currentBannerIndex].colors}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.heroBanner}
+                >
+                  <View style={styles.bannerContent}>
+                    <View style={styles.bannerBadge}>
+                      <Text style={styles.bannerBadgeText}>{banners[currentBannerIndex].badge}</Text>
+                    </View>
+                    <Text style={styles.bannerTitle}>{banners[currentBannerIndex].title}</Text>
+                    <View style={styles.bannerButton}>
+                      <Text style={styles.bannerButtonText}>{banners[currentBannerIndex].buttonText}</Text>
+                    </View>
+                  </View>
+                  <View style={styles.bannerImageContainer}>
+                    <Text style={styles.bannerEmoji}>{banners[currentBannerIndex].emoji}</Text>
+                  </View>
+                </LinearGradient>
+              </TouchableOpacity>
+
+              {/* Pagination Dots */}
+              <View style={styles.paginationContainer}>
+                {banners.map((_, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => setCurrentBannerIndex(index)}
+                    style={[
+                      styles.paginationDot,
+                      index === currentBannerIndex && styles.paginationDotActive
+                    ]}
+                  />
+                ))}
               </View>
-              <View style={styles.bannerImageContainer}>
-                <Text style={styles.bannerEmoji}>🍟</Text>
-              </View>
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
+            </View>
 
         {/* Categories */}
         <View style={styles.categoriesSection}>
