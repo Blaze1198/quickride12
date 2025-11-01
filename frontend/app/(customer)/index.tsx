@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   Image,
   ActivityIndicator,
   TextInput,
+  Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -26,11 +27,16 @@ interface Restaurant {
   is_open: boolean;
 }
 
+const HEADER_MAX_HEIGHT = 140;
+const HEADER_MIN_HEIGHT = 0;
+const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
+
 export default function HomeScreen() {
   const router = useRouter();
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const scrollY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     fetchRestaurants();
