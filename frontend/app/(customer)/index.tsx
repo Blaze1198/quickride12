@@ -902,4 +902,44 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+
+  // Search Overlay Styles
+  searchOverlay: {
+    flex: 1,
+    backgroundColor: '#FFF',
+    paddingTop: 20,
+  },
+  searchResultsContainer: {
+    padding: 20,
+  },
+  searchResultsTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
+  },
+  searchResultsCount: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 20,
+  },
+  searchResults: {
+    gap: 0,
+  },
+  noResults: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 64,
+  },
+  noResultsText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#666',
+    marginTop: 16,
+  },
+  noResultsSubtext: {
+    fontSize: 14,
+    color: '#999',
+    marginTop: 8,
+  },
 });
