@@ -265,8 +265,11 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Header */}
-        <View style={styles.header}>
+        {/* Main Content - Hidden when searching */}
+        {!isSearchActive && (
+          <View>
+            {/* Header */}
+            <View style={styles.header}>
           <TouchableOpacity 
             style={styles.locationContainer}
             onPress={handleLocationPress}
