@@ -149,11 +149,27 @@ class Order(BaseModel):
     rider_id: Optional[str] = None
     rider_name: Optional[str] = None
     rider_phone: Optional[str] = None
+    payment_method: PaymentMethod = PaymentMethod.CASH
+    payment_status: PaymentStatus = PaymentStatus.PENDING
+    payment_reference: Optional[str] = None  # GCash reference number
+    gcash_number: Optional[str] = None  # Customer's GCash number
     payment_source_id: Optional[str] = None
     payment_id: Optional[str] = None
     special_instructions: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Payment(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    order_id: str
+    amount: float
+    payment_method: PaymentMethod
+    payment_status: PaymentStatus
+    gcash_number: Optional[str] = None
+    reference_number: Optional[str] = None
+    payment_proof_base64: Optional[str] = None  # Screenshot of payment
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    verified_at: Optional[datetime] = None
 
 class Rider(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
