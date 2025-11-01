@@ -107,9 +107,29 @@ export default function HomeScreen() {
     );
   }
 
+  const headerHeight = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE],
+    outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
+    extrapolate: 'clamp',
+  });
+
+  const headerOpacity = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
+    outputRange: [1, 0.5, 0],
+    extrapolate: 'clamp',
+  });
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+      <Animated.View 
+        style={[
+          styles.header, 
+          { 
+            height: headerHeight,
+            opacity: headerOpacity,
+          }
+        ]}
+      >
         <Text style={styles.headerTitle}>QuickBite</Text>
         <View style={styles.searchContainer}>
           <Ionicons name="search" size={20} color="#999" style={styles.searchIcon} />
@@ -118,15 +138,21 @@ export default function HomeScreen() {
             placeholder="Search restaurants..."
             value={searchQuery}
             onChangeText={setSearchQuery}
+            placeholderTextColor="#999"
           />
         </View>
-      </View>
+      </Animated.View>
 
-      <FlatList
+      <Animated.FlatList
         data={filteredRestaurants}
         renderItem={renderRestaurant}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: false }
+        )}
+        scrollEventThrottle={16}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Ionicons name="restaurant-outline" size={64} color="#CCC" />
