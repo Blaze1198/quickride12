@@ -16,7 +16,8 @@ BACKEND_URL = "https://foodrush-app-1.preview.emergentagent.com/api"
 
 class GCashPaymentTester:
     def __init__(self):
-        self.session = requests.Session()
+        self.customer_session = requests.Session()
+        self.restaurant_session = requests.Session()
         self.customer_token = None
         self.restaurant_token = None
         self.customer_user = None
