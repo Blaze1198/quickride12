@@ -48,6 +48,8 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [showLocationPicker, setShowLocationPicker] = useState(false);
 
   useEffect(() => {
     fetchRestaurants();
@@ -62,6 +64,47 @@ export default function HomeScreen() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const toggleFavorite = (restaurantId: string) => {
+    setFavorites((prev) => {
+      const newFavorites = new Set(prev);
+      if (newFavorites.has(restaurantId)) {
+        newFavorites.delete(restaurantId);
+      } else {
+        newFavorites.add(restaurantId);
+      }
+      return newFavorites;
+    });
+  };
+
+  const handleCategorySelect = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+    // In future, you can filter by actual category
+  };
+
+  const handleLocationPress = () => {
+    setShowLocationPicker(!showLocationPicker);
+    // In future, open location picker modal
+  };
+
+  const handleNotificationPress = () => {
+    router.push('/(customer)/orders');
+  };
+
+  const handleFilterPress = () => {
+    // In future, open filter modal
+    console.log('Filter pressed');
+  };
+
+  const handleBannerPress = () => {
+    // Navigate to featured/deals section
+    console.log('Banner pressed - show deals');
+  };
+
+  const handleSeeAllPress = () => {
+    // Show all restaurants or navigate to full list
+    console.log('See all pressed');
   };
 
   const filteredRestaurants = restaurants.filter((r) =>
