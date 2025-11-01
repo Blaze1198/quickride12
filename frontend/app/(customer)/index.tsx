@@ -52,6 +52,14 @@ export default function HomeScreen() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [showLocationPicker, setShowLocationPicker] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState('Metro Manila, Philippines');
+  const [filters, setFilters] = useState({
+    priceRange: 'all',
+    rating: 'all',
+    deliveryFee: 'all',
+    distance: 'all',
+  });
 
   useEffect(() => {
     fetchRestaurants();
