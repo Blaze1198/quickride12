@@ -219,7 +219,7 @@ class GCashPaymentTester:
         }
         
         headers = {"Authorization": f"Bearer {self.customer_token}"}
-        response = self.session.post(f"{BACKEND_URL}/payments/gcash/verify", json=verification_data, headers=headers)
+        response = self.customer_session.post(f"{BACKEND_URL}/payments/gcash/verify", json=verification_data, headers=headers)
         
         if response.status_code == 200:
             data = response.json()
