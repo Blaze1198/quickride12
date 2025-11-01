@@ -172,6 +172,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: '#FF6B6B',
     padding: 16,
+    overflow: 'hidden',
   },
   headerTitle: {
     fontSize: 24,
