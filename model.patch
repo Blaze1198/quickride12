@@ -1,629 +1,634 @@
-diff --git a/frontend/app/(customer)/index.tsx b/frontend/app/(customer)/index.tsx
-index e6f34fc..ad006d0 100644
---- a/frontend/app/(customer)/index.tsx
-+++ b/frontend/app/(customer)/index.tsx
-@@ -356,29 +356,30 @@ export default function HomeScreen() {
-     <SafeAreaView style={styles.container}>
-       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-         {/* Header - Always Visible */}
--        <View style={styles.header}>
--          <View style={styles.headerLeft}>
--            <Text style={styles.homeTitle}>Home</Text>
--            <TouchableOpacity 
--              style={styles.locationBadge}
--              onPress={handleLocationPress}
--              activeOpacity={0.7}
--            >
--              
--              <Ionicons name="location" size={14} color="#FF6B6B" />
--              <Text style={styles.locationBadgeText}>{selectedLocation.split(',')[0]}</Text>
--              <Ionicons name="chevron-down" size={12} color="#666" />
--            </TouchableOpacity>
--          </View>
-+        <View style={styles.pinkHeader}>
-+          <TouchableOpacity 
-+            style={styles.locationContainer}
-+            onPress={handleLocationPress}
-+            activeOpacity={0.7}
-+          >
-+            <Ionicons name="location" size={18} color="#FFF" />
-+            <Text style={styles.locationText}>{selectedLocation}</Text>
-+            <Ionicons name="chevron-down" size={16} color="#FFF" />
-+          </TouchableOpacity>
-           <TouchableOpacity 
-             style={styles.notificationButton}
-             onPress={handleNotificationPress}
-             activeOpacity={0.7}
-           >
--            <Ionicons name="notifications-outline" size={24} color="#333" />
-+            <Ionicons name="notifications-outline" size={24} color="#FFF" />
-             <View style={styles.notificationBadge} />
-           </TouchableOpacity>
-         </View>
-+        
-+        {/* Home Title */}
-+        <View style={styles.titleContainer}>
-+          <Text style={styles.homeTitle}>Home</Text>
-+        </View>
- 
-         {/* Search Bar - Always Visible */}
-         <View style={styles.searchSection}>
-@@ -758,9 +759,24 @@ const styles = StyleSheet.create({
-     gap: 6,
-   },
-   locationText: {
--    fontSize: 13,
-+    fontSize: 14,
-     fontWeight: '500',
--    color: '#666',
-+    color: '#FFF',
-+  },
-+  pinkHeader: {
-+    flexDirection: 'row',
-+    alignItems: 'center',
-+    justifyContent: 'space-between',
-+    paddingHorizontal: 20,
-+    paddingVertical: 16,
-+    backgroundColor: '#FF6B6B',
-+  },
-+  titleContainer: {
-+    paddingHorizontal: 20,
-+    paddingVertical: 12,
-+    backgroundColor: '#FFF',
-+    borderBottomWidth: 2,
-+    borderBottomColor: '#FFE8E8',
-   },
-   notificationButton: {
-     position: 'relative',
 diff --git a/model.patch b/model.patch
-index 5759f29..e69de29 100644
+index 0c53e35..e69de29 100644
 --- a/model.patch
 +++ b/model.patch
-@@ -1,547 +0,0 @@
+@@ -1,629 +0,0 @@
 -diff --git a/frontend/app/(customer)/index.tsx b/frontend/app/(customer)/index.tsx
--index 63f3a48..6d93fc2 100644
+-index e6f34fc..ad006d0 100644
 ---- a/frontend/app/(customer)/index.tsx
 -+++ b/frontend/app/(customer)/index.tsx
--@@ -719,10 +719,34 @@ const styles = StyleSheet.create({
--   // Header Styles
--   header: {
--     flexDirection: 'row',
---    justifyContent: 'space-between',
--     alignItems: 'center',
--+    justifyContent: 'space-between',
--     paddingHorizontal: 20,
---    paddingVertical: 12,
--+    paddingVertical: 16,
--+  },
--+  headerLeft: {
--+    flexDirection: 'row',
--+    alignItems: 'center',
--+    gap: 12,
--+  },
--+  homeTitle: {
--+    fontSize: 24,
--+    fontWeight: 'bold',
--+    color: '#333',
--+  },
--+  locationBadge: {
--+    flexDirection: 'row',
--+    alignItems: 'center',
--+    backgroundColor: '#FFE8E8',
--+    paddingHorizontal: 10,
--+    paddingVertical: 6,
--+    borderRadius: 20,
--+    gap: 4,
--+  },
--+  locationBadgeText: {
--+    fontSize: 12,
--+    fontWeight: '600',
--+    color: '#FF6B6B',
+-@@ -356,29 +356,30 @@ export default function HomeScreen() {
+-     <SafeAreaView style={styles.container}>
+-       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+-         {/* Header - Always Visible */}
+--        <View style={styles.header}>
+--          <View style={styles.headerLeft}>
+--            <Text style={styles.homeTitle}>Home</Text>
+--            <TouchableOpacity 
+--              style={styles.locationBadge}
+--              onPress={handleLocationPress}
+--              activeOpacity={0.7}
+--            >
+--              
+--              <Ionicons name="location" size={14} color="#FF6B6B" />
+--              <Text style={styles.locationBadgeText}>{selectedLocation.split(',')[0]}</Text>
+--              <Ionicons name="chevron-down" size={12} color="#666" />
+--            </TouchableOpacity>
+--          </View>
+-+        <View style={styles.pinkHeader}>
+-+          <TouchableOpacity 
+-+            style={styles.locationContainer}
+-+            onPress={handleLocationPress}
+-+            activeOpacity={0.7}
+-+          >
+-+            <Ionicons name="location" size={18} color="#FFF" />
+-+            <Text style={styles.locationText}>{selectedLocation}</Text>
+-+            <Ionicons name="chevron-down" size={16} color="#FFF" />
+-+          </TouchableOpacity>
+-           <TouchableOpacity 
+-             style={styles.notificationButton}
+-             onPress={handleNotificationPress}
+-             activeOpacity={0.7}
+-           >
+--            <Ionicons name="notifications-outline" size={24} color="#333" />
+-+            <Ionicons name="notifications-outline" size={24} color="#FFF" />
+-             <View style={styles.notificationBadge} />
+-           </TouchableOpacity>
+-         </View>
+-+        
+-+        {/* Home Title */}
+-+        <View style={styles.titleContainer}>
+-+          <Text style={styles.homeTitle}>Home</Text>
+-+        </View>
+- 
+-         {/* Search Bar - Always Visible */}
+-         <View style={styles.searchSection}>
+-@@ -758,9 +759,24 @@ const styles = StyleSheet.create({
+-     gap: 6,
 -   },
--   locationContainer: {
--     flexDirection: 'row',
+-   locationText: {
+--    fontSize: 13,
+-+    fontSize: 14,
+-     fontWeight: '500',
+--    color: '#666',
+-+    color: '#FFF',
+-+  },
+-+  pinkHeader: {
+-+    flexDirection: 'row',
+-+    alignItems: 'center',
+-+    justifyContent: 'space-between',
+-+    paddingHorizontal: 20,
+-+    paddingVertical: 16,
+-+    backgroundColor: '#FF6B6B',
+-+  },
+-+  titleContainer: {
+-+    paddingHorizontal: 20,
+-+    paddingVertical: 12,
+-+    backgroundColor: '#FFF',
+-+    borderBottomWidth: 2,
+-+    borderBottomColor: '#FFE8E8',
+-   },
+-   notificationButton: {
+-     position: 'relative',
 -diff --git a/model.patch b/model.patch
--index a502d7b..e69de29 100644
+-index 5759f29..e69de29 100644
 ---- a/model.patch
 -+++ b/model.patch
--@@ -1,501 +0,0 @@
+-@@ -1,547 +0,0 @@
 --diff --git a/frontend/app/(customer)/index.tsx b/frontend/app/(customer)/index.tsx
---index 06262e3..fa01704 100644
+--index 63f3a48..6d93fc2 100644
 ----- a/frontend/app/(customer)/index.tsx
 --+++ b/frontend/app/(customer)/index.tsx
---@@ -318,56 +318,8 @@ export default function HomeScreen() {
---         {/* Main Content - Hidden when searching */}
---         {!isSearchActive && (
---           <View>
----          <TouchableOpacity 
----            style={styles.locationContainer}
----            onPress={handleLocationPress}
----            activeOpacity={0.7}
----          >
----            <Ionicons name="location" size={20} color="#FF6B6B" />
----            <Text style={styles.locationText}>{selectedLocation}</Text>
----            <Ionicons name="chevron-down" size={16} color="#666" />
----          </TouchableOpacity>
----          <TouchableOpacity 
----            style={styles.notificationButton}
----            onPress={handleNotificationPress}
----            activeOpacity={0.7}
----          >
----            <Ionicons name="notifications-outline" size={24} color="#333" />
----            <View style={styles.notificationBadge} />
----          </TouchableOpacity>
----        </View>
----
----        {/* Search Bar */}
----        <View style={styles.searchSection}>
----          <View style={styles.searchContainer}>
----            <Ionicons name="search" size={20} color="#999" />
----            <TextInput
----              style={styles.searchInput}
----              placeholder="Search delivery..."
----              value={searchQuery}
----              onChangeText={handleSearchChange}
----              onFocus={handleSearchFocus}
----              placeholderTextColor="#999"
----            />
----            {isSearchActive && (
----              <TouchableOpacity onPress={handleSearchClose}>
----                <Ionicons name="close-circle" size={20} color="#999" />
----              </TouchableOpacity>
----            )}
----          </View>
----          {!isSearchActive && (
----            <TouchableOpacity 
----              style={styles.filterButton}
----              onPress={handleFilterPress}
----              activeOpacity={0.7}
----            >
----              <Ionicons name="options-outline" size={24} color="#FF6B6B" />
----            </TouchableOpacity>
----          )}
----        </View>
----
----        {/* Hero Banner */}
----        <View style={styles.bannerContainer}>
---+            {/* Hero Banner */}
---+            <View style={styles.bannerContainer}>
---           <TouchableOpacity 
---             activeOpacity={0.9}
---             onPress={handleBannerPress}
+--@@ -719,10 +719,34 @@ const styles = StyleSheet.create({
+--   // Header Styles
+--   header: {
+--     flexDirection: 'row',
+---    justifyContent: 'space-between',
+--     alignItems: 'center',
+--+    justifyContent: 'space-between',
+--     paddingHorizontal: 20,
+---    paddingVertical: 12,
+--+    paddingVertical: 16,
+--+  },
+--+  headerLeft: {
+--+    flexDirection: 'row',
+--+    alignItems: 'center',
+--+    gap: 12,
+--+  },
+--+  homeTitle: {
+--+    fontSize: 24,
+--+    fontWeight: 'bold',
+--+    color: '#333',
+--+  },
+--+  locationBadge: {
+--+    flexDirection: 'row',
+--+    alignItems: 'center',
+--+    backgroundColor: '#FFE8E8',
+--+    paddingHorizontal: 10,
+--+    paddingVertical: 6,
+--+    borderRadius: 20,
+--+    gap: 4,
+--+  },
+--+  locationBadgeText: {
+--+    fontSize: 12,
+--+    fontWeight: '600',
+--+    color: '#FF6B6B',
+--   },
+--   locationContainer: {
+--     flexDirection: 'row',
 --diff --git a/model.patch b/model.patch
---index d877c41..e69de29 100644
+--index a502d7b..e69de29 100644
 ----- a/model.patch
 --+++ b/model.patch
---@@ -1,433 +0,0 @@
+--@@ -1,501 +0,0 @@
+---diff --git a/frontend/app/(customer)/index.tsx b/frontend/app/(customer)/index.tsx
+---index 06262e3..fa01704 100644
+------ a/frontend/app/(customer)/index.tsx
+---+++ b/frontend/app/(customer)/index.tsx
+---@@ -318,56 +318,8 @@ export default function HomeScreen() {
+---         {/* Main Content - Hidden when searching */}
+---         {!isSearchActive && (
+---           <View>
+----          <TouchableOpacity 
+----            style={styles.locationContainer}
+----            onPress={handleLocationPress}
+----            activeOpacity={0.7}
+----          >
+----            <Ionicons name="location" size={20} color="#FF6B6B" />
+----            <Text style={styles.locationText}>{selectedLocation}</Text>
+----            <Ionicons name="chevron-down" size={16} color="#666" />
+----          </TouchableOpacity>
+----          <TouchableOpacity 
+----            style={styles.notificationButton}
+----            onPress={handleNotificationPress}
+----            activeOpacity={0.7}
+----          >
+----            <Ionicons name="notifications-outline" size={24} color="#333" />
+----            <View style={styles.notificationBadge} />
+----          </TouchableOpacity>
+----        </View>
+----
+----        {/* Search Bar */}
+----        <View style={styles.searchSection}>
+----          <View style={styles.searchContainer}>
+----            <Ionicons name="search" size={20} color="#999" />
+----            <TextInput
+----              style={styles.searchInput}
+----              placeholder="Search delivery..."
+----              value={searchQuery}
+----              onChangeText={handleSearchChange}
+----              onFocus={handleSearchFocus}
+----              placeholderTextColor="#999"
+----            />
+----            {isSearchActive && (
+----              <TouchableOpacity onPress={handleSearchClose}>
+----                <Ionicons name="close-circle" size={20} color="#999" />
+----              </TouchableOpacity>
+----            )}
+----          </View>
+----          {!isSearchActive && (
+----            <TouchableOpacity 
+----              style={styles.filterButton}
+----              onPress={handleFilterPress}
+----              activeOpacity={0.7}
+----            >
+----              <Ionicons name="options-outline" size={24} color="#FF6B6B" />
+----            </TouchableOpacity>
+----          )}
+----        </View>
+----
+----        {/* Hero Banner */}
+----        <View style={styles.bannerContainer}>
+---+            {/* Hero Banner */}
+---+            <View style={styles.bannerContainer}>
+---           <TouchableOpacity 
+---             activeOpacity={0.9}
+---             onPress={handleBannerPress}
 ---diff --git a/model.patch b/model.patch
----index 632809a..e69de29 100644
+---index d877c41..e69de29 100644
 ------ a/model.patch
 ---+++ b/model.patch
----@@ -1,428 +0,0 @@
-----diff --git a/backend/server.py b/backend/server.py
-----index 459b719..5590f15 100644
-------- a/backend/server.py
-----+++ b/backend/server.py
-----@@ -1100,6 +1100,48 @@ async def get_recent_activities(request: Request):
-----     
-----     return activities[:30]
----- 
-----+# ============= ADMIN RESTAURANT MANAGEMENT =============
-----+@api_router.delete("/admin/restaurants/{restaurant_id}")
-----+async def admin_delete_restaurant(restaurant_id: str, request: Request):
-----+    """Admin can delete any restaurant"""
-----+    await require_admin(request)
-----+    
-----+    restaurant = await db.restaurants.find_one({"id": restaurant_id})
-----+    if not restaurant:
-----+        raise HTTPException(status_code=404, detail="Restaurant not found")
-----+    
-----+    # Delete the restaurant
-----+    await db.restaurants.delete_one({"id": restaurant_id})
-----+    
-----+    # Also delete all orders related to this restaurant
-----+    await db.orders.delete_many({"restaurant_id": restaurant_id})
-----+    
-----+    logger.info(f"Admin deleted restaurant {restaurant.get('name')} (ID: {restaurant_id})")
-----+    
-----+    return {"message": "Restaurant deleted successfully"}
-----+
-----+@api_router.put("/admin/restaurants/{restaurant_id}/status")
-----+async def admin_update_restaurant_status(restaurant_id: str, status_update: Dict[str, Any], request: Request):
-----+    """Admin can open/close any restaurant"""
-----+    await require_admin(request)
-----+    
-----+    restaurant = await db.restaurants.find_one({"id": restaurant_id})
-----+    if not restaurant:
-----+        raise HTTPException(status_code=404, detail="Restaurant not found")
-----+    
-----+    is_open = status_update.get("is_open")
-----+    if is_open is None:
-----+        raise HTTPException(status_code=400, detail="is_open field is required")
-----+    
-----+    await db.restaurants.update_one(
-----+        {"id": restaurant_id},
-----+        {"$set": {"is_open": is_open}}
-----+    )
-----+    
-----+    logger.info(f"Admin updated restaurant {restaurant.get('name')} status to {'open' if is_open else 'closed'}")
-----+    
-----+    return {"message": "Restaurant status updated"}
-----+
----- # ============= USER PROFILE ENDPOINTS =============
----- @api_router.put("/users/{user_id}")
----- async def update_user_profile(user_id: str, updates: Dict[str, Any], request: Request):
+---@@ -1,433 +0,0 @@
 ----diff --git a/model.patch b/model.patch
-----index 1f81e74..e69de29 100644
+----index 632809a..e69de29 100644
 ------- a/model.patch
 ----+++ b/model.patch
-----@@ -1,370 +0,0 @@
------diff --git a/frontend/app/(rider)/_layout.tsx b/frontend/app/(rider)/_layout.tsx
------index 8d487c1..8a1c346 100644
--------- a/frontend/app/(rider)/_layout.tsx
------+++ b/frontend/app/(rider)/_layout.tsx
------@@ -51,6 +51,15 @@ export default function RiderLayout() {
------           ),
------         }}
------       />
------+      <Tabs.Screen
------+        name="history"
------+        options={{
------+          title: 'History',
------+          tabBarIcon: ({ color, size }) => (
------+            <Ionicons name="time" size={size} color={color} />
------+          ),
------+        }}
------+      />
------     </Tabs>
------   );
------ }
+----@@ -1,428 +0,0 @@
+-----diff --git a/backend/server.py b/backend/server.py
+-----index 459b719..5590f15 100644
+-------- a/backend/server.py
+-----+++ b/backend/server.py
+-----@@ -1100,6 +1100,48 @@ async def get_recent_activities(request: Request):
+-----     
+-----     return activities[:30]
+----- 
+-----+# ============= ADMIN RESTAURANT MANAGEMENT =============
+-----+@api_router.delete("/admin/restaurants/{restaurant_id}")
+-----+async def admin_delete_restaurant(restaurant_id: str, request: Request):
+-----+    """Admin can delete any restaurant"""
+-----+    await require_admin(request)
+-----+    
+-----+    restaurant = await db.restaurants.find_one({"id": restaurant_id})
+-----+    if not restaurant:
+-----+        raise HTTPException(status_code=404, detail="Restaurant not found")
+-----+    
+-----+    # Delete the restaurant
+-----+    await db.restaurants.delete_one({"id": restaurant_id})
+-----+    
+-----+    # Also delete all orders related to this restaurant
+-----+    await db.orders.delete_many({"restaurant_id": restaurant_id})
+-----+    
+-----+    logger.info(f"Admin deleted restaurant {restaurant.get('name')} (ID: {restaurant_id})")
+-----+    
+-----+    return {"message": "Restaurant deleted successfully"}
+-----+
+-----+@api_router.put("/admin/restaurants/{restaurant_id}/status")
+-----+async def admin_update_restaurant_status(restaurant_id: str, status_update: Dict[str, Any], request: Request):
+-----+    """Admin can open/close any restaurant"""
+-----+    await require_admin(request)
+-----+    
+-----+    restaurant = await db.restaurants.find_one({"id": restaurant_id})
+-----+    if not restaurant:
+-----+        raise HTTPException(status_code=404, detail="Restaurant not found")
+-----+    
+-----+    is_open = status_update.get("is_open")
+-----+    if is_open is None:
+-----+        raise HTTPException(status_code=400, detail="is_open field is required")
+-----+    
+-----+    await db.restaurants.update_one(
+-----+        {"id": restaurant_id},
+-----+        {"$set": {"is_open": is_open}}
+-----+    )
+-----+    
+-----+    logger.info(f"Admin updated restaurant {restaurant.get('name')} status to {'open' if is_open else 'closed'}")
+-----+    
+-----+    return {"message": "Restaurant status updated"}
+-----+
+----- # ============= USER PROFILE ENDPOINTS =============
+----- @api_router.put("/users/{user_id}")
+----- async def update_user_profile(user_id: str, updates: Dict[str, Any], request: Request):
 -----diff --git a/model.patch b/model.patch
------index f41cb9a..e69de29 100644
+-----index 1f81e74..e69de29 100644
 -------- a/model.patch
 -----+++ b/model.patch
------@@ -1,345 +0,0 @@
-------diff --git a/frontend/app/(restaurant)/index.tsx b/frontend/app/(restaurant)/index.tsx
-------index 06a447f..7a82e68 100644
---------- a/frontend/app/(restaurant)/index.tsx
-------+++ b/frontend/app/(restaurant)/index.tsx
-------@@ -33,8 +33,8 @@ export default function RestaurantOrdersScreen() {
------- 
-------   useEffect(() => {
-------     fetchOrders();
--------    // Poll for new orders every 10 seconds
--------    const interval = setInterval(fetchOrders, 10000);
-------+    // Auto-refresh every 5 seconds for real-time updates
-------+    const interval = setInterval(fetchOrders, 5000);
-------     return () => clearInterval(interval);
-------   }, []);
------- 
+-----@@ -1,370 +0,0 @@
+------diff --git a/frontend/app/(rider)/_layout.tsx b/frontend/app/(rider)/_layout.tsx
+------index 8d487c1..8a1c346 100644
+--------- a/frontend/app/(rider)/_layout.tsx
+------+++ b/frontend/app/(rider)/_layout.tsx
+------@@ -51,6 +51,15 @@ export default function RiderLayout() {
+------           ),
+------         }}
+------       />
+------+      <Tabs.Screen
+------+        name="history"
+------+        options={{
+------+          title: 'History',
+------+          tabBarIcon: ({ color, size }) => (
+------+            <Ionicons name="time" size={size} color={color} />
+------+          ),
+------+        }}
+------+      />
+------     </Tabs>
+------   );
+------ }
 ------diff --git a/model.patch b/model.patch
-------index 38a8d8a..e69de29 100644
+------index f41cb9a..e69de29 100644
 --------- a/model.patch
 ------+++ b/model.patch
-------@@ -1,325 +0,0 @@
+------@@ -1,345 +0,0 @@
+-------diff --git a/frontend/app/(restaurant)/index.tsx b/frontend/app/(restaurant)/index.tsx
+-------index 06a447f..7a82e68 100644
+---------- a/frontend/app/(restaurant)/index.tsx
+-------+++ b/frontend/app/(restaurant)/index.tsx
+-------@@ -33,8 +33,8 @@ export default function RestaurantOrdersScreen() {
+------- 
+-------   useEffect(() => {
+-------     fetchOrders();
+--------    // Poll for new orders every 10 seconds
+--------    const interval = setInterval(fetchOrders, 10000);
+-------+    // Auto-refresh every 5 seconds for real-time updates
+-------+    const interval = setInterval(fetchOrders, 5000);
+-------     return () => clearInterval(interval);
+-------   }, []);
+------- 
 -------diff --git a/model.patch b/model.patch
--------index b8b7135..e69de29 100644
+-------index 38a8d8a..e69de29 100644
 ---------- a/model.patch
 -------+++ b/model.patch
--------@@ -1,183 +0,0 @@
---------diff --git a/backend/server.py b/backend/server.py
---------index a45763c..de2f4e7 100644
------------ a/backend/server.py
---------+++ b/backend/server.py
---------@@ -611,10 +611,16 @@ async def get_available_orders_for_riders(request: Request):
---------     if user.role != UserRole.RIDER:
---------         raise HTTPException(status_code=403, detail="Only riders can access this")
---------     
---------+    # Riders can see orders that are paid, accepted, preparing, or ready for pickup
---------     orders = await db.orders.find({
----------        "status": OrderStatus.READY_FOR_PICKUP,
---------+        "status": {"$in": [
---------+            OrderStatus.PAID,
---------+            OrderStatus.ACCEPTED,
---------+            OrderStatus.PREPARING,
---------+            OrderStatus.READY_FOR_PICKUP
---------+        ]},
---------         "rider_id": None
----------    }).to_list(50)
---------+    }).sort("created_at", -1).to_list(50)
---------     
---------     return [Order(**o) for o in orders]
--------- 
+-------@@ -1,325 +0,0 @@
 --------diff --git a/model.patch b/model.patch
---------index 1b9f004..e69de29 100644
+--------index b8b7135..e69de29 100644
 ----------- a/model.patch
 --------+++ b/model.patch
---------@@ -1,155 +0,0 @@
+--------@@ -1,183 +0,0 @@
 ---------diff --git a/backend/server.py b/backend/server.py
----------index 78ecb4a..5afea79 100644
+---------index a45763c..de2f4e7 100644
 ------------ a/backend/server.py
 ---------+++ b/backend/server.py
----------@@ -240,8 +240,11 @@ async def register(request: Request):
----------         await db.user_sessions.insert_one(user_session.dict())
----------         
----------         # Return user without password hash
-----------        user_dict = user.dict()
----------+        user_dict = user.model_dump()
----------         user_dict.pop("password_hash", None)
----------+        # Convert datetime to string
----------+        if "created_at" in user_dict and isinstance(user_dict["created_at"], datetime):
----------+            user_dict["created_at"] = user_dict["created_at"].isoformat()
----------         
----------         response = JSONResponse({
----------             "user": user_dict,
----------@@ -299,8 +302,11 @@ async def login(request: Request):
----------         await db.user_sessions.insert_one(user_session.dict())
----------         
----------         # Return user without password hash
-----------        user_dict = user.dict()
----------+        user_dict = user.model_dump()
----------         user_dict.pop("password_hash", None)
----------+        # Convert datetime to string
----------+        if "created_at" in user_dict and isinstance(user_dict["created_at"], datetime):
----------+            user_dict["created_at"] = user_dict["created_at"].isoformat()
----------         
----------         response = JSONResponse({
----------             "user": user_dict,
----------@@ -374,8 +380,13 @@ async def create_session(request: Request):
----------         await db.user_sessions.insert_one(user_session.dict())
----------         
----------         # Set cookie
----------+        user_dict = user.model_dump()
----------+        # Convert datetime to string
----------+        if "created_at" in user_dict and isinstance(user_dict["created_at"], datetime):
----------+            user_dict["created_at"] = user_dict["created_at"].isoformat()
----------+        
----------         response = JSONResponse({
-----------            "user": user.dict(),
----------+            "user": user_dict,
----------             "session_token": session_token
----------         })
----------         response.set_cookie(
+---------@@ -611,10 +611,16 @@ async def get_available_orders_for_riders(request: Request):
+---------     if user.role != UserRole.RIDER:
+---------         raise HTTPException(status_code=403, detail="Only riders can access this")
+---------     
+---------+    # Riders can see orders that are paid, accepted, preparing, or ready for pickup
+---------     orders = await db.orders.find({
+----------        "status": OrderStatus.READY_FOR_PICKUP,
+---------+        "status": {"$in": [
+---------+            OrderStatus.PAID,
+---------+            OrderStatus.ACCEPTED,
+---------+            OrderStatus.PREPARING,
+---------+            OrderStatus.READY_FOR_PICKUP
+---------+        ]},
+---------         "rider_id": None
+----------    }).to_list(50)
+---------+    }).sort("created_at", -1).to_list(50)
+---------     
+---------     return [Order(**o) for o in orders]
+--------- 
 ---------diff --git a/model.patch b/model.patch
----------index 46f7896..e69de29 100644
+---------index 1b9f004..e69de29 100644
 ------------ a/model.patch
 ---------+++ b/model.patch
----------@@ -1,105 +0,0 @@
-----------diff --git a/frontend/store/authStore.ts b/frontend/store/authStore.ts
-----------index 73c68be..7a3124d 100644
-------------- a/frontend/store/authStore.ts
-----------+++ b/frontend/store/authStore.ts
-----------@@ -5,7 +5,7 @@ interface User {
-----------   email: string;
-----------   name: string;
-----------   picture?: string;
------------  role: 'customer' | 'restaurant' | 'rider';
-----------+  role: 'customer' | 'restaurant' | 'rider' | 'admin';
-----------   phone?: string;
----------- }
----------- 
+---------@@ -1,155 +0,0 @@
+----------diff --git a/backend/server.py b/backend/server.py
+----------index 78ecb4a..5afea79 100644
+------------- a/backend/server.py
+----------+++ b/backend/server.py
+----------@@ -240,8 +240,11 @@ async def register(request: Request):
+----------         await db.user_sessions.insert_one(user_session.dict())
+----------         
+----------         # Return user without password hash
+-----------        user_dict = user.dict()
+----------+        user_dict = user.model_dump()
+----------         user_dict.pop("password_hash", None)
+----------+        # Convert datetime to string
+----------+        if "created_at" in user_dict and isinstance(user_dict["created_at"], datetime):
+----------+            user_dict["created_at"] = user_dict["created_at"].isoformat()
+----------         
+----------         response = JSONResponse({
+----------             "user": user_dict,
+----------@@ -299,8 +302,11 @@ async def login(request: Request):
+----------         await db.user_sessions.insert_one(user_session.dict())
+----------         
+----------         # Return user without password hash
+-----------        user_dict = user.dict()
+----------+        user_dict = user.model_dump()
+----------         user_dict.pop("password_hash", None)
+----------+        # Convert datetime to string
+----------+        if "created_at" in user_dict and isinstance(user_dict["created_at"], datetime):
+----------+            user_dict["created_at"] = user_dict["created_at"].isoformat()
+----------         
+----------         response = JSONResponse({
+----------             "user": user_dict,
+----------@@ -374,8 +380,13 @@ async def create_session(request: Request):
+----------         await db.user_sessions.insert_one(user_session.dict())
+----------         
+----------         # Set cookie
+----------+        user_dict = user.model_dump()
+----------+        # Convert datetime to string
+----------+        if "created_at" in user_dict and isinstance(user_dict["created_at"], datetime):
+----------+            user_dict["created_at"] = user_dict["created_at"].isoformat()
+----------+        
+----------         response = JSONResponse({
+-----------            "user": user.dict(),
+----------+            "user": user_dict,
+----------             "session_token": session_token
+----------         })
+----------         response.set_cookie(
 ----------diff --git a/model.patch b/model.patch
-----------index 249be45..e69de29 100644
+----------index 46f7896..e69de29 100644
 ------------- a/model.patch
 ----------+++ b/model.patch
-----------@@ -1,87 +0,0 @@
------------diff --git a/frontend/app/(auth)/login.tsx b/frontend/app/(auth)/login.tsx
------------index 965082a..166b088 100644
--------------- a/frontend/app/(auth)/login.tsx
------------+++ b/frontend/app/(auth)/login.tsx
------------@@ -181,6 +181,27 @@ export default function LoginScreen() {
------------             <Ionicons name="logo-google" size={24} color="#FFF" />
------------             <Text style={styles.loginButtonText}>Sign in with Google</Text>
------------           </TouchableOpacity>
------------+
------------+          <View style={styles.divider}>
------------+            <View style={styles.dividerLine} />
------------+            <Text style={styles.dividerText}>OR</Text>
------------+            <View style={styles.dividerLine} />
------------+          </View>
------------+
------------+          <TouchableOpacity
------------+            style={styles.emailButton}
------------+            onPress={() => router.push('/(auth)/signin' as any)}
------------+          >
------------+            <Ionicons name="mail" size={24} color="#FF6B6B" />
------------+            <Text style={styles.emailButtonText}>Sign in with Email</Text>
------------+          </TouchableOpacity>
------------+
------------+          <TouchableOpacity
------------+            style={styles.registerButton}
------------+            onPress={() => router.push('/(auth)/register' as any)}
------------+          >
------------+            <Text style={styles.registerButtonText}>Create New Account</Text>
------------+          </TouchableOpacity>
------------         </View>
------------       </ScrollView>
------------     </SafeAreaView>
------------@@ -284,4 +305,54 @@ const styles = StyleSheet.create({
------------     fontWeight: '600',
------------     marginLeft: 12,
------------   },
------------+  divider: {
------------+    flexDirection: 'row',
------------+    alignItems: 'center',
------------+    marginVertical: 24,
------------+  },
------------+  dividerLine: {
------------+    flex: 1,
------------+    height: 1,
------------+    backgroundColor: '#E0E0E0',
------------+  },
------------+  dividerText: {
------------+    marginHorizontal: 16,
------------+    fontSize: 14,
------------+    color: '#999',
------------+    fontWeight: '500',
------------+  },
------------+  emailButton: {
------------+    flexDirection: 'row',
------------+    alignItems: 'center',
------------+    justifyContent: 'center',
------------+    backgroundColor: '#FFF',
------------+    borderWidth: 2,
------------+    borderColor: '#FF6B6B',
------------+    padding: 18,
------------+    borderRadius: 16,
------------+    marginBottom: 16,
------------+    shadowColor: '#000',
------------+    shadowOffset: { width: 0, height: 2 },
------------+    shadowOpacity: 0.1,
------------+    shadowRadius: 8,
------------+    elevation: 4,
------------+  },
------------+  emailButtonText: {
------------+    color: '#FF6B6B',
------------+    fontSize: 18,
------------+    fontWeight: '600',
------------+    marginLeft: 12,
------------+  },
------------+  registerButton: {
------------+    alignItems: 'center',
------------+    justifyContent: 'center',
------------+    padding: 18,
------------+    borderRadius: 16,
------------+  },
------------+  registerButtonText: {
------------+    color: '#FF6B6B',
------------+    fontSize: 16,
------------+    fontWeight: '600',
------------+    textDecorationLine: 'underline',
------------+  },
------------ });
--------diff --git a/test_result.md b/test_result.md
--------index 9d2b24c..b96e429 100644
----------- a/test_result.md
--------+++ b/test_result.md
--------@@ -110,39 +110,48 @@ user_problem_statement: |
-------- backend:
--------   - task: "Menu Item CRUD API - Add menu item"
--------     implemented: true
---------    working: "NA"
--------+    working: true
--------     file: "/app/backend/server.py"
--------     stuck_count: 0
--------     priority: "high"
---------    needs_retesting: true
--------+    needs_retesting: false
--------     status_history:
--------       - working: "NA"
--------         agent: "main"
--------         comment: "Added POST /api/restaurants/{restaurant_id}/menu-items endpoint to add new menu items to a restaurant. Uses MongoDB $push to append to menu array."
--------+      - working: true
--------+        agent: "testing"
--------+        comment: "✅ TESTED SUCCESSFULLY: POST /api/restaurants/{restaurant_id}/menu-items endpoint working correctly. Successfully added 3 test menu items (Chicken Adobo, Halo-Halo, Lumpia Shanghai) with different categories and availability statuses. All items were properly stored in restaurant's menu array with correct UUIDs generated."
-------- 
--------   - task: "Menu Item CRUD API - Update menu item"
--------     implemented: true
---------    working: "NA"
--------+    working: true
--------     file: "/app/backend/server.py"
--------     stuck_count: 0
--------     priority: "high"
---------    needs_retesting: true
--------+    needs_retesting: false
--------     status_history:
--------       - working: "NA"
--------         agent: "main"
--------         comment: "Added PUT /api/restaurants/{restaurant_id}/menu-items/{item_id} endpoint to update menu items. Uses MongoDB array_filters to update specific item in menu array."
--------+      - working: true
--------+        agent: "testing"
--------+        comment: "✅ TESTED SUCCESSFULLY: PUT /api/restaurants/{restaurant_id}/menu-items/{item_id} endpoint working correctly. Successfully tested multiple update scenarios: price updates (250.00 → 275.00 → 300.00), availability toggling (true → false → true), description updates, name changes, and multiple field updates simultaneously. MongoDB array_filters working properly to target specific menu items."
-------- 
--------   - task: "Menu Item CRUD API - Delete menu item"
--------     implemented: true
---------    working: "NA"
--------+    working: true
--------     file: "/app/backend/server.py"
--------     stuck_count: 0
--------     priority: "high"
---------    needs_retesting: true
--------+    needs_retesting: false
--------     status_history:
--------       - working: "NA"
--------         agent: "main"
--------         comment: "Added DELETE /api/restaurants/{restaurant_id}/menu-items/{item_id} endpoint to remove menu items from restaurant. Uses MongoDB $pull operator."
--------+      - working: true
--------+        agent: "testing"
--------+        comment: "✅ TESTED SUCCESSFULLY: DELETE /api/restaurants/{restaurant_id}/menu-items/{item_id} endpoint working correctly. Successfully deleted 'Lumpia Shanghai' menu item (ID: 6c2ffd9a-073a-4ed7-8eb1-5df175c60b6b) from restaurant menu. MongoDB $pull operator properly removed the item from the menu array."
-------- 
--------   - task: "Restaurant Profile Update API"
--------     implemented: true
--------@@ -150,11 +159,14 @@ backend:
--------     file: "/app/backend/server.py"
--------     stuck_count: 0
--------     priority: "medium"
---------    needs_retesting: true
--------+    needs_retesting: false
--------     status_history:
--------       - working: true
--------         agent: "main"
--------         comment: "Existing PUT /api/restaurants/{restaurant_id} endpoint is already available and functional. Will be tested with new profile management features."
--------+      - working: true
--------+        agent: "testing"
--------+        comment: "✅ TESTED SUCCESSFULLY: PUT /api/restaurants/{restaurant_id} endpoint working correctly. Successfully tested all restaurant profile updates: name changes, description updates, phone number updates, operating hours modifications, is_open status toggling, and multiple field updates simultaneously. All changes are properly persisted to MongoDB."
-------- 
-------- frontend:
--------   - task: "Menu Management Screen - Full Implementation"
--------@@ -210,11 +222,7 @@ metadata:
--------   run_ui: false
-------- 
-------- test_plan:
---------  current_focus:
---------    - "Menu Item CRUD API - Add menu item"
---------    - "Menu Item CRUD API - Update menu item"
---------    - "Menu Item CRUD API - Delete menu item"
---------    - "Restaurant Profile Update API"
--------+  current_focus: []
--------   stuck_tasks: []
--------   test_all: false
--------   test_priority: "high_first"
--------@@ -244,4 +252,45 @@ agent_communication:
--------       - Use restaurant role user account for testing
--------       - Menu and Profile tabs should be accessible from restaurant dashboard
--------       
---------      Please test the backend APIs first to ensure they're working correctly before frontend testing.
--------\ No newline at end of file
--------+      Please test the backend APIs first to ensure they're working correctly before frontend testing.
--------+  - agent: "testing"
--------+    message: |
--------+      🎉 BACKEND TESTING COMPLETED SUCCESSFULLY - ALL APIS WORKING PERFECTLY!
--------+      
--------+      ✅ COMPREHENSIVE BACKEND API TESTING RESULTS:
--------+      
--------+      1. Menu Item CRUD APIs - ALL WORKING:
--------+         • POST /api/restaurants/{restaurant_id}/menu-items ✅
--------+           - Successfully added 3 menu items with different categories
--------+           - Proper UUID generation and MongoDB storage
--------+           - Authorization working correctly
--------+         
--------+         • PUT /api/restaurants/{restaurant_id}/menu-items/{item_id} ✅
--------+           - Price updates working (250.00 → 275.00 → 300.00)
--------+           - Availability toggling working (true ↔ false)
--------+           - Description and name updates working
--------+           - Multiple field updates working simultaneously
--------+           - MongoDB array_filters working properly
--------+         
--------+         • DELETE /api/restaurants/{restaurant_id}/menu-items/{item_id} ✅
--------+           - Successfully deleted menu items from restaurant
--------+           - MongoDB $pull operator working correctly
--------+      
--------+      2. Restaurant Profile Update API - WORKING:
--------+         • PUT /api/restaurants/{restaurant_id} ✅
--------+           - Name, description, phone updates working
--------+           - Operating hours modifications working
--------+           - is_open status toggling working
--------+           - Multiple field updates working
--------+      
--------+      3. Security & Authorization - WORKING:
--------+         • Owner-only access properly enforced ✅
--------+         • 403 Forbidden correctly returned for unauthorized access
--------+         • Session-based authentication working
--------+      
--------+      🔧 TESTING INFRASTRUCTURE:
--------+      • Created comprehensive backend_test.py with 100% success rate
--------+      • Tested with real restaurant data and realistic scenarios
--------+      • All APIs responding correctly at https://foodrush-app-1.preview.emergentagent.com/api
--------+      
--------+      ✅ RECOMMENDATION: Backend APIs are production-ready. Main agent can now summarize and finish the implementation.
--------\ No newline at end of file
+----------@@ -1,105 +0,0 @@
+-----------diff --git a/frontend/store/authStore.ts b/frontend/store/authStore.ts
+-----------index 73c68be..7a3124d 100644
+-------------- a/frontend/store/authStore.ts
+-----------+++ b/frontend/store/authStore.ts
+-----------@@ -5,7 +5,7 @@ interface User {
+-----------   email: string;
+-----------   name: string;
+-----------   picture?: string;
+------------  role: 'customer' | 'restaurant' | 'rider';
+-----------+  role: 'customer' | 'restaurant' | 'rider' | 'admin';
+-----------   phone?: string;
+----------- }
+----------- 
+-----------diff --git a/model.patch b/model.patch
+-----------index 249be45..e69de29 100644
+-------------- a/model.patch
+-----------+++ b/model.patch
+-----------@@ -1,87 +0,0 @@
+------------diff --git a/frontend/app/(auth)/login.tsx b/frontend/app/(auth)/login.tsx
+------------index 965082a..166b088 100644
+--------------- a/frontend/app/(auth)/login.tsx
+------------+++ b/frontend/app/(auth)/login.tsx
+------------@@ -181,6 +181,27 @@ export default function LoginScreen() {
+------------             <Ionicons name="logo-google" size={24} color="#FFF" />
+------------             <Text style={styles.loginButtonText}>Sign in with Google</Text>
+------------           </TouchableOpacity>
+------------+
+------------+          <View style={styles.divider}>
+------------+            <View style={styles.dividerLine} />
+------------+            <Text style={styles.dividerText}>OR</Text>
+------------+            <View style={styles.dividerLine} />
+------------+          </View>
+------------+
+------------+          <TouchableOpacity
+------------+            style={styles.emailButton}
+------------+            onPress={() => router.push('/(auth)/signin' as any)}
+------------+          >
+------------+            <Ionicons name="mail" size={24} color="#FF6B6B" />
+------------+            <Text style={styles.emailButtonText}>Sign in with Email</Text>
+------------+          </TouchableOpacity>
+------------+
+------------+          <TouchableOpacity
+------------+            style={styles.registerButton}
+------------+            onPress={() => router.push('/(auth)/register' as any)}
+------------+          >
+------------+            <Text style={styles.registerButtonText}>Create New Account</Text>
+------------+          </TouchableOpacity>
+------------         </View>
+------------       </ScrollView>
+------------     </SafeAreaView>
+------------@@ -284,4 +305,54 @@ const styles = StyleSheet.create({
+------------     fontWeight: '600',
+------------     marginLeft: 12,
+------------   },
+------------+  divider: {
+------------+    flexDirection: 'row',
+------------+    alignItems: 'center',
+------------+    marginVertical: 24,
+------------+  },
+------------+  dividerLine: {
+------------+    flex: 1,
+------------+    height: 1,
+------------+    backgroundColor: '#E0E0E0',
+------------+  },
+------------+  dividerText: {
+------------+    marginHorizontal: 16,
+------------+    fontSize: 14,
+------------+    color: '#999',
+------------+    fontWeight: '500',
+------------+  },
+------------+  emailButton: {
+------------+    flexDirection: 'row',
+------------+    alignItems: 'center',
+------------+    justifyContent: 'center',
+------------+    backgroundColor: '#FFF',
+------------+    borderWidth: 2,
+------------+    borderColor: '#FF6B6B',
+------------+    padding: 18,
+------------+    borderRadius: 16,
+------------+    marginBottom: 16,
+------------+    shadowColor: '#000',
+------------+    shadowOffset: { width: 0, height: 2 },
+------------+    shadowOpacity: 0.1,
+------------+    shadowRadius: 8,
+------------+    elevation: 4,
+------------+  },
+------------+  emailButtonText: {
+------------+    color: '#FF6B6B',
+------------+    fontSize: 18,
+------------+    fontWeight: '600',
+------------+    marginLeft: 12,
+------------+  },
+------------+  registerButton: {
+------------+    alignItems: 'center',
+------------+    justifyContent: 'center',
+------------+    padding: 18,
+------------+    borderRadius: 16,
+------------+  },
+------------+  registerButtonText: {
+------------+    color: '#FF6B6B',
+------------+    fontSize: 16,
+------------+    fontWeight: '600',
+------------+    textDecorationLine: 'underline',
+------------+  },
+------------ });
+--------diff --git a/test_result.md b/test_result.md
+--------index 9d2b24c..b96e429 100644
+----------- a/test_result.md
+--------+++ b/test_result.md
+--------@@ -110,39 +110,48 @@ user_problem_statement: |
+-------- backend:
+--------   - task: "Menu Item CRUD API - Add menu item"
+--------     implemented: true
+---------    working: "NA"
+--------+    working: true
+--------     file: "/app/backend/server.py"
+--------     stuck_count: 0
+--------     priority: "high"
+---------    needs_retesting: true
+--------+    needs_retesting: false
+--------     status_history:
+--------       - working: "NA"
+--------         agent: "main"
+--------         comment: "Added POST /api/restaurants/{restaurant_id}/menu-items endpoint to add new menu items to a restaurant. Uses MongoDB $push to append to menu array."
+--------+      - working: true
+--------+        agent: "testing"
+--------+        comment: "✅ TESTED SUCCESSFULLY: POST /api/restaurants/{restaurant_id}/menu-items endpoint working correctly. Successfully added 3 test menu items (Chicken Adobo, Halo-Halo, Lumpia Shanghai) with different categories and availability statuses. All items were properly stored in restaurant's menu array with correct UUIDs generated."
+-------- 
+--------   - task: "Menu Item CRUD API - Update menu item"
+--------     implemented: true
+---------    working: "NA"
+--------+    working: true
+--------     file: "/app/backend/server.py"
+--------     stuck_count: 0
+--------     priority: "high"
+---------    needs_retesting: true
+--------+    needs_retesting: false
+--------     status_history:
+--------       - working: "NA"
+--------         agent: "main"
+--------         comment: "Added PUT /api/restaurants/{restaurant_id}/menu-items/{item_id} endpoint to update menu items. Uses MongoDB array_filters to update specific item in menu array."
+--------+      - working: true
+--------+        agent: "testing"
+--------+        comment: "✅ TESTED SUCCESSFULLY: PUT /api/restaurants/{restaurant_id}/menu-items/{item_id} endpoint working correctly. Successfully tested multiple update scenarios: price updates (250.00 → 275.00 → 300.00), availability toggling (true → false → true), description updates, name changes, and multiple field updates simultaneously. MongoDB array_filters working properly to target specific menu items."
+-------- 
+--------   - task: "Menu Item CRUD API - Delete menu item"
+--------     implemented: true
+---------    working: "NA"
+--------+    working: true
+--------     file: "/app/backend/server.py"
+--------     stuck_count: 0
+--------     priority: "high"
+---------    needs_retesting: true
+--------+    needs_retesting: false
+--------     status_history:
+--------       - working: "NA"
+--------         agent: "main"
+--------         comment: "Added DELETE /api/restaurants/{restaurant_id}/menu-items/{item_id} endpoint to remove menu items from restaurant. Uses MongoDB $pull operator."
+--------+      - working: true
+--------+        agent: "testing"
+--------+        comment: "✅ TESTED SUCCESSFULLY: DELETE /api/restaurants/{restaurant_id}/menu-items/{item_id} endpoint working correctly. Successfully deleted 'Lumpia Shanghai' menu item (ID: 6c2ffd9a-073a-4ed7-8eb1-5df175c60b6b) from restaurant menu. MongoDB $pull operator properly removed the item from the menu array."
+-------- 
+--------   - task: "Restaurant Profile Update API"
+--------     implemented: true
+--------@@ -150,11 +159,14 @@ backend:
+--------     file: "/app/backend/server.py"
+--------     stuck_count: 0
+--------     priority: "medium"
+---------    needs_retesting: true
+--------+    needs_retesting: false
+--------     status_history:
+--------       - working: true
+--------         agent: "main"
+--------         comment: "Existing PUT /api/restaurants/{restaurant_id} endpoint is already available and functional. Will be tested with new profile management features."
+--------+      - working: true
+--------+        agent: "testing"
+--------+        comment: "✅ TESTED SUCCESSFULLY: PUT /api/restaurants/{restaurant_id} endpoint working correctly. Successfully tested all restaurant profile updates: name changes, description updates, phone number updates, operating hours modifications, is_open status toggling, and multiple field updates simultaneously. All changes are properly persisted to MongoDB."
+-------- 
+-------- frontend:
+--------   - task: "Menu Management Screen - Full Implementation"
+--------@@ -210,11 +222,7 @@ metadata:
+--------   run_ui: false
+-------- 
+-------- test_plan:
+---------  current_focus:
+---------    - "Menu Item CRUD API - Add menu item"
+---------    - "Menu Item CRUD API - Update menu item"
+---------    - "Menu Item CRUD API - Delete menu item"
+---------    - "Restaurant Profile Update API"
+--------+  current_focus: []
+--------   stuck_tasks: []
+--------   test_all: false
+--------   test_priority: "high_first"
+--------@@ -244,4 +252,45 @@ agent_communication:
+--------       - Use restaurant role user account for testing
+--------       - Menu and Profile tabs should be accessible from restaurant dashboard
+--------       
+---------      Please test the backend APIs first to ensure they're working correctly before frontend testing.
+--------\ No newline at end of file
+--------+      Please test the backend APIs first to ensure they're working correctly before frontend testing.
+--------+  - agent: "testing"
+--------+    message: |
+--------+      🎉 BACKEND TESTING COMPLETED SUCCESSFULLY - ALL APIS WORKING PERFECTLY!
+--------+      
+--------+      ✅ COMPREHENSIVE BACKEND API TESTING RESULTS:
+--------+      
+--------+      1. Menu Item CRUD APIs - ALL WORKING:
+--------+         • POST /api/restaurants/{restaurant_id}/menu-items ✅
+--------+           - Successfully added 3 menu items with different categories
+--------+           - Proper UUID generation and MongoDB storage
+--------+           - Authorization working correctly
+--------+         
+--------+         • PUT /api/restaurants/{restaurant_id}/menu-items/{item_id} ✅
+--------+           - Price updates working (250.00 → 275.00 → 300.00)
+--------+           - Availability toggling working (true ↔ false)
+--------+           - Description and name updates working
+--------+           - Multiple field updates working simultaneously
+--------+           - MongoDB array_filters working properly
+--------+         
+--------+         • DELETE /api/restaurants/{restaurant_id}/menu-items/{item_id} ✅
+--------+           - Successfully deleted menu items from restaurant
+--------+           - MongoDB $pull operator working correctly
+--------+      
+--------+      2. Restaurant Profile Update API - WORKING:
+--------+         • PUT /api/restaurants/{restaurant_id} ✅
+--------+           - Name, description, phone updates working
+--------+           - Operating hours modifications working
+--------+           - is_open status toggling working
+--------+           - Multiple field updates working
+--------+      
+--------+      3. Security & Authorization - WORKING:
+--------+         • Owner-only access properly enforced ✅
+--------+         • 403 Forbidden correctly returned for unauthorized access
+--------+         • Session-based authentication working
+--------+      
+--------+      🔧 TESTING INFRASTRUCTURE:
+--------+      • Created comprehensive backend_test.py with 100% success rate
+--------+      • Tested with real restaurant data and realistic scenarios
+--------+      • All APIs responding correctly at https://foodrush-app-1.preview.emergentagent.com/api
+--------+      
+--------+      ✅ RECOMMENDATION: Backend APIs are production-ready. Main agent can now summarize and finish the implementation.
+--------\ No newline at end of file
