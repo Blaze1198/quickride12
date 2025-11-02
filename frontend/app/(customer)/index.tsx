@@ -723,6 +723,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 16,
+    backgroundColor: '#FFF',
+    borderBottomWidth: 2,
+    borderBottomColor: '#FFE8E8',
   },
   headerLeft: {
     flexDirection: 'row',
