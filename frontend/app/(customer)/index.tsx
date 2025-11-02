@@ -364,6 +364,7 @@ export default function HomeScreen() {
               onPress={handleLocationPress}
               activeOpacity={0.7}
             >
+              
               <Ionicons name="location" size={14} color="#FF6B6B" />
               <Text style={styles.locationBadgeText}>{selectedLocation.split(',')[0]}</Text>
               <Ionicons name="chevron-down" size={12} color="#666" />
