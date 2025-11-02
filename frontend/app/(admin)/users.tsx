@@ -6,6 +6,11 @@ import {
   FlatList,
   ActivityIndicator,
   RefreshControl,
+  TouchableOpacity,
+  Alert,
+  Platform,
+  Modal,
+  TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import api from '../../utils/api';
@@ -18,12 +23,20 @@ interface User {
   role: string;
   phone?: string;
   created_at: string;
+  is_banned?: boolean;
+  is_suspended?: boolean;
+  suspension_reason?: string;
 }
 
 export default function AdminUsersScreen() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [showSuspendModal, setShowSuspendModal] = useState(false);
+  const [suspendDays, setSuspendDays] = useState('7');
+  const [suspendReason, setSuspendReason] = useState('');
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -44,6 +57,98 @@ export default function AdminUsersScreen() {
   const onRefresh = () => {
     setRefreshing(true);
     fetchUsers();
+  };
+
+  const handleBanUser = async (userId: string, name: string) => {
+    const confirmed = Platform.OS === 'web'
+      ? window.confirm(`Are you sure you want to BAN ${name}?`)
+      : await new Promise((resolve) => {
+          Alert.alert(
+            'Ban User',
+            `Are you sure you want to BAN ${name}?`,
+            [
+              { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
+              { text: 'Ban', style: 'destructive', onPress: () => resolve(true) },
+            ]
+          );
+        });
+
+    if (!confirmed) return;
+
+    setActionLoading(true);
+    try {
+      await api.put(`/admin/users/${userId}/ban`, {});
+      if (Platform.OS === 'web') {
+        window.alert('User banned successfully');
+      } else {
+        Alert.alert('Success', 'User banned successfully');
+      }
+      fetchUsers();
+    } catch (error: any) {
+      console.error('Error banning user:', error);
+      const message = error.response?.data?.detail || 'Failed to ban user';
+      if (Platform.OS === 'web') {
+        window.alert(`Error: ${message}`);
+      } else {
+        Alert.alert('Error', message);
+      }
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleUnbanUser = async (userId: string, name: string) => {
+    setActionLoading(true);
+    try {
+      await api.put(`/admin/users/${userId}/unban`, {});
+      if (Platform.OS === 'web') {
+        window.alert('User unbanned successfully');
+      } else {
+        Alert.alert('Success', 'User unbanned successfully');
+      }
+      fetchUsers();
+    } catch (error: any) {
+      console.error('Error unbanning user:', error);
+      const message = error.response?.data?.detail || 'Failed to unban user';
+      if (Platform.OS === 'web') {
+        window.alert(`Error: ${message}`);
+      } else {
+        Alert.alert('Error', message);
+      }
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleSuspendUser = async () => {
+    if (!selectedUser) return;
+
+    setActionLoading(true);
+    try {
+      await api.put(`/admin/users/${selectedUser.id}/suspend`, {
+        days: parseInt(suspendDays) || 7,
+        reason: suspendReason || 'Violation of terms',
+      });
+      if (Platform.OS === 'web') {
+        window.alert('User suspended successfully');
+      } else {
+        Alert.alert('Success', 'User suspended successfully');
+      }
+      setShowSuspendModal(false);
+      setSuspendDays('7');
+      setSuspendReason('');
+      fetchUsers();
+    } catch (error: any) {
+      console.error('Error suspending user:', error);
+      const message = error.response?.data?.detail || 'Failed to suspend user';
+      if (Platform.OS === 'web') {
+        window.alert(`Error: ${message}`);
+      } else {
+        Alert.alert('Error', message);
+      }
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   const getRoleIcon = (role: string) => {
@@ -85,9 +190,60 @@ export default function AdminUsersScreen() {
         <Text style={styles.userName}>{item.name}</Text>
         <Text style={styles.userEmail}>{item.email}</Text>
         {item.phone && <Text style={styles.userPhone}>{item.phone}</Text>}
-        <View style={[styles.roleBadge, { backgroundColor: getRoleColor(item.role) }]}>
-          <Text style={styles.roleBadgeText}>{item.role.toUpperCase()}</Text>
+        <View style={styles.badgeRow}>
+          <View style={[styles.roleBadge, { backgroundColor: getRoleColor(item.role) }]}>
+            <Text style={styles.roleBadgeText}>{item.role.toUpperCase()}</Text>
+          </View>
+          {item.is_banned && (
+            <View style={[styles.statusBadge, { backgroundColor: '#F44336' }]}>
+              <Text style={styles.statusBadgeText}>BANNED</Text>
+            </View>
+          )}
+          {item.is_suspended && (
+            <View style={[styles.statusBadge, { backgroundColor: '#FF9800' }]}>
+              <Text style={styles.statusBadgeText}>SUSPENDED</Text>
+            </View>
+          )}
         </View>
+        {item.suspension_reason && (
+          <Text style={styles.suspendReason}>Reason: {item.suspension_reason}</Text>
+        )}
+        {item.role !== 'admin' && (
+          <View style={styles.actionButtons}>
+            {item.is_banned ? (
+              <TouchableOpacity
+                style={[styles.actionButton, styles.unbanButton]}
+                onPress={() => handleUnbanUser(item.id, item.name)}
+                disabled={actionLoading}
+              >
+                <Ionicons name="checkmark-circle" size={16} color="#4CAF50" />
+                <Text style={styles.unbanText}>Unban</Text>
+              </TouchableOpacity>
+            ) : (
+              <>
+                <TouchableOpacity
+                  style={[styles.actionButton, styles.suspendButton]}
+                  onPress={() => {
+                    setSelectedUser(item);
+                    setShowSuspendModal(true);
+                  }}
+                  disabled={actionLoading}
+                >
+                  <Ionicons name="time" size={16} color="#FF9800" />
+                  <Text style={styles.suspendText}>Suspend</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.actionButton, styles.banButton]}
+                  onPress={() => handleBanUser(item.id, item.name)}
+                  disabled={actionLoading}
+                >
+                  <Ionicons name="ban" size={16} color="#F44336" />
+                  <Text style={styles.banText}>Ban</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+        )}
       </View>
     </View>
   );
@@ -113,6 +269,55 @@ export default function AdminUsersScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#FF6B6B']} />
         }
       />
+
+      {/* Suspend Modal */}
+      <Modal
+        visible={showSuspendModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowSuspendModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Suspend User</Text>
+              <TouchableOpacity onPress={() => setShowSuspendModal(false)}>
+                <Ionicons name="close" size={24} color="#333" />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.modalBody}>
+              <Text style={styles.modalLabel}>Suspend for (days):</Text>
+              <TextInput
+                style={styles.modalInput}
+                value={suspendDays}
+                onChangeText={setSuspendDays}
+                keyboardType="numeric"
+                placeholder="7"
+              />
+              <Text style={styles.modalLabel}>Reason:</Text>
+              <TextInput
+                style={[styles.modalInput, styles.modalTextArea]}
+                value={suspendReason}
+                onChangeText={setSuspendReason}
+                placeholder="Violation of terms"
+                multiline
+                numberOfLines={4}
+              />
+              <TouchableOpacity
+                style={styles.suspendSubmitButton}
+                onPress={handleSuspendUser}
+                disabled={actionLoading}
+              >
+                {actionLoading ? (
+                  <ActivityIndicator color="#FFF" />
+                ) : (
+                  <Text style={styles.suspendSubmitText}>Suspend User</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
