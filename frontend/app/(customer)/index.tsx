@@ -717,24 +717,6 @@ const styles = StyleSheet.create({
   },
 
   // Header Styles
-  headerContainer: {
-    backgroundColor: '#FFF',
-    borderBottomWidth: 2,
-    borderBottomColor: '#FFE8E8',
-    paddingHorizontal: 20,
-    paddingTop: 12,
-    paddingBottom: 16,
-  },
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -751,7 +733,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   homeTitle: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
   },
