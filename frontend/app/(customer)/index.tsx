@@ -724,16 +724,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: '#FFE8E8',
   },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  homeTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-  },
   locationBadge: {
     flexDirection: 'row',
     alignItems: 'center',
