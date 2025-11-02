@@ -355,18 +355,18 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Header - Pink section with Home, Location & Notification */}
-        <View style={styles.pinkHeader}>
+        {/* Header - Always Visible */}
+        <View style={styles.header}>
           <View style={styles.headerLeft}>
             <Text style={styles.homeTitle}>Home</Text>
             <TouchableOpacity 
-              style={styles.locationContainer}
+              style={styles.locationBadge}
               onPress={handleLocationPress}
               activeOpacity={0.7}
             >
-              <Ionicons name="location" size={16} color="#FFF" />
-              <Text style={styles.locationText}>{selectedLocation.split(',')[0]}</Text>
-              <Ionicons name="chevron-down" size={14} color="#FFF" />
+              <Ionicons name="location" size={14} color="#FF6B6B" />
+              <Text style={styles.locationBadgeText}>{selectedLocation.split(',')[0]}</Text>
+              <Ionicons name="chevron-down" size={12} color="#666" />
             </TouchableOpacity>
           </View>
           <TouchableOpacity 
@@ -374,7 +374,7 @@ export default function HomeScreen() {
             onPress={handleNotificationPress}
             activeOpacity={0.7}
           >
-            <Ionicons name="notifications-outline" size={24} color="#FFF" />
+            <Ionicons name="notifications-outline" size={24} color="#333" />
             <View style={styles.notificationBadge} />
           </TouchableOpacity>
         </View>
