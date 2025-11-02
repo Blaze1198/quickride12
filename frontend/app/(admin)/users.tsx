@@ -374,6 +374,11 @@ const styles = StyleSheet.create({
     color: '#666',
     marginBottom: 8,
   },
+  badgeRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 12,
+  },
   roleBadge: {
     alignSelf: 'flex-start',
     paddingHorizontal: 12,
@@ -384,5 +389,121 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 12,
     fontWeight: '600',
+  },
+  statusBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  statusBadgeText: {
+    color: '#FFF',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  suspendReason: {
+    fontSize: 12,
+    color: '#FF9800',
+    fontStyle: 'italic',
+    marginBottom: 8,
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 8,
+  },
+  actionButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    gap: 4,
+  },
+  suspendButton: {
+    backgroundColor: '#FFF3E0',
+    borderColor: '#FF9800',
+  },
+  suspendText: {
+    color: '#FF9800',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  banButton: {
+    backgroundColor: '#FFEBEE',
+    borderColor: '#F44336',
+  },
+  banText: {
+    color: '#F44336',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  unbanButton: {
+    backgroundColor: '#E8F5E9',
+    borderColor: '#4CAF50',
+  },
+  unbanText: {
+    color: '#4CAF50',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    width: 400,
+    backgroundColor: '#FFF',
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  modalBody: {
+    padding: 20,
+  },
+  modalLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#666',
+    marginBottom: 8,
+  },
+  modalInput: {
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    marginBottom: 16,
+  },
+  modalTextArea: {
+    height: 100,
+    textAlignVertical: 'top',
+  },
+  suspendSubmitButton: {
+    backgroundColor: '#FF9800',
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  suspendSubmitText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
