@@ -740,29 +740,25 @@ const styles = StyleSheet.create({
   locationBadge: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#FFE8E8',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 20,
+    gap: 4,
+  },
+  locationBadgeText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FF6B6B',
+  },
+  locationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 6,
   },
   locationText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#FFF',
-  },
-  pinkHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    backgroundColor: '#FF6B6B',
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  homeTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
     color: '#FFF',
   },
   notificationButton: {
