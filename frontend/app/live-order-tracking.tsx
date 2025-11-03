@@ -147,7 +147,7 @@ export default function LiveOrderTrackingScreen() {
 
     setMapLoaded(true);
 
-    // Delivery location marker
+    // Delivery location marker (Customer - Red)
     if (order.delivery_address) {
       new google.maps.Marker({
         position: {
@@ -157,36 +157,75 @@ export default function LiveOrderTrackingScreen() {
         map,
         icon: {
           path: google.maps.SymbolPath.CIRCLE,
-          scale: 10,
+          scale: 12,
           fillColor: '#FF6B6B',
           fillOpacity: 1,
           strokeColor: '#FFF',
-          strokeWeight: 2,
+          strokeWeight: 3,
         },
         title: 'Your Location',
+        label: {
+          text: '🏠',
+          fontSize: '20px',
+        }
       });
     }
 
-    // Rider marker (if available - in future with real location updates)
-    // For now, show a sample marker near delivery location
-    if (order.rider_name) {
-      new google.maps.Marker({
+    // Rider marker (Real-time location - Blue)
+    if (riderLocation) {
+      const riderMarker = new google.maps.Marker({
         position: {
-          lat: (order.delivery_address?.latitude || 14.5995) + 0.005,
-          lng: (order.delivery_address?.longitude || 120.9842) + 0.005,
+          lat: riderLocation.latitude,
+          lng: riderLocation.longitude,
         },
         map,
         icon: {
           path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-          scale: 6,
-          fillColor: '#4CAF50',
+          scale: 7,
+          fillColor: '#2196F3',
           fillOpacity: 1,
           strokeColor: '#FFF',
           strokeWeight: 2,
-          rotation: 45,
+          rotation: riderLocation.heading || 0,
         },
-        title: `Rider: ${order.rider_name}`,
+        title: `Rider: ${order.rider_name || 'On the way'}`,
+        animation: google.maps.Animation.DROP,
       });
+
+      // Draw route from rider to customer
+      const directionsService = new google.maps.DirectionsService();
+      const directionsRenderer = new google.maps.DirectionsRenderer({
+        map: map,
+        suppressMarkers: true,
+        polylineOptions: {
+          strokeColor: '#2196F3',
+          strokeWeight: 4,
+          strokeOpacity: 0.8,
+        },
+      });
+
+      directionsService.route(
+        {
+          origin: { lat: riderLocation.latitude, lng: riderLocation.longitude },
+          destination: { lat: order.delivery_address.latitude, lng: order.delivery_address.longitude },
+          travelMode: google.maps.TravelMode.DRIVING,
+        },
+        (result: any, status: any) => {
+          if (status === 'OK' && result) {
+            directionsRenderer.setDirections(result);
+            // Get accurate ETA from Google
+            const leg = result.routes[0].legs[0];
+            setDistance(leg.distance.text);
+            setEta(leg.duration.text);
+          }
+        }
+      );
+
+      // Fit bounds to show both markers
+      const bounds = new google.maps.LatLngBounds();
+      bounds.extend({ lat: order.delivery_address.latitude, lng: order.delivery_address.longitude });
+      bounds.extend({ lat: riderLocation.latitude, lng: riderLocation.longitude });
+      map.fitBounds(bounds);
     }
   };
 
