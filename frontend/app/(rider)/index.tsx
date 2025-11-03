@@ -489,6 +489,33 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 8,
   },
+  rideInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+    paddingVertical: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#F0F0F0',
+  },
+  rideDistance: {
+    fontSize: 14,
+    color: '#2196F3',
+    fontWeight: '600',
+  },
+  acceptRideButton: {
+    flexDirection: 'row',
+    backgroundColor: '#2196F3',
+    padding: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  acceptRideButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
   acceptButton: {
     flexDirection: 'row',
     backgroundColor: '#4CAF50',
