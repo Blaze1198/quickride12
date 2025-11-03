@@ -2104,6 +2104,8 @@ async def get_current_order(request: Request):
     customer = await db.users.find_one({"id": order['customer_id']})
     
     order_dict = {**order}
+    # Remove MongoDB _id field to avoid serialization issues
+    order_dict.pop('_id', None)
     order_dict["restaurant_name"] = restaurant.get('name') if restaurant else 'Unknown'
     order_dict["restaurant_location"] = restaurant.get('location') if restaurant else None
     order_dict["customer_name"] = customer.get('name') if customer else 'Customer'
