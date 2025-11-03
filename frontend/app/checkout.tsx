@@ -53,10 +53,14 @@ export default function CheckoutScreen() {
       lat: parseFloat(latitude) || 14.5547,
       lng: parseFloat(longitude) || 121.0244
     });
+    setMapLoaded(false); // Reset map state
     setShowMapPicker(true);
+    
+    console.log('📍 Opening map picker...');
     
     // Get user's current location
     if (typeof navigator !== 'undefined' && navigator.geolocation) {
+      console.log('🔍 Requesting geolocation...');
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const newLocation = {
@@ -64,10 +68,10 @@ export default function CheckoutScreen() {
             lng: position.coords.longitude
           };
           setTempLocation(newLocation);
-          console.log('Got current location:', newLocation);
+          console.log('✅ Got current location:', newLocation);
         },
         (error) => {
-          console.error('Error getting location:', error);
+          console.error('❌ Error getting location:', error);
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
