@@ -47,6 +47,15 @@ export default function RiderLayout() {
         }}
       />
       <Tabs.Screen
+        name="navigation"
+        options={{
+          title: 'Navigation',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="navigate" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="earnings"
         options={{
           title: 'Earnings',
