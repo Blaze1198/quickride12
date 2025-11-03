@@ -51,7 +51,7 @@ export default function LoginScreen() {
     try {
       const response = await api.post('/auth/session', {
         session_id: sessionId,
-        role: selectedRole,
+        role: 'customer', // Default to customer role for OAuth
       });
 
       const { user, session_token } = response.data;
