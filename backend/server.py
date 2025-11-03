@@ -2077,6 +2077,63 @@ async def get_current_ride(request: Request):
     
     return Ride(**ride)
 
+@api_router.get("/rider/current-order")
+async def get_current_order(request: Request):
+    """Get rider's current active food delivery order"""
+    user = await require_auth(request)
+    
+    if user.role != UserRole.RIDER:
+        raise HTTPException(status_code=403, detail="Rider access only")
+    
+    rider = await db.riders.find_one({"user_id": user.id})
+    if not rider or not rider.get('current_order_id'):
+        return None
+    
+    order = await db.orders.find_one({"id": rider['current_order_id']})
+    if not order:
+        return None
+    
+    # Enrich with restaurant and customer info
+    restaurant = await db.restaurants.find_one({"id": order['restaurant_id']})
+    customer = await db.users.find_one({"id": order['customer_id']})
+    
+    order_dict = {**order}
+    order_dict["restaurant_name"] = restaurant.get('name') if restaurant else 'Unknown'
+    order_dict["restaurant_location"] = restaurant.get('location') if restaurant else None
+    order_dict["customer_name"] = customer.get('name') if customer else 'Customer'
+    order_dict["customer_phone"] = customer.get('phone') if customer else None
+    
+    return order_dict
+
+@api_router.get("/orders/{order_id}/rider-location")
+async def get_order_rider_location(order_id: str, request: Request):
+    """Get real-time rider location for a specific order (customer endpoint)"""
+    user = await require_auth(request)
+    
+    order = await db.orders.find_one({"id": order_id})
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    # Verify customer owns this order
+    if order['customer_id'] != user.id and user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Get rider location
+    if not order.get('rider_id'):
+        return {"rider_assigned": False, "location": None}
+    
+    rider = await db.riders.find_one({"user_id": order['rider_id']})
+    if not rider:
+        return {"rider_assigned": True, "location": None}
+    
+    return {
+        "rider_assigned": True,
+        "location": rider.get('current_location'),
+        "rider_name": rider.get('name'),
+        "rider_phone": rider.get('phone')
+    }
+
+
 @api_router.put("/rider/toggle-service")
 async def toggle_rider_service(service_data: Dict[str, Any], request: Request):
     """Toggle rider between food delivery and ride service"""
