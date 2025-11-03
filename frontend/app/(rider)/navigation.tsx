@@ -290,6 +290,10 @@ export default function RiderNavigationScreen() {
           (result: any, status: any) => {
             if (status === 'OK') {
               directionsRenderer.setDirections(result);
+              // Extract distance and ETA
+              const leg = result.routes[0].legs[0];
+              setDistanceToDestination(leg.distance.text);
+              setEtaToDestination(leg.duration.text);
             }
           }
         );
