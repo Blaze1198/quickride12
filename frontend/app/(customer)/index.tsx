@@ -1179,7 +1179,7 @@ export default function HomeScreen() {
             </View>
 
             {/* Map Container */}
-            {Platform.OS === 'web' && (
+            {Platform.OS === 'web' ? (
               <View style={styles.mapPickerContainer}>
                 {!mapLoaded && (
                   <View style={styles.mapLoading}>
@@ -1188,17 +1188,18 @@ export default function HomeScreen() {
                     <Text style={styles.mapLoadingSubtext}>Please allow location access</Text>
                   </View>
                 )}
-                {/* @ts-ignore */}
-                <div 
-                  ref={mapRef} 
-                  style={{ 
-                    width: '100%', 
-                    height: '100%',
-                    display: mapLoaded ? 'block' : 'none'
-                  }} 
-                />
+                <View style={{ flex: 1, opacity: mapLoaded ? 1 : 0 }}>
+                  {/* @ts-ignore - Web-specific div for Google Maps */}
+                  <div 
+                    ref={mapRef} 
+                    style={{ 
+                      width: '100%', 
+                      height: '100%',
+                    }} 
+                  />
+                </View>
               </View>
-            )}
+            ) : null}
 
             {/* Address Display */}
             <View style={styles.mapAddressContainer}>
