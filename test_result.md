@@ -239,6 +239,7 @@ metadata:
 
 test_plan:
   current_focus:
+    - "Map Verification Modal in Checkout"
     - "Add /rider/current-order endpoint"
     - "Add /orders/{order_id}/rider-location endpoint"
     - "Rider Navigation Screen with Live Directions"
