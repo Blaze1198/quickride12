@@ -475,8 +475,8 @@ export default function HomeScreen() {
     });
   };
 
-  // Search location using Google Places Autocomplete
-  const handleSearchLocation = (query: string) => {
+  // Search location using Google Places Autocomplete (New API)
+  const handleSearchLocation = async (query: string) => {
     setLocationSearchQuery(query);
     console.log('🔍 Search query:', query);
     
@@ -493,7 +493,7 @@ export default function HomeScreen() {
     }
 
     // Debounce search
-    searchTimeoutRef.current = setTimeout(() => {
+    searchTimeoutRef.current = setTimeout(async () => {
       const google = (window as any).google;
       if (!google || !google.maps || !google.maps.places) {
         console.error('❌ Google Maps Places API not available');
@@ -501,38 +501,47 @@ export default function HomeScreen() {
         return;
       }
 
-      console.log('✅ Google Maps Places API available, searching...');
+      console.log('✅ Google Maps Places API available, searching with new API...');
 
       try {
-        const service = new google.maps.places.AutocompleteService();
-        service.getPlacePredictions(
-          {
-            input: query,
-            componentRestrictions: { country: 'ph' }, // Restrict to Philippines
-          },
-          (predictions: any, status: any) => {
-            console.log('📍 Search status:', status);
-            console.log('📍 Predictions:', predictions);
-            
-            if (status === 'OK' && predictions && predictions.length > 0) {
-              setSearchResults(predictions);
-              setShowSearchResults(true);
-              console.log('✅ Found', predictions.length, 'results');
-            } else if (status === 'ZERO_RESULTS') {
-              console.log('⚠️ No results found for:', query);
-              setSearchResults([]);
-              setShowSearchResults(false);
-              Alert.alert('No Results', 'No locations found. Try a different search term.');
-            } else {
-              console.error('❌ Search failed with status:', status);
-              setSearchResults([]);
-              setShowSearchResults(false);
-            }
-          }
-        );
+        // Use the new AutocompleteSuggestion API (replaces deprecated AutocompleteService)
+        const { AutocompleteSuggestion } = await google.maps.importLibrary("places");
+        
+        const request = {
+          input: query,
+          includedRegionCodes: ["ph"], // Restrict to Philippines
+        };
+
+        const { suggestions } = await AutocompleteSuggestion.fetchAutocompleteSuggestions(request);
+        
+        console.log('📍 Suggestions:', suggestions);
+        
+        if (suggestions && suggestions.length > 0) {
+          // Convert new format to old format for compatibility
+          const formattedResults = suggestions.map((suggestion: any) => ({
+            place_id: suggestion.placePrediction.placeId,
+            structured_formatting: {
+              main_text: suggestion.placePrediction.text.text,
+              secondary_text: suggestion.placePrediction.text.matches?.[0]?.endOffset 
+                ? suggestion.placePrediction.text.text.substring(suggestion.placePrediction.text.matches[0].endOffset)
+                : '',
+            },
+            description: suggestion.placePrediction.text.text,
+          }));
+          
+          setSearchResults(formattedResults);
+          setShowSearchResults(true);
+          console.log('✅ Found', formattedResults.length, 'results');
+        } else {
+          console.log('⚠️ No results found for:', query);
+          setSearchResults([]);
+          setShowSearchResults(false);
+        }
       } catch (error) {
         console.error('❌ Error in search:', error);
-        Alert.alert('Search Error', 'Unable to search. Please use the map to select your location.');
+        // Fallback: show message to user
+        setSearchResults([]);
+        setShowSearchResults(false);
       }
     }, 300);
   };
