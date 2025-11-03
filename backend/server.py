@@ -1798,7 +1798,7 @@ async def update_user_profile(user_id: str, updates: Dict[str, Any], request: Re
 # ============= RIDE SERVICE ENDPOINTS =============
 
 # Helper function to calculate distance using Google Maps API
-async def calculate_distance(origin: Location, destination: Location, stops: List[RideStop] = []) -> float:
+async def calculate_route_distance(origin: Location, destination: Location, stops: List[RideStop] = []) -> float:
     """Calculate actual road distance using Google Maps Distance Matrix API"""
     try:
         api_key = os.getenv('GOOGLE_MAPS_API_KEY', 'AIzaSyDJqsXxZXuu808lFZXARvy4rd0xktuqwJQ')
