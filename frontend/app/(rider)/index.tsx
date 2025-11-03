@@ -51,10 +51,14 @@ export default function RiderAvailableScreen() {
   const [toggling, setToggling] = useState(false);
   const [isAvailable, setIsAvailable] = useState(true);
   const [nearbyOrders, setNearbyOrders] = useState<any[]>([]);
+  const [currentLocation, setCurrentLocation] = useState<any>(null);
+  const [showLocationPicker, setShowLocationPicker] = useState(false);
+  const [locationAddress, setLocationAddress] = useState('Fetching location...');
 
   useEffect(() => {
     fetchData();
     fetchRiderAvailability();
+    fetchRiderLocation();
     fetchNearbyOrders();
     // Poll for new orders/rides and nearby orders
     const interval = setInterval(() => {
@@ -70,6 +74,99 @@ export default function RiderAvailableScreen() {
       setIsAvailable(response.data.is_available !== false);
     } catch (error) {
       console.error('Error fetching rider availability:', error);
+    }
+  };
+
+  const fetchRiderLocation = async () => {
+    try {
+      const response = await api.get('/riders/me');
+      if (response.data.current_location) {
+        setCurrentLocation(response.data.current_location);
+        setLocationAddress(response.data.current_location.address || 'Location set');
+      }
+    } catch (error) {
+      console.error('Error fetching rider location:', error);
+    }
+  };
+
+  const getCurrentGPSLocation = () => {
+    if (typeof navigator !== 'undefined' && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const location = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          };
+          await updateRiderLocation(location);
+        },
+        (error) => {
+          console.error('Error getting GPS location:', error);
+          if (Platform.OS === 'web') {
+            window.alert('Failed to get GPS location. Please enable location permissions.');
+          } else {
+            Alert.alert('Error', 'Failed to get GPS location');
+          }
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    } else {
+      if (Platform.OS === 'web') {
+        window.alert('Geolocation is not supported by your browser');
+      } else {
+        Alert.alert('Error', 'Geolocation not available');
+      }
+    }
+  };
+
+  const updateRiderLocation = async (location: any) => {
+    try {
+      // Reverse geocode to get address
+      let address = `${location.latitude.toFixed(4)}, ${location.longitude.toFixed(4)}`;
+      
+      if (Platform.OS === 'web' && (window as any).google) {
+        const google = (window as any).google;
+        const geocoder = new google.maps.Geocoder();
+        const result = await new Promise((resolve) => {
+          geocoder.geocode(
+            { location: { lat: location.latitude, lng: location.longitude } },
+            (results: any, status: any) => {
+              if (status === 'OK' && results[0]) {
+                resolve(results[0].formatted_address);
+              } else {
+                resolve(address);
+              }
+            }
+          );
+        });
+        address = result as string;
+      }
+
+      const locationData = {
+        latitude: location.latitude,
+        longitude: location.longitude,
+        address: address,
+      };
+
+      await api.put('/riders/location', locationData);
+      setCurrentLocation(locationData);
+      setLocationAddress(address);
+      
+      if (Platform.OS === 'web') {
+        window.alert('✅ Location updated successfully!');
+      } else {
+        Alert.alert('Success', 'Location updated successfully!');
+      }
+      
+      // Refresh nearby orders with new location
+      fetchNearbyOrders();
+    } catch (error: any) {
+      console.error('Error updating location:', error);
+      const message = error.response?.data?.detail || 'Failed to update location';
+      if (Platform.OS === 'web') {
+        window.alert(`Error: ${message}`);
+      } else {
+        Alert.alert('Error', message);
+      }
     }
   };
 
