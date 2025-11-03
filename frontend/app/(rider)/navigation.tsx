@@ -154,7 +154,21 @@ export default function RiderNavigationScreen() {
 
   const initializeMap = () => {
     const google = (window as any).google;
-    if (!google || !mapRef.current || !currentJob || !userLocation) return;
+    if (!google) {
+      console.error('❌ Google Maps API not available after script load');
+      setMapLoaded(false);
+      return;
+    }
+    if (!mapRef.current) {
+      console.error('❌ Map container ref not available');
+      return;
+    }
+    if (!currentJob || !userLocation) {
+      console.error('❌ Missing data for map initialization', { currentJob: !!currentJob, userLocation: !!userLocation });
+      return;
+    }
+
+    console.log('✅ Initializing map with:', { currentJob: currentJob.type, userLocation });
 
     const map = new google.maps.Map(mapRef.current, {
       center: userLocation,
@@ -169,6 +183,7 @@ export default function RiderNavigationScreen() {
     });
 
     setMapLoaded(true);
+    console.log('✅ Map initialized successfully');
 
     // Current location marker (rider)
     new google.maps.Marker({
