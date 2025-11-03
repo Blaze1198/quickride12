@@ -21,7 +21,6 @@ export default function LoginScreen() {
   const router = useRouter();
   const { setUser, setSessionToken, setLoading } = useAuthStore();
   const [processing, setProcessing] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<'customer' | 'restaurant' | 'rider'>('customer');
 
   useEffect(() => {
     // Check for session_id in URL
