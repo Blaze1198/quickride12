@@ -1044,51 +1044,19 @@ export default function HomeScreen() {
               <View style={{ width: 28 }} />
             </View>
 
-            {/* Search Bar */}
+            {/* Search Bar - Replaced with Instructions */}
             <View style={styles.searchBarContainer}>
-              <View style={styles.searchInputContainer}>
-                <Ionicons name="search" size={20} color="#666" />
-                <TextInput
-                  style={styles.searchInput}
-                  placeholder="Search for a place..."
-                  value={locationSearchQuery}
-                  onChangeText={handleSearchLocation}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-                {locationSearchQuery.length > 0 && (
-                  <TouchableOpacity onPress={() => {
-                    setLocationSearchQuery('');
-                    setSearchResults([]);
-                    setShowSearchResults(false);
-                  }}>
-                    <Ionicons name="close-circle" size={20} color="#999" />
-                  </TouchableOpacity>
-                )}
+              <View style={styles.instructionCard}>
+                <Ionicons name="information-circle" size={24} color="#2196F3" />
+                <View style={styles.instructionTextContainer}>
+                  <Text style={styles.instructionTitle}>How to select location:</Text>
+                  <Text style={styles.instructionText}>
+                    • Drag the red marker to your exact location{'\n'}
+                    • Or click/tap anywhere on the map{'\n'}
+                    • Use pinch to zoom for accuracy
+                  </Text>
+                </View>
               </View>
-              
-              {/* Search Results Dropdown */}
-              {showSearchResults && searchResults.length > 0 && (
-                <ScrollView style={styles.searchResultsContainer}>
-                  {searchResults.map((result: any) => (
-                    <TouchableOpacity
-                      key={result.place_id}
-                      style={styles.searchResultItem}
-                      onPress={() => selectSearchResult(result.place_id)}
-                    >
-                      <Ionicons name="location-outline" size={20} color="#FF6B6B" />
-                      <View style={styles.searchResultTextContainer}>
-                        <Text style={styles.searchResultMain}>
-                          {result.structured_formatting.main_text}
-                        </Text>
-                        <Text style={styles.searchResultSecondary}>
-                          {result.structured_formatting.secondary_text}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
-              )}
             </View>
 
             {/* Map Container */}
