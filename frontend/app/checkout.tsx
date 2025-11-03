@@ -141,8 +141,18 @@ export default function CheckoutScreen() {
 
   // Initialize interactive map
   const initializeMapPicker = () => {
+    console.log('🗺️ initializeMapPicker called');
     const google = (window as any).google;
-    if (!google || !mapRef.current) return;
+    if (!google) {
+      console.error('❌ Google object not available');
+      return;
+    }
+    if (!mapRef.current) {
+      console.error('❌ Map ref not available');
+      return;
+    }
+
+    console.log('✅ Creating map with center:', tempLocation);
 
     const map = new google.maps.Map(mapRef.current, {
       center: tempLocation,
@@ -153,6 +163,8 @@ export default function CheckoutScreen() {
       streetViewControl: false,
       fullscreenControl: false,
     });
+
+    console.log('✅ Map created, adding marker...');
 
     // Add draggable marker
     const marker = new google.maps.Marker({
@@ -169,6 +181,7 @@ export default function CheckoutScreen() {
       },
     });
 
+    console.log('✅ Marker added');
     markerRef.current = marker;
 
     // Update location when marker is dragged
@@ -178,6 +191,7 @@ export default function CheckoutScreen() {
         lat: position.lat(),
         lng: position.lng()
       };
+      console.log('📍 Marker dragged to:', newLocation);
       setTempLocation(newLocation);
       getAddressFromCoordinates(newLocation.lat, newLocation.lng);
     });
@@ -188,6 +202,7 @@ export default function CheckoutScreen() {
         lat: event.latLng.lat(),
         lng: event.latLng.lng()
       };
+      console.log('📍 Map clicked at:', newLocation);
       marker.setPosition(newLocation);
       setTempLocation(newLocation);
       getAddressFromCoordinates(newLocation.lat, newLocation.lng);
@@ -197,6 +212,7 @@ export default function CheckoutScreen() {
     getAddressFromCoordinates(tempLocation.lat, tempLocation.lng);
     
     setMapLoaded(true);
+    console.log('✅ Map initialization complete!');
   };
 
   // Reverse geocoding to get address from coordinates
