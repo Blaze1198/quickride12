@@ -144,7 +144,21 @@ export default function LiveOrderTrackingScreen() {
 
   const initializeMap = () => {
     const google = (window as any).google;
-    if (!google || !mapRef.current || !order) return;
+    if (!google) {
+      console.error('❌ Google Maps API not available after script load');
+      setMapLoaded(false);
+      return;
+    }
+    if (!mapRef.current) {
+      console.error('❌ Map container ref not available');
+      return;
+    }
+    if (!order) {
+      console.error('❌ No order data available for map');
+      return;
+    }
+
+    console.log('✅ Initializing map for order tracking');
 
     // Default to delivery address
     const center = {
