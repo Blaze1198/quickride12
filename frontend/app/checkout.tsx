@@ -32,6 +32,13 @@ export default function CheckoutScreen() {
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'gcash'>('gcash');
   const [gcashNumber, setGcashNumber] = useState('09609317687'); // Merchant number for display
+  
+  // Map location picker states
+  const [showMapPicker, setShowMapPicker] = useState(false);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [tempLocation, setTempLocation] = useState({ lat: 14.5547, lng: 121.0244 });
+  const mapRef = useRef<any>(null);
+  const markerRef = useRef<any>(null);
 
   // Calculate fees
   const subtotal = getTotalAmount();
