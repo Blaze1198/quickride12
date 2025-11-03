@@ -30,8 +30,19 @@ export default function RiderNavigationScreen() {
       fetchCurrentJob();
       getUserLocation();
     }, 10000);
-    return () => clearInterval(interval);
-  }, []);
+    
+    // Send location updates every 5 seconds when rider has active job
+    const locationInterval = setInterval(() => {
+      if (userLocation && currentJob) {
+        updateRiderLocation();
+      }
+    }, 5000);
+    
+    return () => {
+      clearInterval(interval);
+      clearInterval(locationInterval);
+    };
+  }, [currentJob, userLocation]);
 
   useEffect(() => {
     if (currentJob && Platform.OS === 'web') {
