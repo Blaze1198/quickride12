@@ -24,6 +24,8 @@ export default function RiderNavigationScreen() {
   const [userLocation, setUserLocation] = useState<any>(null);
   const [distanceToDestination, setDistanceToDestination] = useState<string>('');
   const [etaToDestination, setEtaToDestination] = useState<string>('');
+  const [mapError, setMapError] = useState<string>('');
+  const [scriptLoaded, setScriptLoaded] = useState(false);
 
   useEffect(() => {
     fetchCurrentJob();
