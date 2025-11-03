@@ -360,22 +360,21 @@ export default function RiderNavigationScreen() {
         
         if (lat !== null && lng !== null) {
           dropoffLocation = { lat, lng };
-          lng: dropoff.longitude,
-        };
-        
-        new google.maps.Marker({
-          position: dropoffLocation,
-          map,
-          icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 10,
-            fillColor: '#FF6B6B',
-            fillOpacity: 1,
-            strokeColor: '#FFF',
-            strokeWeight: 2,
-          },
-          title: 'Dropoff: ' + dropoff.address,
-        });
+          
+          new google.maps.Marker({
+            position: dropoffLocation,
+            map,
+            icon: {
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 10,
+              fillColor: '#FF6B6B',
+              fillOpacity: 1,
+              strokeColor: '#FFF',
+              strokeWeight: 2,
+            },
+            title: 'Dropoff: ' + dropoff.address,
+          });
+        }
       }
     }
 
