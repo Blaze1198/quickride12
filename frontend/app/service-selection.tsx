@@ -108,10 +108,14 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   servicesContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
     gap: 16,
   },
   serviceCard: {
-    height: 180,
+    width: '90%',
+    maxWidth: 400,
+    height: 140,
     borderRadius: 16,
     overflow: 'hidden',
     shadowColor: '#000',
@@ -123,46 +127,17 @@ const styles = StyleSheet.create({
   gradientCard: {
     flex: 1,
     padding: 20,
-    justifyContent: 'space-between',
-  },
-  iconContainer: {
-    alignSelf: 'flex-start',
-    marginBottom: 8,
-  },
-  serviceTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#FFF',
-    marginBottom: 4,
-  },
-  serviceDescription: {
-    fontSize: 13,
-    color: '#FFF',
-    opacity: 0.9,
-    marginBottom: 12,
-  },
-  serviceFeatures: {
-    gap: 6,
-    marginBottom: 12,
-  },
-  featureItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  featureText: {
-    fontSize: 12,
-    color: '#FFF',
-    fontWeight: '500',
-  },
-  arrowButton: {
-    alignSelf: 'flex-end',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    width: 40,
-    height: 40,
-    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  cardContent: {
+    alignItems: 'center',
+    gap: 12,
+  },
+  serviceTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#FFF',
   },
   switchContainer: {
     flexDirection: 'row',
