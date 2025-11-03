@@ -67,6 +67,13 @@ export default function HomeScreen() {
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
   
+  // Map picker states
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [tempLocation, setTempLocation] = useState({ lat: 14.5547, lng: 121.0244 });
+  const [userAddress, setUserAddress] = useState('');
+  const mapRef = useRef<any>(null);
+  const markerRef = useRef<any>(null);
+  
   const slideAnim = useRef(new Animated.Value(0)).current;
   const [bannerWidth, setBannerWidth] = useState(width - 40); // width minus padding
 
