@@ -658,6 +658,89 @@ export default function RiderAvailableScreen() {
           }
         />
       )}
+
+      {/* Search Location Modal */}
+      <Modal
+        visible={showSearchModal}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setShowSearchModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.searchModalContent}>
+            <View style={styles.searchModalHeader}>
+              <Text style={styles.searchModalTitle}>Search Location</Text>
+              <TouchableOpacity onPress={() => setShowSearchModal(false)}>
+                <Ionicons name="close" size={28} color="#333" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.searchInputContainer}>
+              <Ionicons name="search" size={20} color="#999" style={styles.searchIcon} />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search for a place..."
+                value={searchQuery}
+                onChangeText={(text) => {
+                  setSearchQuery(text);
+                  searchLocation(text);
+                }}
+                autoFocus
+              />
+              {searchQuery.length > 0 && (
+                <TouchableOpacity onPress={() => {
+                  setSearchQuery('');
+                  setSearchResults([]);
+                }}>
+                  <Ionicons name="close-circle" size={20} color="#999" />
+                </TouchableOpacity>
+              )}
+            </View>
+
+            <ScrollView style={styles.searchResultsContainer}>
+              {searching && (
+                <View style={styles.searchLoadingContainer}>
+                  <ActivityIndicator size="small" color="#FF6B6B" />
+                  <Text style={styles.searchLoadingText}>Searching...</Text>
+                </View>
+              )}
+
+              {!searching && searchResults.length === 0 && searchQuery.length >= 3 && (
+                <View style={styles.noResultsContainer}>
+                  <Ionicons name="location-outline" size={48} color="#CCC" />
+                  <Text style={styles.noResultsText}>No locations found</Text>
+                  <Text style={styles.noResultsSubtext}>Try a different search term</Text>
+                </View>
+              )}
+
+              {!searching && searchResults.length === 0 && searchQuery.length < 3 && (
+                <View style={styles.noResultsContainer}>
+                  <Ionicons name="search-outline" size={48} color="#CCC" />
+                  <Text style={styles.noResultsText}>Start typing to search</Text>
+                  <Text style={styles.noResultsSubtext}>Enter at least 3 characters</Text>
+                </View>
+              )}
+
+              {searchResults.map((place, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.searchResultItem}
+                  onPress={() => selectSearchResult(place)}
+                >
+                  <Ionicons name="location" size={24} color="#FF6B6B" />
+                  <View style={styles.searchResultText}>
+                    <Text style={styles.searchResultName}>{place.name}</Text>
+                    <Text style={styles.searchResultAddress} numberOfLines={2}>
+                      {place.formatted_address}
+                    </Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color="#CCC" />
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
