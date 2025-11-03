@@ -247,7 +247,15 @@ def test_navigation_apis():
         else:
             results.log_fail("Order Status Update", f"HTTP {response.status_code if response else 'No response'}")
         
-        # 7. Test PUT /api/riders/location
+        # 7. Create rider profile first (auto-created by calling /riders/me)
+        print("\n👤 Creating rider profile...")
+        response = make_request("GET", "/riders/me", auth_token=rider_token)
+        if response and response.status_code == 200:
+            results.log_pass("Rider Profile Creation")
+        else:
+            results.log_fail("Rider Profile Creation", f"HTTP {response.status_code if response else 'No response'}")
+        
+        # 8. Test PUT /api/riders/location
         print("\n📍 Testing rider location update...")
         location_data = {
             "latitude": 14.5995,
