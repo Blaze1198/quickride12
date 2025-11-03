@@ -197,6 +197,28 @@ frontend:
           - Auto-zoom to show both customer and rider on map
           - Order status with color-coded badges
 
+  - task: "Map Verification Modal in Checkout"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/checkout.tsx"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "User reported: Map verification modal stuck on 'Loading verification map...' with React error: 'Unexpected text node: . A text node cannot be a child of a <View>'"
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Fixed React Native component structure error in map verification modal:
+          - Replaced HTML div rendering with proper React Native View wrapping
+          - Added platform-specific rendering (Platform.OS === 'web' ? ... : null)
+          - Fixed display property by using opacity instead (opacity: 0/1)
+          - Ensured div element is wrapped inside View component to prevent "unexpected text node" error
+          - Applied same fix to both map picker modal and verification modal
+          - Properly handling web-only Google Maps div element within React Native component hierarchy
+
   - task: "Periodic Location Updates from Rider"
     implemented: true
     working: "NA"
