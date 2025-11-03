@@ -257,6 +257,104 @@ export default function CheckoutScreen() {
     console.log('Location confirmed:', tempLocation, deliveryAddress);
   };
 
+  // Load Google Maps for verification modal
+  const loadVerificationMap = () => {
+    if (typeof window === 'undefined') return;
+
+    const apiKey = 'AIzaSyA0m1oRlXLQWjxacqjEJ6zJW3WvmOWvQkQ';
+
+    if ((window as any).google && (window as any).google.maps) {
+      initializeVerificationMap();
+      return;
+    }
+
+    const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
+    if (existingScript) {
+      const checkInterval = setInterval(() => {
+        if ((window as any).google && (window as any).google.maps) {
+          clearInterval(checkInterval);
+          initializeVerificationMap();
+        }
+      }, 100);
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}`;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => {
+      setTimeout(() => {
+        if ((window as any).google && (window as any).google.maps) {
+          initializeVerificationMap();
+        }
+      }, 100);
+    };
+    document.head.appendChild(script);
+  };
+
+  // Initialize verification map
+  const initializeVerificationMap = () => {
+    const google = (window as any).google;
+    if (!google || !verificationMapRef.current) return;
+
+    const location = {
+      lat: parseFloat(latitude),
+      lng: parseFloat(longitude)
+    };
+
+    const map = new google.maps.Map(verificationMapRef.current, {
+      center: location,
+      zoom: 17,
+      disableDefaultUI: false,
+      zoomControl: true,
+    });
+
+    // Add marker
+    new google.maps.Marker({
+      position: location,
+      map,
+      icon: {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 18,
+        fillColor: '#FF6B6B',
+        fillOpacity: 1,
+        strokeColor: '#FFF',
+        strokeWeight: 4,
+      },
+      title: 'Your Delivery Location',
+    });
+
+    // Add pulsing circle
+    const pulsingCircle = new google.maps.Circle({
+      map: map,
+      center: location,
+      radius: 30,
+      fillColor: '#FF6B6B',
+      fillOpacity: 0.2,
+      strokeColor: '#FF6B6B',
+      strokeOpacity: 0.6,
+      strokeWeight: 2,
+    });
+
+    // Animate pulsing
+    let growing = true;
+    let radius = 30;
+    setInterval(() => {
+      if (growing) {
+        radius += 2;
+        if (radius >= 60) growing = false;
+      } else {
+        radius -= 2;
+        if (radius <= 30) growing = true;
+      }
+      pulsingCircle.setRadius(radius);
+    }, 100);
+
+    setVerificationMapLoaded(true);
+  };
+
+  // Modified handlePlaceOrder - shows verification modal first
   const handlePlaceOrder = async () => {
     console.log('Place Order clicked');
     
