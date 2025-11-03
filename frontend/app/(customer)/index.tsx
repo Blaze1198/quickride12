@@ -475,6 +475,80 @@ export default function HomeScreen() {
     });
   };
 
+  // Search location using Google Places Autocomplete
+  const handleSearchLocation = (query: string) => {
+    setSearchQuery(query);
+    
+    // Clear previous timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    if (query.length < 3) {
+      setSearchResults([]);
+      setShowSearchResults(false);
+      return;
+    }
+
+    // Debounce search
+    searchTimeoutRef.current = setTimeout(() => {
+      const google = (window as any).google;
+      if (!google) return;
+
+      const service = new google.maps.places.AutocompleteService();
+      service.getPlacePredictions(
+        {
+          input: query,
+          componentRestrictions: { country: 'ph' }, // Restrict to Philippines
+        },
+        (predictions: any, status: any) => {
+          if (status === 'OK' && predictions) {
+            setSearchResults(predictions);
+            setShowSearchResults(true);
+            console.log('🔍 Search results:', predictions.length);
+          } else {
+            setSearchResults([]);
+            setShowSearchResults(false);
+          }
+        }
+      );
+    }, 300);
+  };
+
+  // Select location from search results
+  const selectSearchResult = (placeId: string) => {
+    const google = (window as any).google;
+    if (!google) return;
+
+    const service = new google.maps.places.PlacesService(document.createElement('div'));
+    service.getDetails({ placeId }, (place: any, status: any) => {
+      if (status === 'OK' && place.geometry) {
+        const location = {
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng()
+        };
+        setTempLocation(location);
+        setUserAddress(place.formatted_address);
+        setSearchQuery('');
+        setShowSearchResults(false);
+        
+        // Move marker on map
+        if (markerRef.current) {
+          markerRef.current.setPosition(location);
+        }
+        
+        // Center map on selected location
+        if (mapRef.current) {
+          const map = new google.maps.Map(mapRef.current, {});
+          map.setCenter(location);
+          map.setZoom(16);
+        }
+        
+        console.log('✅ Location selected from search:', place.formatted_address);
+      }
+    });
+  };
+
   // Confirm selected location
   const confirmLocation = () => {
     const address = userAddress || selectedLocation;
