@@ -324,3 +324,32 @@ agent_communication:
       - All core API functionality is working despite test script timeout issues
       
       RECOMMENDATION: Backend navigation and tracking APIs are FULLY FUNCTIONAL and ready for production use.
+
+  - agent: "main"
+    message: |
+      URGENT FIX: Map Verification Modal in Checkout
+      
+      USER REPORTED ISSUE:
+      - Map verification modal stuck on "Loading verification map..."
+      - React error: "Unexpected text node: . A text node cannot be a child of a <View>"
+      
+      ROOT CAUSE:
+      - HTML div elements were being rendered directly within React Native View components
+      - This causes a rendering error, especially on web platform
+      
+      FIX APPLIED:
+      - Modified checkout.tsx map rendering logic
+      - Wrapped div elements inside proper React Native View components
+      - Changed from display: 'block'/'none' to opacity: 1/0 for visibility control
+      - Added proper platform-specific rendering (Platform.OS === 'web' ? ... : null)
+      - Applied fix to both map picker modal and map verification modal
+      
+      FILES MODIFIED:
+      - /app/frontend/app/checkout.tsx (lines 747-765 and 813-831)
+      
+      TESTING NEEDED:
+      - Verify map verification modal loads correctly when clicking "Place Order"
+      - Ensure Google Maps appears in the modal
+      - Confirm no React errors in console
+      - Test "Edit Location" button functionality
+      - Test "Confirm & Place Order" button after verification
