@@ -332,9 +332,26 @@ export default function RiderAvailableScreen() {
             <View style={styles.emptyContainer}>
               <Ionicons name="fast-food-outline" size={64} color="#CCC" />
               <Text style={styles.emptyText}>No available food deliveries</Text>
-          </View>
-        }
-      />
+            </View>
+          }
+        />
+      ) : (
+        <FlatList
+          data={rides}
+          renderItem={renderRide}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContent}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#2196F3']} />
+          }
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Ionicons name="bicycle-outline" size={64} color="#CCC" />
+              <Text style={styles.emptyText}>No available ride requests</Text>
+            </View>
+          }
+        />
+      )}
     </SafeAreaView>
   );
 }
@@ -343,6 +360,32 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
+  },
+  toggleHeader: {
+    backgroundColor: '#FFF',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  toggleOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  toggleText: {
+    fontSize: 14,
+    color: '#999',
+    fontWeight: '600',
+  },
+  toggleTextActive: {
+    color: '#333',
+    fontWeight: 'bold',
   },
   loadingContainer: {
     flex: 1,
