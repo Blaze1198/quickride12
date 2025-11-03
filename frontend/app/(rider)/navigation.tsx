@@ -238,8 +238,21 @@ export default function RiderNavigationScreen() {
       return null;
     };
 
+    // Ensure userLocation has valid numeric coordinates
+    const userLat = parseCoordinate(userLocation.latitude);
+    const userLng = parseCoordinate(userLocation.longitude);
+    
+    if (userLat === null || userLng === null) {
+      console.error('❌ Invalid user location coordinates:', userLocation);
+      setMapError('Unable to determine your location');
+      return;
+    }
+
+    const userPosition = { lat: userLat, lng: userLng };
+    console.log('✅ User position:', userPosition);
+
     const map = new google.maps.Map(mapRef.current, {
-      center: userLocation,
+      center: userPosition,
       zoom: 14,
       styles: [
         {
@@ -255,7 +268,7 @@ export default function RiderNavigationScreen() {
 
     // Current location marker (rider)
     new google.maps.Marker({
-      position: userLocation,
+      position: userPosition,
       map,
       icon: {
         path: google.maps.SymbolPath.CIRCLE,
