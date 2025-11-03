@@ -547,6 +547,72 @@ export default function CheckoutScreen() {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
+
+      {/* Map Location Picker Modal */}
+      <Modal
+        visible={showMapPicker}
+        animationType="slide"
+        onRequestClose={() => setShowMapPicker(false)}
+      >
+        <SafeAreaView style={styles.modalContainer}>
+          {/* Map Header */}
+          <View style={styles.mapHeader}>
+            <TouchableOpacity onPress={() => setShowMapPicker(false)}>
+              <Ionicons name="close" size={28} color="#333" />
+            </TouchableOpacity>
+            <Text style={styles.mapHeaderTitle}>Select Delivery Location</Text>
+            <View style={{ width: 28 }} />
+          </View>
+
+          {/* Map Container */}
+          {Platform.OS === 'web' && (
+            <View style={styles.mapPickerContainer}>
+              {!mapLoaded && (
+                <View style={styles.mapLoading}>
+                  <ActivityIndicator size="large" color="#FF6B6B" />
+                  <Text style={styles.mapLoadingText}>Loading map...</Text>
+                </View>
+              )}
+              {/* @ts-ignore */}
+              <div 
+                ref={mapRef} 
+                style={{ 
+                  width: '100%', 
+                  height: '100%',
+                  display: mapLoaded ? 'block' : 'none'
+                }} 
+              />
+            </View>
+          )}
+
+          {/* Address Display */}
+          <View style={styles.mapAddressContainer}>
+            <View style={styles.mapAddressCard}>
+              <Ionicons name="location" size={24} color="#FF6B6B" />
+              <View style={styles.mapAddressTextContainer}>
+                <Text style={styles.mapAddressLabel}>Delivery Address</Text>
+                <Text style={styles.mapAddressText} numberOfLines={2}>
+                  {deliveryAddress || 'Drag the marker to select location'}
+                </Text>
+                <Text style={styles.mapCoordinates}>
+                  📍 {tempLocation.lat.toFixed(6)}, {tempLocation.lng.toFixed(6)}
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Confirm Button */}
+          <View style={styles.mapFooter}>
+            <TouchableOpacity
+              style={styles.confirmLocationButton}
+              onPress={confirmLocation}
+            >
+              <Ionicons name="checkmark-circle" size={24} color="#FFF" />
+              <Text style={styles.confirmLocationText}>Confirm Location</Text>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
+      </Modal>
     </SafeAreaView>
   );
 }
