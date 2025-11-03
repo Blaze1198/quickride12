@@ -67,6 +67,44 @@ export default function LiveOrderTrackingScreen() {
     }
   };
 
+  const fetchRiderLocation = async () => {
+    try {
+      const response = await api.get(`/orders/${orderId}/rider-location`);
+      if (response.data.rider_assigned && response.data.location) {
+        setRiderLocation(response.data.location);
+        // Calculate distance and ETA if we have both locations
+        if (order?.delivery_address && response.data.location) {
+          calculateDistanceAndETA(response.data.location, order.delivery_address);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching rider location:', error);
+    }
+  };
+
+  const calculateDistanceAndETA = (from: any, to: any) => {
+    // Calculate straight-line distance (Haversine formula)
+    const R = 6371; // Radius of Earth in km
+    const dLat = (to.latitude - from.latitude) * Math.PI / 180;
+    const dLon = (to.longitude - from.longitude) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(from.latitude * Math.PI / 180) * Math.cos(to.latitude * Math.PI / 180) *
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distanceKm = R * c;
+    
+    if (distanceKm < 1) {
+      setDistance(`${(distanceKm * 1000).toFixed(0)}m away`);
+    } else {
+      setDistance(`${distanceKm.toFixed(1)}km away`);
+    }
+    
+    // Estimate ETA (assuming 20 km/h average speed in city)
+    const etaMinutes = Math.ceil((distanceKm / 20) * 60);
+    setEta(`${etaMinutes} min`);
+  };
+
   const loadMap = () => {
     if (typeof window === 'undefined' || !order) return;
 
