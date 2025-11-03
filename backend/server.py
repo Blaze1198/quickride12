@@ -780,9 +780,16 @@ async def update_order_status(order_id: str, status_update: Dict[str, str], requ
     """Update order status"""
     user = await require_auth(request)
     
+    logger.info(f"📝 Status update request for order {order_id}")
+    logger.info(f"   New status: {status_update.get('status')}")
+    logger.info(f"   User: {user.email} (role: {user.role})")
+    
     order = await db.orders.find_one({"id": order_id})
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
+    
+    logger.info(f"   Current order status: {order.get('status')}")
+    logger.info(f"   Has rider assigned: {bool(order.get('rider_id'))}")
     
     new_status = status_update.get("status")
     
