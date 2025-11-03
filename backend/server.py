@@ -780,10 +780,13 @@ async def update_order_status(order_id: str, status_update: Dict[str, str], requ
             update_data["status"] = OrderStatus.RIDER_ASSIGNED
             new_status = OrderStatus.RIDER_ASSIGNED
             
-            # Update rider status to busy
+            # Update rider status to busy AND set current_order_id
             await db.riders.update_one(
                 {"id": available_rider["id"]},
-                {"$set": {"status": RiderStatus.BUSY}}
+                {"$set": {
+                    "status": RiderStatus.BUSY,
+                    "current_order_id": order_id  # FIX: Set current order
+                }}
             )
             
             logger.info(f"Auto-assigned rider {available_rider['name']} ({available_rider['id']}) to order {order_id}")
@@ -794,11 +797,14 @@ async def update_order_status(order_id: str, status_update: Dict[str, str], requ
                 "order": Order(**order).dict()
             }, room=f"rider_{available_rider['user_id']}")
     
-    # When order is delivered, set rider back to available
+    # When order is delivered, clear rider's current_order_id and set back to available
     if new_status == OrderStatus.DELIVERED and order.get("rider_id"):
         await db.riders.update_one(
             {"id": order["rider_id"]},
-            {"$set": {"status": RiderStatus.AVAILABLE}}
+            {"$set": {
+                "status": RiderStatus.AVAILABLE,
+                "current_order_id": None  # FIX: Clear current order
+            }}
         )
         logger.info(f"Rider {order.get('rider_name')} set back to available after delivery")
     
