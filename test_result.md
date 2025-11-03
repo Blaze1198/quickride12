@@ -146,10 +146,10 @@ backend:
         comment: "Existing PUT /api/riders/location endpoint already working. Updates rider's current location in database and emits WebSocket events for real-time tracking."
 
 frontend:
-  - task: "Menu Management Screen - Full Implementation"
+  - task: "Rider Navigation Screen with Live Directions"
     implemented: true
     working: "NA"
-    file: "/app/frontend/app/(restaurant)/menu.tsx"
+    file: "/app/frontend/app/(rider)/navigation.tsx"
     stuck_count: 0
     priority: "high"
     needs_retesting: true
@@ -157,22 +157,20 @@ frontend:
       - working: "NA"
         agent: "main"
         comment: |
-          Fully rebuilt menu management screen with:
-          - List all menu items with images, price, category, availability status
-          - Category filtering (All, Appetizers, Main Course, Desserts, Drinks, Sides, Snacks)
-          - Add new menu items with bottom sheet modal
-          - Edit existing menu items
-          - Toggle item availability (in-stock/out-of-stock)
-          - Delete menu items with confirmation
-          - Image picker for menu item photos
-          - Pull-to-refresh functionality
-          - Empty states with helpful messages
-          - Real-time updates after operations
+          Enhanced rider navigation screen with:
+          - Fetches current job (food order or ride) from backend
+          - Google Maps integration with real-time directions
+          - Auto-updates rider location to backend every 5 seconds
+          - Shows distance and ETA to next destination
+          - Visual route display with turn-by-turn directions
+          - Status update buttons for order/ride progression
+          - Differentiates between restaurant pickup and customer delivery
+          - Color-coded markers (green=pickup, red=dropoff, blue=rider)
 
-  - task: "Restaurant Profile Management Screen"
+  - task: "Customer Live Order Tracking"
     implemented: true
     working: "NA"
-    file: "/app/frontend/app/(restaurant)/profile.tsx"
+    file: "/app/frontend/app/live-order-tracking.tsx"
     stuck_count: 0
     priority: "high"
     needs_retesting: true
@@ -180,17 +178,27 @@ frontend:
       - working: "NA"
         agent: "main"
         comment: |
-          Fully rebuilt restaurant profile screen with:
-          - View and edit restaurant name, description
-          - Update phone number
-          - Manage operating hours
-          - Edit restaurant address
-          - Upload/change restaurant image/logo
-          - Toggle restaurant open/closed status
-          - Display info cards (rating, prep time)
-          - Edit mode with save/cancel actions
-          - Form validation for required fields
-          - Image picker for restaurant photo
+          Enhanced customer order tracking with:
+          - Real-time rider location fetched every 3 seconds
+          - Google Maps showing customer and rider positions
+          - Live route display from rider to customer
+          - Distance and ETA calculations using Google Maps Directions API
+          - Visual indicators showing rider approaching (e.g., "250m away • ETA: 3 min")
+          - Animated rider marker with directional arrow
+          - Auto-zoom to show both customer and rider on map
+          - Order status with color-coded badges
+
+  - task: "Periodic Location Updates from Rider"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/(rider)/navigation.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Rider app now automatically sends location updates to backend every 5 seconds when they have an active job. Uses browser geolocation API to get current position and sends to /api/riders/location endpoint."
 
 metadata:
   created_by: "main_agent"
