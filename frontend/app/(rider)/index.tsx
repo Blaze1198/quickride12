@@ -245,6 +245,17 @@ export default function RiderAvailableScreen() {
         </Text>
       </View>
 
+      {/* Start Navigation Button - Always visible for assigned orders */}
+      {(item.status === 'rider_assigned' || item.status === 'out_for_delivery') && (
+        <TouchableOpacity
+          style={styles.navigationButton}
+          onPress={() => router.push('/(rider)/navigation')}
+        >
+          <Ionicons name="navigate" size={24} color="#FFF" />
+          <Text style={styles.navigationButtonText}>Start Navigation</Text>
+        </TouchableOpacity>
+      )}
+
       {item.status === 'rider_assigned' && (
         <TouchableOpacity
           style={styles.pickupButton}
