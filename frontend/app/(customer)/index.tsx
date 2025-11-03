@@ -478,6 +478,7 @@ export default function HomeScreen() {
   // Search location using Google Places Autocomplete
   const handleSearchLocation = (query: string) => {
     setLocationSearchQuery(query);
+    console.log('🔍 Search query:', query);
     
     // Clear previous timeout
     if (searchTimeoutRef.current) {
@@ -487,31 +488,52 @@ export default function HomeScreen() {
     if (query.length < 3) {
       setSearchResults([]);
       setShowSearchResults(false);
+      console.log('⚠️ Query too short, need at least 3 characters');
       return;
     }
 
     // Debounce search
     searchTimeoutRef.current = setTimeout(() => {
       const google = (window as any).google;
-      if (!google) return;
+      if (!google || !google.maps || !google.maps.places) {
+        console.error('❌ Google Maps Places API not available');
+        Alert.alert('Search Error', 'Location search is not available. Please drag the marker on the map.');
+        return;
+      }
 
-      const service = new google.maps.places.AutocompleteService();
-      service.getPlacePredictions(
-        {
-          input: query,
-          componentRestrictions: { country: 'ph' }, // Restrict to Philippines
-        },
-        (predictions: any, status: any) => {
-          if (status === 'OK' && predictions) {
-            setSearchResults(predictions);
-            setShowSearchResults(true);
-            console.log('🔍 Search results:', predictions.length);
-          } else {
-            setSearchResults([]);
-            setShowSearchResults(false);
+      console.log('✅ Google Maps Places API available, searching...');
+
+      try {
+        const service = new google.maps.places.AutocompleteService();
+        service.getPlacePredictions(
+          {
+            input: query,
+            componentRestrictions: { country: 'ph' }, // Restrict to Philippines
+          },
+          (predictions: any, status: any) => {
+            console.log('📍 Search status:', status);
+            console.log('📍 Predictions:', predictions);
+            
+            if (status === 'OK' && predictions && predictions.length > 0) {
+              setSearchResults(predictions);
+              setShowSearchResults(true);
+              console.log('✅ Found', predictions.length, 'results');
+            } else if (status === 'ZERO_RESULTS') {
+              console.log('⚠️ No results found for:', query);
+              setSearchResults([]);
+              setShowSearchResults(false);
+              Alert.alert('No Results', 'No locations found. Try a different search term.');
+            } else {
+              console.error('❌ Search failed with status:', status);
+              setSearchResults([]);
+              setShowSearchResults(false);
+            }
           }
-        }
-      );
+        );
+      } catch (error) {
+        console.error('❌ Error in search:', error);
+        Alert.alert('Search Error', 'Unable to search. Please use the map to select your location.');
+      }
     }, 300);
   };
 
