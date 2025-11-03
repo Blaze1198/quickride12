@@ -26,13 +26,17 @@ export default function ServiceSelectionScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Choose a Service</Text>
-          <Text style={styles.subtitle}>What would you like to do today?</Text>
-        </View>
+      <LinearGradient
+        colors={['#F5F5F5', '#FFFFFF', '#F5F5F5']}
+        style={styles.gradientBackground}
+      >
+        <View style={styles.content}>
+          <View style={styles.header}>
+            <Text style={styles.title}>Choose a Service</Text>
+            <Text style={styles.subtitle}>What would you like to do today?</Text>
+          </View>
 
-        <View style={styles.servicesContainer}>
+          <View style={styles.servicesContainer}>
           {/* Food Delivery Service */}
           <TouchableOpacity
             style={styles.serviceCard}
