@@ -757,6 +757,16 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#FFF',
   },
+  headerRightButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  serviceToggleButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: '#E3F2FD',
+  },
   notificationButton: {
     position: 'relative',
   },
