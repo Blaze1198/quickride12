@@ -400,19 +400,24 @@ export default function LiveOrderTrackingScreen() {
             </View>
           )}
           {/* @ts-ignore - Web-only div for Google Maps */}
-          {Platform.OS === 'web' && (
-            <div 
-              ref={mapRef} 
-              style={{ 
-                width: '100%', 
-                height: '100%', 
-                display: mapLoaded ? 'block' : 'none',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-              }} 
-            />
-          )}
+          {Platform.OS === 'web' ? (
+            <View style={{ 
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              opacity: mapLoaded ? 1 : 0,
+            }}>
+              <div 
+                ref={mapRef} 
+                style={{ 
+                  width: '100%', 
+                  height: '100%', 
+                }} 
+              />
+            </View>
+          ) : null}
         </View>
       ) : (
         <View style={[styles.mapContainer, styles.mapPlaceholder]}>
