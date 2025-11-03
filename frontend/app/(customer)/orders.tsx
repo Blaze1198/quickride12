@@ -108,46 +108,63 @@ export default function OrdersScreen() {
     return status.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
-  const renderOrder = ({ item }: { item: Order }) => (
-    <TouchableOpacity
-      style={styles.orderCard}
-      onPress={() => router.push(`/order/${item.id}` as any)}
-    >
-      <View style={styles.orderHeader}>
-        <View style={styles.headerLeft}>
-          <Text style={styles.restaurantName}>{item.restaurant_name}</Text>
-          <Text style={styles.orderDate}>
-            {new Date(item.created_at).toLocaleString()}
-          </Text>
-        </View>
-        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
-          <Ionicons name={getStatusIcon(item.status) as any} size={16} color="#FFF" />
-          <Text style={styles.statusText}>{formatStatus(item.status, item)}</Text>
-        </View>
-      </View>
-      
-      {/* Show rider info for rider_assigned status */}
-      {item.status === 'rider_assigned' && item.rider_name && (
-        <View style={styles.riderInfoBanner}>
-          <Ionicons name="bicycle" size={18} color="#4CAF50" />
-          <View style={styles.riderDetails}>
-            <Text style={styles.riderLabel}>Rider:</Text>
-            <Text style={styles.riderName}>{item.rider_name}</Text>
-            {item.rider_phone && (
-              <Text style={styles.riderPhone}>• {item.rider_phone}</Text>
-            )}
+  const renderOrder = ({ item }: { item: Order }) => {
+    const canTrack = ['rider_assigned', 'picked_up', 'out_for_delivery'].includes(item.status);
+    
+    return (
+      <View style={styles.orderCard}>
+        <TouchableOpacity
+          style={styles.orderMainContent}
+          onPress={() => router.push(`/order/${item.id}` as any)}
+        >
+          <View style={styles.orderHeader}>
+            <View style={styles.headerLeft}>
+              <Text style={styles.restaurantName}>{item.restaurant_name}</Text>
+              <Text style={styles.orderDate}>
+                {new Date(item.created_at).toLocaleString()}
+              </Text>
+            </View>
+            <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
+              <Ionicons name={getStatusIcon(item.status) as any} size={16} color="#FFF" />
+              <Text style={styles.statusText}>{formatStatus(item.status, item)}</Text>
+            </View>
           </View>
-        </View>
-      )}
-      
-      <View style={styles.orderBody}>
-        <Text style={styles.itemsText}>
-          {item.items.length} item{item.items.length !== 1 ? 's' : ''}
-        </Text>
-        <Text style={styles.totalAmount}>₱{item.total_amount.toFixed(2)}</Text>
+          
+          {/* Show rider info for rider_assigned status */}
+          {item.status === 'rider_assigned' && item.rider_name && (
+            <View style={styles.riderInfoBanner}>
+              <Ionicons name="bicycle" size={18} color="#4CAF50" />
+              <View style={styles.riderDetails}>
+                <Text style={styles.riderLabel}>Rider:</Text>
+                <Text style={styles.riderName}>{item.rider_name}</Text>
+                {item.rider_phone && (
+                  <Text style={styles.riderPhone}>• {item.rider_phone}</Text>
+                )}
+              </View>
+            </View>
+          )}
+          
+          <View style={styles.orderBody}>
+            <Text style={styles.itemsText}>
+              {item.items.length} item{item.items.length !== 1 ? 's' : ''}
+            </Text>
+            <Text style={styles.totalAmount}>₱{item.total_amount.toFixed(2)}</Text>
+          </View>
+        </TouchableOpacity>
+        
+        {/* Track Live Button */}
+        {canTrack && (
+          <TouchableOpacity
+            style={styles.trackButton}
+            onPress={() => router.push(`/live-order-tracking?orderId=${item.id}` as any)}
+          >
+            <Ionicons name="navigate" size={20} color="#FFF" />
+            <Text style={styles.trackButtonText}>Track Live</Text>
+          </TouchableOpacity>
+        )}
       </View>
-    </TouchableOpacity>
-  );
+    );
+  };
 
   if (loading) {
     return (
