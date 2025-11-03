@@ -127,31 +127,87 @@ export default function RiderNavigationScreen() {
       return;
     }
 
-    // Try multiple ways to get the API key
-    const apiKey = 'AIzaSyA0m1oRlXLQWjxacqjEJ6zJW3WvmOWvQkQ';
-
-    console.log('Attempting to load Google Maps...');
-
-    if ((window as any).google) {
-      console.log('Google Maps already loaded');
+    // If Google Maps is already loaded, initialize immediately
+    if ((window as any).google && (window as any).google.maps) {
+      console.log('✅ Google Maps already available, initializing...');
       initializeMap();
       return;
     }
 
+    // Prevent loading script multiple times
+    if (scriptLoaded) {
+      console.log('Script already loading...');
+      return;
+    }
+
+    setScriptLoaded(true);
+    console.log('🔄 Starting to load Google Maps script for rider navigation...');
+
+    const apiKey = 'AIzaSyA0m1oRlXLQWjxacqjEJ6zJW3WvmOWvQkQ';
+    
+    // Check if script already exists in DOM
+    const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
+    if (existingScript) {
+      console.log('Script tag exists, waiting for load...');
+      // Wait for it to load
+      const checkInterval = setInterval(() => {
+        if ((window as any).google && (window as any).google.maps) {
+          clearInterval(checkInterval);
+          console.log('✅ Google Maps loaded from existing script');
+          initializeMap();
+        }
+      }, 100);
+      
+      // Timeout after 10 seconds
+      setTimeout(() => {
+        clearInterval(checkInterval);
+        if (!mapLoaded) {
+          console.error('❌ Timeout waiting for Google Maps');
+          setMapError('Map failed to load. Please refresh the page.');
+          setScriptLoaded(false);
+        }
+      }, 10000);
+      return;
+    }
+
+    // Create new script tag
     const script = document.createElement('script');
     script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
     script.async = true;
     script.defer = true;
+    
     script.onload = () => {
       console.log('✅ Google Maps script loaded successfully');
-      initializeMap();
+      // Wait a bit for google.maps to be fully available
+      setTimeout(() => {
+        if ((window as any).google && (window as any).google.maps) {
+          console.log('✅ Google Maps API is ready');
+          initializeMap();
+        } else {
+          console.error('❌ Google Maps API not available after script load');
+          setMapError('Map API failed to initialize');
+          setScriptLoaded(false);
+        }
+      }, 100);
     };
+    
     script.onerror = (error) => {
       console.error('❌ Failed to load Google Maps script:', error);
-      setMapLoaded(false);
+      setMapError('Failed to load map. Please check your connection.');
+      setScriptLoaded(false);
     };
+    
     document.head.appendChild(script);
-    console.log('Google Maps script tag added to document');
+    console.log('📍 Google Maps script tag added to document');
+
+    // Safety timeout - if map doesn't load in 10 seconds, show error
+    setTimeout(() => {
+      if (!mapLoaded) {
+        console.error('❌ Map loading timeout (10s)');
+        setMapError('Map took too long to load. Please refresh the page.');
+        setScriptLoaded(false);
+      }
+    }, 10000);
   };
 
   const initializeMap = () => {
