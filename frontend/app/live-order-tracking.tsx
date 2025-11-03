@@ -37,6 +37,8 @@ export default function LiveOrderTrackingScreen() {
   const [riderLocation, setRiderLocation] = useState<any>(null);
   const [distance, setDistance] = useState<string>('');
   const [eta, setEta] = useState<string>('');
+  const [mapError, setMapError] = useState<string>('');
+  const [scriptLoaded, setScriptLoaded] = useState(false);
 
   useEffect(() => {
     if (orderId) {
