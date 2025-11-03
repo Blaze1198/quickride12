@@ -46,7 +46,7 @@ export default function ServiceSelectionScreen() {
               style={styles.gradientCard}
             >
               <View style={styles.iconContainer}>
-                <Ionicons name="fast-food" size={64} color="#FFF" />
+                <Ionicons name="fast-food" size={40} color="#FFF" />
               </View>
               <Text style={styles.serviceTitle}>Food Delivery</Text>
               <Text style={styles.serviceDescription}>
@@ -54,20 +54,20 @@ export default function ServiceSelectionScreen() {
               </Text>
               <View style={styles.serviceFeatures}>
                 <View style={styles.featureItem}>
-                  <Ionicons name="checkmark-circle" size={16} color="#FFF" />
+                  <Ionicons name="checkmark-circle" size={14} color="#FFF" />
                   <Text style={styles.featureText}>Quick delivery</Text>
                 </View>
                 <View style={styles.featureItem}>
-                  <Ionicons name="checkmark-circle" size={16} color="#FFF" />
+                  <Ionicons name="checkmark-circle" size={14} color="#FFF" />
                   <Text style={styles.featureText}>Track your order</Text>
                 </View>
                 <View style={styles.featureItem}>
-                  <Ionicons name="checkmark-circle" size={16} color="#FFF" />
+                  <Ionicons name="checkmark-circle" size={14} color="#FFF" />
                   <Text style={styles.featureText}>Multiple restaurants</Text>
                 </View>
               </View>
               <View style={styles.arrowButton}>
-                <Ionicons name="arrow-forward" size={24} color="#FFF" />
+                <Ionicons name="arrow-forward" size={20} color="#FFF" />
               </View>
             </LinearGradient>
           </TouchableOpacity>
