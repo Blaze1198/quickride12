@@ -1243,6 +1243,86 @@ async def update_rider_status(status_update: Dict[str, str], request: Request):
     
     return {"message": "Status updated", "status": new_status}
 
+@api_router.put("/riders/availability")
+async def toggle_rider_availability(availability_data: Dict[str, bool], request: Request):
+    """Toggle rider availability for accepting new orders"""
+    user = await require_auth(request)
+    
+    if user.role != UserRole.RIDER:
+        raise HTTPException(status_code=403, detail="Only riders can update availability")
+    
+    is_available = availability_data.get("is_available")
+    
+    rider = await db.riders.find_one({"user_id": user.id})
+    if not rider:
+        raise HTTPException(status_code=404, detail="Rider profile not found")
+    
+    await db.riders.update_one(
+        {"user_id": user.id},
+        {"$set": {"is_available": is_available}}
+    )
+    
+    logger.info(f"Rider {rider.get('name')} ({rider['id']}) availability toggled to: {is_available}")
+    
+    return {
+        "message": "Availability updated",
+        "is_available": is_available,
+        "status": "You will now receive orders" if is_available else "You will not receive orders"
+    }
+
+@api_router.get("/riders/nearby-orders")
+async def get_nearby_orders(request: Request, radius: float = 10.0):
+    """Get orders within delivery radius for rider"""
+    user = await require_auth(request)
+    
+    if user.role != UserRole.RIDER:
+        raise HTTPException(status_code=403, detail="Only riders can access this")
+    
+    rider = await db.riders.find_one({"user_id": user.id})
+    if not rider:
+        raise HTTPException(status_code=404, detail="Rider profile not found")
+    
+    if not rider.get("current_location"):
+        return {"orders": [], "message": "Please enable location to see nearby orders"}
+    
+    rider_lat = rider["current_location"]["latitude"]
+    rider_lon = rider["current_location"]["longitude"]
+    
+    # Get unassigned orders that are ready for pickup
+    orders = await db.orders.find({
+        "status": {"$in": [
+            OrderStatus.PREPARING,
+            OrderStatus.READY_FOR_PICKUP
+        ]},
+        "rider_id": None
+    }).to_list(100)
+    
+    nearby_orders = []
+    for order in orders:
+        # Get restaurant location
+        restaurant = await db.restaurants.find_one({"id": order["restaurant_id"]})
+        if restaurant and restaurant.get("location"):
+            rest_lat = restaurant["location"]["latitude"]
+            rest_lon = restaurant["location"]["longitude"]
+            
+            distance = calculate_distance(rider_lat, rider_lon, rest_lat, rest_lon)
+            
+            if distance <= radius:
+                order_data = Order(**order).dict()
+                order_data["distance_km"] = round(distance, 2)
+                order_data["restaurant_location"] = restaurant["location"]
+                nearby_orders.append(order_data)
+    
+    # Sort by distance
+    nearby_orders.sort(key=lambda x: x["distance_km"])
+    
+    return {
+        "orders": nearby_orders,
+        "rider_location": rider["current_location"],
+        "radius_km": radius,
+        "count": len(nearby_orders)
+    }
+
 # ============= SOCKET.IO EVENTS =============
 @sio.event
 async def connect(sid, environ):
