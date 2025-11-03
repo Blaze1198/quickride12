@@ -427,6 +427,19 @@ export default function RiderNavigationScreen() {
                 : currentJob.data.dropoff_location?.address}
             </Text>
           </View>
+          {distanceToDestination && etaToDestination && (
+            <View style={styles.etaCard}>
+              <View style={styles.etaItem}>
+                <Ionicons name="navigate" size={20} color="#2196F3" />
+                <Text style={styles.etaLabel}>{distanceToDestination}</Text>
+              </View>
+              <View style={styles.etaDivider} />
+              <View style={styles.etaItem}>
+                <Ionicons name="time" size={20} color="#2196F3" />
+                <Text style={styles.etaLabel}>ETA: {etaToDestination}</Text>
+              </View>
+            </View>
+          )}
         </View>
 
         {nextAction && (
