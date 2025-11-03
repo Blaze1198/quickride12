@@ -69,14 +69,12 @@ export default function RiderNavigationScreen() {
 
   const getUserLocation = () => {
     if (typeof navigator !== 'undefined' && navigator.geolocation) {
-      console.log('🔍 Requesting user location from browser...');
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const location = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           };
-          console.log('✅ Got real user location:', location);
           setUserLocation(location);
         },
         (error) => {
@@ -86,7 +84,7 @@ export default function RiderNavigationScreen() {
             latitude: 14.5547,
             longitude: 121.0244,
           };
-          console.log('⚠️ Using fallback location (Makati, Manila):', fallbackLocation);
+          console.log('⚠️ Using fallback location (Makati, Manila)');
           setUserLocation(fallbackLocation);
         },
         {
