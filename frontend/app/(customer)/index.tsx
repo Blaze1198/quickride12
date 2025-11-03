@@ -366,14 +366,23 @@ export default function HomeScreen() {
             <Text style={styles.locationBadgeText}>{selectedLocation.split(',')[0]}</Text>
             <Ionicons name="chevron-down" size={12} color="#666" />
           </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.notificationButton}
-            onPress={handleNotificationPress}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="notifications-outline" size={24} color="#333" />
-            <View style={styles.notificationBadge} />
-          </TouchableOpacity>
+          <View style={styles.headerRightButtons}>
+            <TouchableOpacity 
+              style={styles.serviceToggleButton}
+              onPress={() => router.push('/service-selection')}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="swap-horizontal" size={20} color="#2196F3" />
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.notificationButton}
+              onPress={handleNotificationPress}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="notifications-outline" size={24} color="#333" />
+              <View style={styles.notificationBadge} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Search Bar - Always Visible */}
