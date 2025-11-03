@@ -54,7 +54,7 @@ export default function RootLayout() {
     } else if (user && inAuthGroup) {
       // Redirect based on role
       if (user.role === 'customer') {
-        router.replace('/(customer)');
+        router.replace('/service-selection');
       } else if (user.role === 'restaurant') {
         router.replace('/(restaurant)');
       } else if (user.role === 'rider') {
