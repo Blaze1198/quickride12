@@ -206,6 +206,50 @@ export default function RiderAvailableScreen() {
     }
   };
 
+  const searchLocation = async (query: string) => {
+    if (!query.trim() || query.length < 3) {
+      setSearchResults([]);
+      return;
+    }
+
+    setSearching(true);
+    try {
+      if (Platform.OS === 'web' && (window as any).google) {
+        const google = (window as any).google;
+        const service = new google.maps.places.PlacesService(document.createElement('div'));
+        
+        const request = {
+          query: query,
+          fields: ['name', 'formatted_address', 'geometry'],
+        };
+
+        service.textSearch(request, (results: any, status: any) => {
+          if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+            setSearchResults(results.slice(0, 5)); // Top 5 results
+          } else {
+            setSearchResults([]);
+          }
+          setSearching(false);
+        });
+      }
+    } catch (error) {
+      console.error('Error searching location:', error);
+      setSearching(false);
+    }
+  };
+
+  const selectSearchResult = async (place: any) => {
+    const location = {
+      latitude: place.geometry.location.lat(),
+      longitude: place.geometry.location.lng(),
+    };
+    
+    await updateRiderLocation(location);
+    setShowSearchModal(false);
+    setSearchQuery('');
+    setSearchResults([]);
+  };
+
   const fetchData = async () => {
     try {
       if (serviceType === 'food_delivery') {
