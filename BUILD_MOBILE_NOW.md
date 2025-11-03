@@ -4,7 +4,7 @@
 
 1. ✅ Created `eas.json` - Build configuration
 2. ✅ Updated `app.json` - App branding & permissions
-3. ✅ Your web app is live at: https://foodapp-ux.preview.emergentagent.com
+3. ✅ Your web app is live at: https://quickbite-ride.preview.emergentagent.com
 
 ## 📱 Next Steps - Build Your Mobile Apps!
 
@@ -315,7 +315,7 @@ Good luck! You got this! 💪
 ## 📝 **Summary:**
 
 **NOW:**
-- ✅ Web app: https://foodapp-ux.preview.emergentagent.com
+- ✅ Web app: https://quickbite-ride.preview.emergentagent.com
 
 **IN 30 MINUTES:**
 - ✅ Android APK installed on your phone

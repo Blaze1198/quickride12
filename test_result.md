@@ -291,6 +291,6 @@ agent_communication:
       🔧 TESTING INFRASTRUCTURE:
       • Created comprehensive backend_test.py with 100% success rate
       • Tested with real restaurant data and realistic scenarios
-      • All APIs responding correctly at https://foodapp-ux.preview.emergentagent.com/api
+      • All APIs responding correctly at https://quickbite-ride.preview.emergentagent.com/api
       
       ✅ RECOMMENDATION: Backend APIs are production-ready. Main agent can now summarize and finish the implementation.
