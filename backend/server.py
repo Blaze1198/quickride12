@@ -192,6 +192,7 @@ class Rider(BaseModel):
     phone: str
     vehicle_type: str = "Motorcycle"
     status: RiderStatus = RiderStatus.AVAILABLE
+    is_available: bool = True  # Toggle for accepting new orders
     current_location: Optional[Location] = None
     current_order_id: Optional[str] = None
     current_ride_id: Optional[str] = None
