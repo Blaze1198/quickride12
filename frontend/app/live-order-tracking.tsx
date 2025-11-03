@@ -310,6 +310,12 @@ export default function LiveOrderTrackingScreen() {
           <Text style={[styles.statusText, { color: statusInfo.color }]}>
             {statusInfo.label}
           </Text>
+          {riderLocation && distance && (
+            <View style={styles.distanceContainer}>
+              <Ionicons name="navigate-circle" size={16} color="#2196F3" />
+              <Text style={styles.distanceText}>{distance} • ETA: {eta}</Text>
+            </View>
+          )}
         </View>
       </View>
 
