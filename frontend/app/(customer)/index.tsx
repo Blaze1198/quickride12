@@ -124,6 +124,14 @@ export default function HomeScreen() {
     return () => clearInterval(interval);
   }, [currentBannerIndex]);
 
+  // Load map when modal opens
+  useEffect(() => {
+    if (showLocationPicker && Platform.OS === 'web') {
+      console.log('🗺️ Modal opened, loading map...');
+      loadMapPicker();
+    }
+  }, [showLocationPicker]);
+
   const goToNextSlide = () => {
     const nextIndex = (currentBannerIndex + 1) % banners.length;
     animateSlide(nextIndex);
