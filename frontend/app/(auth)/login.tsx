@@ -241,43 +241,75 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 36,
     fontWeight: 'bold',
-    color: '#FF6B6B',
+    color: '#2196F3',
     marginTop: 16,
   },
   subtitle: {
     fontSize: 16,
     color: '#666',
     marginTop: 8,
+    textAlign: 'center',
   },
-  roleSection: {
-    marginBottom: 32,
+  buttonsSection: {
+    marginTop: 32,
   },
-  roleTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#333',
+  signInButton: {
+    backgroundColor: '#2196F3',
+    padding: 18,
+    borderRadius: 12,
+    alignItems: 'center',
     marginBottom: 16,
   },
-  roleCard: {
+  signInButtonText: {
+    color: '#FFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  registerButton: {
+    backgroundColor: '#FFF',
+    padding: 18,
+    borderRadius: 12,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#2196F3',
+    marginBottom: 24,
+  },
+  registerButtonText: {
+    color: '#2196F3',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  divider: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 20,
-    borderRadius: 16,
-    borderWidth: 2,
-    borderColor: '#E0E0E0',
-    marginBottom: 12,
+    marginVertical: 24,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#E0E0E0',
+  },
+  dividerText: {
+    marginHorizontal: 16,
+    color: '#999',
+    fontSize: 14,
+  },
+  googleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#FFF',
+    padding: 18,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    gap: 12,
   },
-  roleCardSelected: {
-    borderColor: '#FF6B6B',
-    backgroundColor: '#FFF5F5',
-  },
-  roleCardTitle: {
-    fontSize: 18,
+  googleButtonText: {
+    fontSize: 16,
     fontWeight: '600',
     color: '#333',
-    marginLeft: 16,
-    flex: 1,
+  },
   },
   roleCardTitleSelected: {
     color: '#FF6B6B',
