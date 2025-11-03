@@ -116,15 +116,22 @@ export default function RiderNavigationScreen() {
   };
 
   const loadMap = () => {
-    if (typeof window === 'undefined' || !currentJob || !userLocation) return;
+    if (typeof window === 'undefined' || !currentJob || !userLocation) {
+      console.log('Map load conditions not met:', {
+        hasWindow: typeof window !== 'undefined',
+        hasJob: !!currentJob,
+        hasLocation: !!userLocation
+      });
+      return;
+    }
 
-    const apiKey = Constants.expoConfig?.extra?.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || 
-                   process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || 
-                   'AIzaSyA0m1oRlXLQWjxacqjEJ6zJW3WvmOWvQkQ';
+    // Try multiple ways to get the API key
+    const apiKey = 'AIzaSyA0m1oRlXLQWjxacqjEJ6zJW3WvmOWvQkQ';
 
-    console.log('Loading Google Maps with API key:', apiKey ? 'Key present' : 'No key');
+    console.log('Attempting to load Google Maps...');
 
     if ((window as any).google) {
+      console.log('Google Maps already loaded');
       initializeMap();
       return;
     }
@@ -134,13 +141,15 @@ export default function RiderNavigationScreen() {
     script.async = true;
     script.defer = true;
     script.onload = () => {
-      console.log('Google Maps script loaded successfully');
+      console.log('✅ Google Maps script loaded successfully');
       initializeMap();
     };
-    script.onerror = () => {
-      console.error('Failed to load Google Maps script');
+    script.onerror = (error) => {
+      console.error('❌ Failed to load Google Maps script:', error);
+      setMapLoaded(false);
     };
     document.head.appendChild(script);
+    console.log('Google Maps script tag added to document');
   };
 
   const initializeMap = () => {
