@@ -228,6 +228,16 @@ export default function RiderNavigationScreen() {
 
     console.log('✅ Initializing map with:', { currentJob: currentJob.type, userLocation });
 
+    // Helper function to safely parse coordinates
+    const parseCoordinate = (value: any): number | null => {
+      if (typeof value === 'number' && !isNaN(value)) return value;
+      if (typeof value === 'string') {
+        const parsed = parseFloat(value);
+        return isNaN(parsed) ? null : parsed;
+      }
+      return null;
+    };
+
     const map = new google.maps.Map(mapRef.current, {
       center: userLocation,
       zoom: 14,
@@ -266,18 +276,19 @@ export default function RiderNavigationScreen() {
       const deliveryLocation = currentJob.data.delivery_address;
       
       if (restaurantLocation) {
-        pickupLocation = {
-          lat: restaurantLocation.latitude,
-          lng: restaurantLocation.longitude,
-        };
+        const lat = parseCoordinate(restaurantLocation.latitude);
+        const lng = parseCoordinate(restaurantLocation.longitude);
         
-        // Restaurant marker (pickup)
-        new google.maps.Marker({
-          position: pickupLocation,
-          map,
-          icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 10,
+        if (lat !== null && lng !== null) {
+          pickupLocation = { lat, lng };
+          
+          // Restaurant marker (pickup)
+          new google.maps.Marker({
+            position: pickupLocation,
+            map,
+            icon: {
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 10,
             fillColor: '#4CAF50',
             fillOpacity: 1,
             strokeColor: '#FFF',
