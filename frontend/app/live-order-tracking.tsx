@@ -33,12 +33,19 @@ export default function LiveOrderTrackingScreen() {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [riderLocation, setRiderLocation] = useState<any>(null);
+  const [distance, setDistance] = useState<string>('');
+  const [eta, setEta] = useState<string>('');
 
   useEffect(() => {
     if (orderId) {
       fetchOrder();
-      // Auto-refresh every 5 seconds
-      const interval = setInterval(fetchOrder, 5000);
+      fetchRiderLocation();
+      // Auto-refresh every 3 seconds for real-time updates
+      const interval = setInterval(() => {
+        fetchOrder();
+        fetchRiderLocation();
+      }, 3000);
       return () => clearInterval(interval);
     }
   }, [orderId]);
