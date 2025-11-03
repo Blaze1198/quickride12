@@ -387,6 +387,20 @@ export default function CheckoutScreen() {
                   multiline
                 />
               </View>
+              {Platform.OS === 'web' && (
+                <TouchableOpacity 
+                  style={styles.mapButton}
+                  onPress={openMapPicker}
+                >
+                  <Ionicons name="map" size={20} color="#FFF" />
+                  <Text style={styles.mapButtonText}>Select Location on Map</Text>
+                </TouchableOpacity>
+              )}
+              {latitude && longitude && (
+                <Text style={styles.coordinatesText}>
+                  📍 Lat: {parseFloat(latitude).toFixed(6)}, Lng: {parseFloat(longitude).toFixed(6)}
+                </Text>
+              )}
             </View>
 
             <View style={styles.inputGroup}>
