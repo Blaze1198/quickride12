@@ -17,6 +17,8 @@ import api from '../../utils/api';
 export default function RiderNavigationScreen() {
   const router = useRouter();
   const mapRef = useRef<any>(null);
+  const mapInstanceRef = useRef<any>(null); // Track if map is already initialized
+  const currentJobIdRef = useRef<string | null>(null); // Track current job ID
   
   const [currentJob, setCurrentJob] = useState<any>(null);
   const [loading, setLoading] = useState(true);
