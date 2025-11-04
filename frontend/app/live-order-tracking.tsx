@@ -386,12 +386,13 @@ export default function LiveOrderTrackingScreen() {
     }
   };
 
-  // Update marker positions without re-initializing the entire map
+  // Update map with new rider location and redraw route
   const updateMapMarkers = () => {
-    console.log('🔄 Updating map markers with new rider location');
-    // For now, just log. The map already updates via initializeMap
-    // In a production app, you'd update existing marker positions here
-    // to avoid re-creating all markers
+    console.log('🔄 Updating map with new rider location - redrawing route');
+    if (riderLocation && mapInstanceRef.current) {
+      // Re-initialize map to redraw markers and route with updated location
+      loadMap();
+    }
   };
 
   const getStatusInfo = (status: string) => {
