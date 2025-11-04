@@ -248,7 +248,10 @@ export default function LiveOrderTrackingScreen() {
       ],
     });
 
+    // Store map instance to prevent re-initialization
+    mapInstanceRef.current = map;
     setMapLoaded(true);
+    console.log('✅ Map initialized successfully');
 
     // Delivery location marker (Customer - Red)
     if (order.delivery_address) {
