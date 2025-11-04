@@ -58,12 +58,23 @@ export default function RestaurantOrdersScreen() {
   };
 
   const updateOrderStatus = async (orderId: string, status: string) => {
+    console.log('🔄 updateOrderStatus called');
+    console.log('   Order ID:', orderId);
+    console.log('   New Status:', status);
+    
     try {
-      await api.put(`/orders/${orderId}/status`, { status });
+      console.log('📤 Sending PUT request to /orders/' + orderId + '/status');
+      const response = await api.put(`/orders/${orderId}/status`, { status });
+      console.log('✅ Status update response:', response.data);
       fetchOrders();
-    } catch (error) {
-      console.error('Error updating order status:', error);
-      Alert.alert('Error', 'Failed to update order status');
+    } catch (error: any) {
+      console.error('❌ Error updating order status:', error);
+      console.error('   Error details:', error.response?.data);
+      if (Platform.OS === 'web') {
+        window.alert('Error: Failed to update order status - ' + (error.response?.data?.detail || error.message));
+      } else {
+        Alert.alert('Error', 'Failed to update order status');
+      }
     }
   };
 
