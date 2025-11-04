@@ -172,9 +172,9 @@ export default function LiveOrderTrackingScreen() {
       return;
     }
 
-    // Create new script tag
+    // Create new script tag with geometry library for route calculations
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places,geometry`;
     script.async = true;
     script.defer = true;
     
