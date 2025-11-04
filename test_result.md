@@ -157,11 +157,11 @@ backend:
 frontend:
   - task: "Rider Navigation Screen with Live Directions"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/app/(rider)/navigation.tsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
@@ -184,6 +184,35 @@ frontend:
           - Map now only initializes when component mounts or when currentJob changes
           - Location updates continue every 5 seconds but no longer trigger full map re-initialization
           - This should significantly reduce console requests and improve performance
+      - working: false
+        agent: "testing"
+        comment: |
+          ❌ CRITICAL AUTHENTICATION ISSUE: Rider navigation screen cannot be accessed due to frontend auth store not being properly initialized.
+          
+          TESTING RESULTS:
+          - Backend APIs working correctly (✅ /api/rider/current-order returns job data with Bearer token)
+          - Created test rider account and order successfully
+          - Session token authentication works at API level
+          - Google Maps API loads correctly when script is injected
+          
+          ROOT CAUSE:
+          - Frontend auth store (/app/frontend/store/authStore.ts) is not initialized with session token from localStorage
+          - App redirects to login page even with valid session token in localStorage
+          - The _layout.tsx checks for user in auth store, but store is empty on page load
+          
+          CONSOLE ERRORS:
+          - "Failed to load resource: 401" on /api/rider/current-order (auth header not set)
+          - App continuously redirects to /login instead of staying on /(rider)/navigation
+          
+          IMPACT:
+          - Map cannot be tested because rider navigation screen is inaccessible
+          - Performance fix cannot be verified due to authentication blocking access
+          - All rider navigation features are blocked by this auth issue
+          
+          REQUIRED FIX:
+          - Initialize auth store with session token from localStorage on app startup
+          - Ensure setAuthToken() is called when session token exists
+          - Fix the auth flow to properly authenticate users with existing session tokens
 
   - task: "Customer Live Order Tracking"
     implemented: true
