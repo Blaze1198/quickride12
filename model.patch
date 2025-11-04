@@ -1176,7 +1176,7 @@ index a32c10a..e69de29 100644
 -------------------+      🔧 TESTING INFRASTRUCTURE:
 -------------------+      • Created comprehensive backend_test.py with 100% success rate
 -------------------+      • Tested with real restaurant data and realistic scenarios
--------------------+      • All APIs responding correctly at https://quickride-maps.preview.emergentagent.com/api
+-------------------+      • All APIs responding correctly at https://livemap-service.preview.emergentagent.com/api
 -------------------+      
 -------------------+      ✅ RECOMMENDATION: Backend APIs are production-ready. Main agent can now summarize and finish the implementation.
 -------------------\ No newline at end of file

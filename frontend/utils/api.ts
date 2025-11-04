@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Constants from 'expo-constants';
 
-const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://quickride-maps.preview.emergentagent.com';
+const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://livemap-service.preview.emergentagent.com';
 
 export const api = axios.create({
   baseURL: `${API_URL}/api`,
