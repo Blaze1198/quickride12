@@ -149,12 +149,12 @@ class MenuItem(BaseModel):
 
 class Restaurant(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    owner_id: str
+    owner_id: Optional[str] = None
     name: str
     description: Optional[str] = None
     image_base64: Optional[str] = None
     location: Location
-    phone: str
+    phone: Optional[str] = None
     menu: List[MenuItem] = []
     operating_hours: Optional[str] = "9:00 AM - 10:00 PM"
     rating: float = 0.0
