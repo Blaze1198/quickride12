@@ -423,18 +423,17 @@ export default function RiderNavigationScreen() {
         if (lat !== null && lng !== null) {
           pickupLocation = { lat, lng };
           
+          // Customer pickup marker - Person icon
           new google.maps.Marker({
             position: pickupLocation,
             map,
             icon: {
-              path: google.maps.SymbolPath.CIRCLE,
-              scale: 10,
-              fillColor: '#4CAF50',
-              fillOpacity: 1,
-              strokeColor: '#FFF',
-              strokeWeight: 2,
+              url: createIconUrl('👤', '#4CAF50'),
+              scaledSize: new google.maps.Size(48, 48),
+              anchor: new google.maps.Point(24, 24),
             },
             title: 'Pickup: ' + currentJob.data.customer_name,
+            zIndex: 900,
           });
         }
       }
@@ -446,18 +445,17 @@ export default function RiderNavigationScreen() {
         if (lat !== null && lng !== null) {
           dropoffLocation = { lat, lng };
           
+          // Destination marker - Flag/Pin icon
           new google.maps.Marker({
             position: dropoffLocation,
             map,
             icon: {
-              path: google.maps.SymbolPath.CIRCLE,
-              scale: 10,
-              fillColor: '#FF6B6B',
-              fillOpacity: 1,
-              strokeColor: '#FFF',
-              strokeWeight: 2,
+              url: createIconUrl('📍', '#FF6B6B'),
+              scaledSize: new google.maps.Size(48, 48),
+              anchor: new google.maps.Point(24, 24),
             },
             title: 'Dropoff: ' + dropoff.address,
+            zIndex: 800,
           });
         }
       }
