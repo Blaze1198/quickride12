@@ -239,28 +239,42 @@ export default function RiderNavigationScreen() {
   const initializeMap = () => {
     const google = (window as any).google;
     if (!google) {
-      console.error('❌ Google Maps API not available after script load');
+      console.error('❌ Google Maps API not available');
       setMapLoaded(false);
+      setMapError('Google Maps API not loaded');
       return;
     }
     if (!mapRef.current) {
       console.error('❌ Map container ref not available');
+      setTimeout(() => initializeMap(), 200); // Retry
       return;
     }
-    if (!currentJob || !userLocation) {
-      console.error('❌ Missing data for map initialization', { currentJob: !!currentJob, userLocation: !!userLocation });
+    if (!currentJob) {
+      console.error('❌ No current job available');
+      setMapError('No active job found');
+      return;
+    }
+    if (!userLocation) {
+      console.error('❌ User location not available');
+      setMapError('Unable to get your location');
       return;
     }
 
-    console.log('✅ Initializing map with:', { currentJob: currentJob.type, userLocation });
+    console.log('✅ Initializing map with:', { 
+      jobType: currentJob.type, 
+      userLocation,
+      jobData: currentJob.data 
+    });
 
     // Helper function to safely parse coordinates
     const parseCoordinate = (value: any): number | null => {
+      if (value === null || value === undefined) return null;
       if (typeof value === 'number' && !isNaN(value)) return value;
       if (typeof value === 'string') {
-        const parsed = parseFloat(value);
+        const parsed = parseFloat(value.trim());
         return isNaN(parsed) ? null : parsed;
       }
+      console.warn('⚠️ Unexpected coordinate type:', typeof value, value);
       return null;
     };
 
@@ -270,14 +284,15 @@ export default function RiderNavigationScreen() {
     
     if (userLat === null || userLng === null) {
       console.error('❌ Invalid user location coordinates:', userLocation);
-      setMapError('Unable to determine your location');
+      setMapError('Invalid location coordinates');
       return;
     }
 
     const userPosition = { lat: userLat, lng: userLng };
     console.log('✅ User position:', userPosition);
 
-    const map = new google.maps.Map(mapRef.current, {
+    try {
+      const map = new google.maps.Map(mapRef.current, {
       center: userPosition,
       zoom: 14,
       styles: [
