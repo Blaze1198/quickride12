@@ -44,6 +44,13 @@ export default function RestaurantProfileScreen() {
   const [formOperatingHours, setFormOperatingHours] = useState('');
   const [formAddress, setFormAddress] = useState('');
   const [formImage, setFormImage] = useState<string | null>(null);
+  
+  // Location modal state
+  const [showLocationModal, setShowLocationModal] = useState(false);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [tempLatitude, setTempLatitude] = useState(14.5995);
+  const [tempLongitude, setTempLongitude] = useState(120.9842);
+  const mapRef = useRef<any>(null);
 
   useEffect(() => {
     fetchRestaurant();
