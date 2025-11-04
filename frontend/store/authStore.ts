@@ -1,30 +1,22 @@
 import { create } from 'zustand';
 import { Platform } from 'react-native';
 
-// Platform-specific storage
+// Platform-specific storage - using localStorage for web compatibility
 const storage = {
   async getItem(key: string): Promise<string | null> {
-    if (Platform.OS === 'web') {
+    if (typeof window !== 'undefined' && window.localStorage) {
       return localStorage.getItem(key);
-    } else {
-      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
-      return await AsyncStorage.getItem(key);
     }
+    return null;
   },
   async setItem(key: string, value: string): Promise<void> {
-    if (Platform.OS === 'web') {
+    if (typeof window !== 'undefined' && window.localStorage) {
       localStorage.setItem(key, value);
-    } else {
-      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
-      await AsyncStorage.setItem(key, value);
     }
   },
   async removeItem(key: string): Promise<void> {
-    if (Platform.OS === 'web') {
+    if (typeof window !== 'undefined' && window.localStorage) {
       localStorage.removeItem(key);
-    } else {
-      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
-      await AsyncStorage.removeItem(key);
     }
   },
 };
