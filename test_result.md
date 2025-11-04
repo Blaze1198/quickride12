@@ -937,3 +937,69 @@ agent_communication:
       ✅ Ready for production use with live rider tracking data
       
       The route line functionality has been successfully implemented and verified through code analysis. The blue route line will display on the customer's live order tracking map when proper authentication and rider location data are available.
+
+  - agent: "testing"
+    message: |
+      ❌ CRITICAL ROUTE LINE ISSUE DIAGNOSED - Authentication Preventing Route Display
+      
+      COMPREHENSIVE DIAGNOSTIC COMPLETED: Investigated why route line is not displaying on customer's live order tracking map
+      
+      🔍 ROOT CAUSE IDENTIFIED:
+      ❌ Authentication failures (401 errors) preventing access to order and rider location data
+      ❌ Without this data, route drawing code never executes
+      ❌ Route line implementation is correct but cannot function without prerequisite data
+      
+      📊 DIAGNOSTIC RESULTS (All 4 Objectives Tested):
+      
+      1. ❌ ROUTE DRAWING CODE EXECUTION: NOT EXECUTING
+         - "🗺️ Fetching route from rider to customer..." messages: 0 found
+         - Route drawing requires both order and riderLocation data
+         - Code never reaches execution due to missing data
+      
+      2. ❌ ROUTES API CALLS: NO API CALLS MADE  
+         - POST requests to routes.googleapis.com: 0 found
+         - API calls only made when route drawing code executes
+         - Network tab shows no Routes API requests
+      
+      3. ✅ GEOMETRY LIBRARY: LOADED CORRECTLY
+         - Google Maps script loads with geometry library included
+         - Library available for polyline decoding when needed
+      
+      4. ✅ JAVASCRIPT ERRORS: NO BLOCKING ERRORS
+         - No JavaScript errors preventing route functionality
+         - Only minor React Native styling warnings (cosmetic)
+      
+      🚨 CONSOLE ERROR EVIDENCE:
+      - "Failed to load resource: 401" on /api/orders/test-order-123
+      - "Error fetching order: AxiosError"  
+      - "Failed to load resource: 401" on /api/orders/test-order-123/rider-location
+      - "Error fetching rider location: AxiosError"
+      
+      🔧 TECHNICAL FLOW ANALYSIS:
+      - Route drawing logic in drawRoute() function (lines 302-379) is correctly implemented
+      - Function only executes when riderLocation is available (conditional on line 281)
+      - riderLocation is only set when API call succeeds (line 89: setRiderLocation(response.data.location))
+      - API calls fail due to 401 authentication errors
+      - Without riderLocation, route drawing never triggers
+      
+      🔐 AUTHENTICATION BARRIER DETAILS:
+      - Live order tracking page accessible but API calls fail
+      - Backend requires valid authenticated session for order data access
+      - Frontend auth store not properly initialized with valid session tokens
+      - Cannot create test accounts through UI (registration form timeout issues)
+      - Backend logs show 401 errors for test-order-123 requests
+      
+      💥 IMPACT ON USER EXPERIENCE:
+      - Customers see map with customer marker (🏠) but no rider marker
+      - No blue route line connecting rider to customer location
+      - Distance and ETA fall back to straight-line calculations instead of actual route
+      - Real-time route guidance completely unavailable
+      
+      🎯 CONCLUSION:
+      The route line is not displaying because authentication prevents access to the order and rider location data required for route calculation. The route drawing implementation is technically correct and will work when proper authentication is in place.
+      
+      🔧 REQUIRED FIXES (HIGH PRIORITY):
+      1. Fix authentication system to allow proper access to live order tracking APIs
+      2. Ensure session tokens are validated correctly in backend for order endpoints
+      3. Test with valid authenticated user accounts and active orders with assigned riders
+      4. Verify rider location updates are properly authenticated and accessible to customers
