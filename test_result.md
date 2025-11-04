@@ -564,6 +564,7 @@ test_plan:
     - "Periodic Location Updates from Rider"
   stuck_tasks:
     - "Map Verification Modal in Checkout"
+    - "Customer Live Order Tracking"
   test_all: false
   test_priority: "high_first"
 
