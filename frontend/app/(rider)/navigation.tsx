@@ -63,10 +63,22 @@ export default function RiderNavigationScreen() {
     return () => clearInterval(updateInterval);
   }, [currentJob?.id]); // Only re-run when job changes
 
-  // Initialize map only when job changes, NOT when location updates
+  // Initialize map only once when job ID changes
   useEffect(() => {
+    const jobId = currentJob?.data?.id;
+    
+    // Only load map if:
+    // 1. We have a current job
+    // 2. Platform is web
+    // 3. Job ID has changed OR map hasn't been initialized yet
     if (currentJob && Platform.OS === 'web') {
-      loadMap();
+      if (!mapInstanceRef.current || currentJobIdRef.current !== jobId) {
+        console.log('🗺️ Job changed or first load, initializing map for job:', jobId);
+        currentJobIdRef.current = jobId;
+        loadMap();
+      } else {
+        console.log('⏭️ Skipping map re-initialization, same job ID:', jobId);
+      }
     }
   }, [currentJob]); // Removed userLocation from dependencies to prevent map refresh
 
