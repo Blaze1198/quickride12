@@ -319,6 +319,8 @@ export default function RiderNavigationScreen() {
       ],
     });
 
+    // Store map instance in ref to prevent re-initialization
+    mapInstanceRef.current = map;
     setMapLoaded(true);
     console.log('✅ Map initialized successfully');
 
