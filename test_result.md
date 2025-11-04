@@ -261,6 +261,35 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: |
+      LATEST UPDATE: Fixed rider navigation map refresh performance issue
+      
+      PROBLEM IDENTIFIED:
+      - Map was continuously refreshing every 5 seconds
+      - Excessive console requests and poor user experience
+      
+      ROOT CAUSE:
+      - useEffect hook on line 68 had both currentJob AND userLocation as dependencies
+      - userLocation updates every 5 seconds, triggering full map re-initialization
+      
+      FIX APPLIED:
+      - Removed userLocation from useEffect dependencies
+      - Map now only initializes when currentJob changes (not on every location update)
+      - Location updates to backend continue every 5 seconds (unchanged)
+      - This prevents unnecessary map re-initialization while maintaining functionality
+      
+      FILE MODIFIED:
+      - /app/frontend/app/(rider)/navigation.tsx (line 68)
+      
+      TESTING NEEDED:
+      - Verify map loads correctly once when rider has active job
+      - Confirm map does NOT refresh continuously (check browser console)
+      - Verify route display is visible and accurate
+      - Confirm distance and ETA are calculated and displayed
+      - Test that rider location updates still work (every 5 seconds to backend)
+      - Verify status update buttons work correctly
+
+  - agent: "main"
+    message: |
       I have implemented comprehensive live navigation and tracking features for both riders and customers:
       
       BACKEND CHANGES:
