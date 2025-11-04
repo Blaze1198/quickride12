@@ -387,11 +387,87 @@ export default function LiveOrderTrackingScreen() {
   };
 
   // Update map with new rider location and redraw route
-  const updateMapMarkers = () => {
-    console.log('🔄 Updating map with new rider location - redrawing route');
-    if (riderLocation && mapInstanceRef.current) {
-      // Re-initialize map to redraw markers and route with updated location
-      loadMap();
+  const updateMapMarkers = async () => {
+    console.log('🔄 Updating map with new rider location');
+    
+    if (!riderLocation || !order || !mapInstanceRef.current) {
+      console.log('⚠️ Cannot update route - missing data');
+      return;
+    }
+
+    try {
+      const apiKey = 'AIzaSyA0m1oRlXLQWjxacqjEJ6zJW3WvmOWvQkQ';
+      
+      console.log('🗺️ Fetching updated route from rider to customer...');
+      
+      // Use Google Maps Routes API (REST)
+      const response = await fetch(
+        `https://routes.googleapis.com/directions/v2:computeRoutes`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Goog-Api-Key': apiKey,
+            'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline'
+          },
+          body: JSON.stringify({
+            origin: {
+              location: {
+                latLng: {
+                  latitude: riderLocation.latitude,
+                  longitude: riderLocation.longitude
+                }
+              }
+            },
+            destination: {
+              location: {
+                latLng: {
+                  latitude: order.delivery_address.latitude,
+                  longitude: order.delivery_address.longitude
+                }
+              }
+            },
+            travelMode: 'DRIVE',
+            routingPreference: 'TRAFFIC_AWARE'
+          })
+        }
+      );
+
+      if (!response.ok) {
+        console.error('❌ Routes API error:', response.status);
+        return;
+      }
+
+      const data = await response.json();
+      
+      if (data.routes && data.routes.length > 0) {
+        const route = data.routes[0];
+        console.log('✅ Route updated successfully');
+        
+        // Decode polyline and draw route (this will replace the old route)
+        if ((window as any).google && (window as any).google.maps && (window as any).google.maps.geometry) {
+          const path = (window as any).google.maps.geometry.encoding.decodePath(route.polyline.encodedPolyline);
+          
+          new (window as any).google.maps.Polyline({
+            path: path,
+            geodesic: true,
+            strokeColor: '#2196F3',
+            strokeOpacity: 0.8,
+            strokeWeight: 4,
+            map: mapInstanceRef.current
+          });
+
+          // Update distance and ETA
+          const distanceKm = (route.distanceMeters / 1000).toFixed(1);
+          const durationMin = Math.ceil(parseInt(route.duration.replace('s', '')) / 60);
+          setDistance(`${distanceKm} km`);
+          setEta(`${durationMin} min`);
+          
+          console.log(`📍 Updated route: ${distanceKm}km, ETA: ${durationMin}min`);
+        }
+      }
+    } catch (error) {
+      console.error('❌ Error updating route:', error);
     }
   };
 
