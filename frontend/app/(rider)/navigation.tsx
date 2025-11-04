@@ -61,11 +61,12 @@ export default function RiderNavigationScreen() {
     return () => clearInterval(updateInterval);
   }, [currentJob?.id]); // Only re-run when job changes
 
+  // Initialize map only when job changes, NOT when location updates
   useEffect(() => {
     if (currentJob && Platform.OS === 'web') {
       loadMap();
     }
-  }, [currentJob, userLocation]);
+  }, [currentJob]); // Removed userLocation from dependencies to prevent map refresh
 
   const getUserLocation = () => {
     if (typeof navigator !== 'undefined' && navigator.geolocation) {
