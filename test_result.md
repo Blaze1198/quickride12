@@ -175,6 +175,15 @@ frontend:
           - Status update buttons for order/ride progression
           - Differentiates between restaurant pickup and customer delivery
           - Color-coded markers (green=pickup, red=dropoff, blue=rider)
+      - working: "NA"
+        agent: "main"
+        comment: |
+          PERFORMANCE FIX: Fixed map continuously refreshing issue
+          - Root cause: useEffect dependency on userLocation was triggering map re-initialization every 5 seconds
+          - Solution: Removed userLocation from useEffect dependencies (line 68)
+          - Map now only initializes when component mounts or when currentJob changes
+          - Location updates continue every 5 seconds but no longer trigger full map re-initialization
+          - This should significantly reduce console requests and improve performance
 
   - task: "Customer Live Order Tracking"
     implemented: true
