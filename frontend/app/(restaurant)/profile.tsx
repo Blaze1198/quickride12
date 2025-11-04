@@ -228,6 +228,104 @@ export default function RestaurantProfileScreen() {
       window.alert(`Location updated to: ${tempLatitude.toFixed(6)}, ${tempLongitude.toFixed(6)}`);
     }
     setShowLocationModal(false);
+    setSearchQuery('');
+    setSearchResults([]);
+  };
+
+  // Search location using Google Places
+  const searchLocation = async (query: string) => {
+    if (!query.trim() || query.length < 3) {
+      setSearchResults([]);
+      return;
+    }
+
+    setSearching(true);
+    try {
+      if (Platform.OS === 'web') {
+        // Ensure Google Maps is loaded
+        const google = await loadGoogleMapsScript();
+        
+        const service = new google.maps.places.PlacesService(document.createElement('div'));
+        
+        const request = {
+          query: query,
+          fields: ['name', 'formatted_address', 'geometry'],
+        };
+
+        service.textSearch(request, (results: any, status: any) => {
+          if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+            setSearchResults(results.slice(0, 5));
+            setSearching(false);
+          } else if (status === google.maps.places.PlacesServiceStatus.ZERO_RESULTS) {
+            setSearchResults([]);
+            setSearching(false);
+          } else {
+            console.error('Places API error:', status);
+            setSearchResults([]);
+            setSearching(false);
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error searching location:', error);
+      setSearching(false);
+    }
+  };
+
+  // Load Google Maps script
+  const loadGoogleMapsScript = () => {
+    return new Promise((resolve, reject) => {
+      if (typeof window === 'undefined') {
+        reject('Not in browser environment');
+        return;
+      }
+
+      if ((window as any).google && (window as any).google.maps) {
+        resolve((window as any).google);
+        return;
+      }
+
+      const script = document.createElement('script');
+      const apiKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || 'AIzaSyDJqsXxZXuu808lFZXARvy4rd0xktuqwJQ';
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+      script.async = true;
+      script.defer = true;
+      
+      script.onload = () => {
+        if ((window as any).google) {
+          resolve((window as any).google);
+        } else {
+          reject('Google Maps API failed to load');
+        }
+      };
+      
+      script.onerror = () => reject('Failed to load Google Maps script');
+      document.head.appendChild(script);
+    });
+  };
+
+  // Select search result
+  const selectSearchResult = async (place: any) => {
+    const lat = place.geometry.location.lat();
+    const lng = place.geometry.location.lng();
+    
+    setTempLatitude(lat);
+    setTempLongitude(lng);
+    setFormAddress(place.formatted_address);
+    setSearchQuery('');
+    setSearchResults([]);
+    
+    // Update map center
+    if (mapRef.current && (window as any).google) {
+      const google = (window as any).google;
+      const map = new google.maps.Map(mapRef.current, {
+        center: { lat, lng },
+        zoom: 16,
+      });
+      
+      // Re-initialize map with new location
+      setTimeout(() => initializeMap(), 100);
+    }
   };
 
   const pickImage = async () => {
