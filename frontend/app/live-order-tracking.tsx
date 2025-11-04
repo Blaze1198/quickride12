@@ -298,34 +298,85 @@ export default function LiveOrderTrackingScreen() {
         animation: google.maps.Animation.DROP,
       });
 
-      // Draw route from rider to customer
-      const directionsService = new google.maps.DirectionsService();
-      const directionsRenderer = new google.maps.DirectionsRenderer({
-        map: map,
-        suppressMarkers: true,
-        polylineOptions: {
-          strokeColor: '#2196F3',
-          strokeWeight: 4,
-          strokeOpacity: 0.8,
-        },
-      });
+      // Draw route from rider to customer using Routes API
+      const drawRoute = async () => {
+        try {
+          const apiKey = 'AIzaSyA0m1oRlXLQWjxacqjEJ6zJW3WvmOWvQkQ';
+          const origin = `${riderLocation.latitude},${riderLocation.longitude}`;
+          const destination = `${order.delivery_address.latitude},${order.delivery_address.longitude}`;
+          
+          console.log('🗺️ Fetching route from rider to customer...');
+          
+          // Use Google Maps Routes API (REST)
+          const response = await fetch(
+            `https://routes.googleapis.com/directions/v2:computeRoutes`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-Goog-Api-Key': apiKey,
+                'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline'
+              },
+              body: JSON.stringify({
+                origin: {
+                  location: {
+                    latLng: {
+                      latitude: riderLocation.latitude,
+                      longitude: riderLocation.longitude
+                    }
+                  }
+                },
+                destination: {
+                  location: {
+                    latLng: {
+                      latitude: order.delivery_address.latitude,
+                      longitude: order.delivery_address.longitude
+                    }
+                  }
+                },
+                travelMode: 'DRIVE',
+                routingPreference: 'TRAFFIC_AWARE'
+              })
+            }
+          );
 
-      directionsService.route(
-        {
-          origin: { lat: riderLocation.latitude, lng: riderLocation.longitude },
-          destination: { lat: order.delivery_address.latitude, lng: order.delivery_address.longitude },
-          travelMode: google.maps.TravelMode.DRIVING,
-        },
-        (result: any, status: any) => {
-          if (status === 'OK' && result) {
-            directionsRenderer.setDirections(result);
-            // Get accurate ETA from Google
-            const leg = result.routes[0].legs[0];
-            setDistance(leg.distance.text);
-            setEta(leg.duration.text);
+          if (!response.ok) {
+            console.error('❌ Routes API error:', response.status);
+            return;
           }
+
+          const data = await response.json();
+          
+          if (data.routes && data.routes.length > 0) {
+            const route = data.routes[0];
+            console.log('✅ Route fetched successfully');
+            
+            // Decode polyline and draw route
+            const path = google.maps.geometry.encoding.decodePath(route.polyline.encodedPolyline);
+            
+            new google.maps.Polyline({
+              path: path,
+              geodesic: true,
+              strokeColor: '#2196F3',
+              strokeOpacity: 0.8,
+              strokeWeight: 4,
+              map: map
+            });
+
+            // Update distance and ETA
+            const distanceKm = (route.distanceMeters / 1000).toFixed(1);
+            const durationMin = Math.ceil(parseInt(route.duration.replace('s', '')) / 60);
+            setDistance(`${distanceKm} km`);
+            setEta(`${durationMin} min`);
+            
+            console.log(`📍 Route: ${distanceKm}km, ETA: ${durationMin}min`);
+          }
+        } catch (error) {
+          console.error('❌ Error drawing route:', error);
         }
-      );
+      };
+
+      drawRoute();
 
       // Fit bounds to show both markers
       const bounds = new google.maps.LatLngBounds();
