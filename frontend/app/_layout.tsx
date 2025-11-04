@@ -6,14 +6,17 @@ import { View, ActivityIndicator } from 'react-native';
 import { NavigationThemeProvider } from '../components/NavigationThemeProvider';
 
 export default function RootLayout() {
-  const { user, isLoading, setUser, setLoading, sessionToken } = useAuthStore();
+  const { user, isLoading, setUser, setLoading, sessionToken, initializeAuth } = useAuthStore();
   const segments = useSegments();
   const router = useRouter();
 
   useEffect(() => {
-    // Check for existing session
+    // Initialize auth store with persisted data
     const checkSession = async () => {
       try {
+        // First, load persisted auth data from AsyncStorage
+        await initializeAuth();
+        
         // Check URL for session_id from Emergent Auth
         if (typeof window !== 'undefined') {
           const hash = window.location.hash;
@@ -23,17 +26,16 @@ export default function RootLayout() {
           if (sessionId) {
             // Process session_id
             // This will be handled by the login screen
-            setLoading(false);
             return;
           }
         }
         
-        // Check if we have a session token
-        if (sessionToken) {
-          setAuthToken(sessionToken);
+        // Set auth token in API if we have one
+        const currentToken = useAuthStore.getState().sessionToken;
+        if (currentToken) {
+          setAuthToken(currentToken);
+          console.log('✅ Session token loaded and set in API');
         }
-        
-        setLoading(false);
       } catch (error) {
         console.error('Session check error:', error);
         setLoading(false);
