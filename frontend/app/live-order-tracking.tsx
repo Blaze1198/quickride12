@@ -335,6 +335,14 @@ export default function LiveOrderTrackingScreen() {
     }
   };
 
+  // Update marker positions without re-initializing the entire map
+  const updateMapMarkers = () => {
+    console.log('🔄 Updating map markers with new rider location');
+    // For now, just log. The map already updates via initializeMap
+    // In a production app, you'd update existing marker positions here
+    // to avoid re-creating all markers
+  };
+
   const getStatusInfo = (status: string) => {
     const statusMap: Record<string, { label: string; color: string; icon: string }> = {
       pending: { label: 'Order Received', color: '#FF9800', icon: 'time' },
