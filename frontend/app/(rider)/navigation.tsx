@@ -843,20 +843,13 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
             }, 800);
           }, 200); // 200ms initial delay for comfort
 
-            // STEP 5: Silky-smooth dark mode fade (1800ms, starting immediately with delay)
+            // STEP 5: Silky-smooth dark mode fade (1800ms, starting immediately)
             setTimeout(() => {
+              if (!mapInstanceRef.current) return;
+              
               console.log('🌙 Fading to dark mode - hiding unnecessary markers...');
               
-              const darkModeDuration = 1800;
-              const darkModeStartTime = performance.now();
-
-              const animateDarkMode = (currentTime: number) => {
-                if (!mapInstanceRef.current) return;
-
-                const elapsed = currentTime - darkModeStartTime;
-                const progress = Math.min(elapsed / darkModeDuration, 1);
-                const easedProgress = easeOutQuart(progress);
-
+              // Apply dark mode styles immediately (simplified for compatibility)
               mapInstanceRef.current.setOptions({
                 styles: [
                   // Dark backgrounds
