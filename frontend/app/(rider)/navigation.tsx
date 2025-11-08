@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -7,18 +7,28 @@ import {
   ActivityIndicator,
   Platform,
   Alert,
+  Dimensions,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Constants from 'expo-constants';
 import { Ionicons } from '@expo/vector-icons';
+import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import api from '../../utils/api';
+
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function RiderNavigationScreen() {
   const router = useRouter();
   const mapRef = useRef<any>(null);
   const mapInstanceRef = useRef<any>(null); // Track if map is already initialized
   const currentJobIdRef = useRef<string | null>(null); // Track current job ID
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  
+  // ALL HOOKS AT THE TOP
+  const insets = useSafeAreaInsets();
+  const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
   
   const [currentJob, setCurrentJob] = useState<any>(null);
   const [loading, setLoading] = useState(true);
