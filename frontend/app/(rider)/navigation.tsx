@@ -980,8 +980,17 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
           zIndex: 1999,
         });
       } else {
-        // Update marker position
+        // Update marker position and rotation
         riderMarkerRef.current.setPosition(currentLatLng);
+        
+        // Update arrow rotation to point in direction of travel
+        const icon = riderMarkerRef.current.getIcon();
+        if (icon && typeof icon === 'object') {
+          riderMarkerRef.current.setIcon({
+            ...icon,
+            rotation: bearing,
+          });
+        }
         
         // Update direction cone
         if (directionConeRef.current) {
