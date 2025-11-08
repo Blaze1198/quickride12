@@ -967,13 +967,13 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
               console.log('✅ Dark mode applied');
             }, 0); // Apply dark mode immediately
 
-            console.log('📍 GPS-style navigation mode activated - map will follow your movement');
-            
-            // Speak first instruction if possible
-            if (leg.steps[0]?.instructions) {
-              speakInstruction(leg.steps[0].instructions);
-            }
-          }, 200); // End of main transition orchestration delay
+          console.log('📍 GPS-style navigation mode activated - map will follow your movement');
+          
+          // Speak first instruction if possible
+          if (leg.steps[0]?.instructions) {
+            speakInstruction(leg.steps[0].instructions);
+          }
+        }, 200); // End of main transition orchestration delay
         } else {
           console.error('❌ Directions request failed:', status);
           Alert.alert('Error', 'Could not get directions');
