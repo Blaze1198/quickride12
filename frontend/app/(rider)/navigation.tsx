@@ -712,16 +712,15 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
           console.log('🎬 Starting smooth transition to navigation mode...');
 
           // ========================================
-          // ULTRA-SMOOTH TRANSITION ORCHESTRATION
+          // BUTTERY-SMOOTH TRANSITION ORCHESTRATION
+          // Using requestAnimationFrame for 60fps smoothness
           // ========================================
           
           const currentLocation = { lat: userLocation.latitude, lng: userLocation.longitude };
           
-          // Easing function for smooth, comfortable transitions (ease-in-out)
-          const easeInOutCubic = (t: number): number => {
-            return t < 0.5 
-              ? 4 * t * t * t 
-              : 1 - Math.pow(-2 * t + 2, 3) / 2;
+          // Ultra-gentle easing function (ease-out-quart) - most comfortable
+          const easeOutQuart = (t: number): number => {
+            return 1 - Math.pow(1 - t, 4);
           };
           
           // Calculate initial bearing for heading
@@ -735,97 +734,114 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
             );
           }
 
-          // STEP 1: Immediately start minimizing bottom sheet (400ms animation)
+          // STEP 1: Immediately start minimizing bottom sheet (smooth native animation)
           if (bottomSheetRef.current) {
             bottomSheetRef.current.snapToIndex(0); // Snap to 12% (minimized)
             console.log('📱 Bottom sheet minimizing...');
           }
 
-          // STEP 2: Ultra-smooth zoom-in animation (1500ms with easing)
+          // Small delay before starting map animations (gives user moment to adjust)
           setTimeout(() => {
+            console.log('🎬 Starting ultra-smooth map transition...');
+
+            // STEP 2: Silky-smooth zoom with requestAnimationFrame (2000ms)
             if (mapInstanceRef.current) {
               console.log('🔍 Zooming to navigation view...');
-              mapInstanceRef.current.panTo(currentLocation);
               
-              // Smooth zoom transition with easing
               const startZoom = mapInstanceRef.current.getZoom() || 14;
               const targetZoom = 18;
-              const zoomSteps = 40; // More steps = smoother
-              const zoomDuration = 1500; // Longer duration
-              const zoomInterval = zoomDuration / zoomSteps;
-              let currentZoomStep = 0;
+              const zoomDuration = 2000; // Even longer for comfort
+              const zoomStartTime = performance.now();
 
-              const zoomIntervalId = setInterval(() => {
-                if (currentZoomStep >= zoomSteps || !mapInstanceRef.current) {
-                  clearInterval(zoomIntervalId);
-                  return;
-                }
+              const animateZoom = (currentTime: number) => {
+                if (!mapInstanceRef.current) return;
+
+                const elapsed = currentTime - zoomStartTime;
+                const progress = Math.min(elapsed / zoomDuration, 1);
+                const easedProgress = easeOutQuart(progress);
                 
-                const progress = currentZoomStep / zoomSteps;
-                const easedProgress = easeInOutCubic(progress);
                 const newZoom = startZoom + ((targetZoom - startZoom) * easedProgress);
-                
                 mapInstanceRef.current.setZoom(newZoom);
-                currentZoomStep++;
-              }, zoomInterval);
+                
+                // Continuously pan to keep centered (smooth follow)
+                mapInstanceRef.current.panTo(currentLocation);
+
+                if (progress < 1) {
+                  requestAnimationFrame(animateZoom);
+                } else {
+                  console.log('✅ Zoom complete');
+                }
+              };
+
+              requestAnimationFrame(animateZoom);
             }
-          }, 150); // Start zoom after 150ms
 
-          // STEP 3: Gradually apply tilt (1200ms with easing, starting at 500ms)
-          setTimeout(() => {
-            if (mapInstanceRef.current && mapInstanceRef.current.setTilt) {
-              console.log('📐 Tilting map to 3D view...');
-              const targetTilt = 45;
-              const tiltSteps = 30; // More steps = smoother
-              const tiltDuration = 1200;
-              const tiltInterval = tiltDuration / tiltSteps;
-              let tiltStep = 0;
+            // STEP 3: Gentle tilt animation (1500ms, starting at 400ms)
+            setTimeout(() => {
+              if (mapInstanceRef.current && mapInstanceRef.current.setTilt) {
+                console.log('📐 Tilting map to 3D view...');
+                
+                const targetTilt = 45;
+                const tiltDuration = 1500;
+                const tiltStartTime = performance.now();
 
-              const tiltIntervalId = setInterval(() => {
-                if (tiltStep >= tiltSteps || !mapInstanceRef.current) {
-                  clearInterval(tiltIntervalId);
-                  return;
-                }
-                
-                const progress = tiltStep / tiltSteps;
-                const easedProgress = easeInOutCubic(progress);
-                const currentTilt = targetTilt * easedProgress;
-                
-                if (mapInstanceRef.current.setTilt) {
-                  mapInstanceRef.current.setTilt(currentTilt);
-                }
-                tiltStep++;
-              }, tiltInterval);
-            }
-          }, 500);
+                const animateTilt = (currentTime: number) => {
+                  if (!mapInstanceRef.current) return;
 
-          // STEP 4: Apply heading rotation (1000ms with easing, starting at 700ms)
-          setTimeout(() => {
-            if (mapInstanceRef.current && mapInstanceRef.current.setHeading) {
-              console.log('🧭 Rotating map to route direction...');
-              const targetHeading = initialBearing;
-              const headingSteps = 25; // More steps = smoother
-              const headingDuration = 1000;
-              const headingInterval = headingDuration / headingSteps;
-              let headingStep = 0;
+                  const elapsed = currentTime - tiltStartTime;
+                  const progress = Math.min(elapsed / tiltDuration, 1);
+                  const easedProgress = easeOutQuart(progress);
+                  
+                  const currentTilt = targetTilt * easedProgress;
+                  
+                  if (mapInstanceRef.current.setTilt) {
+                    mapInstanceRef.current.setTilt(currentTilt);
+                  }
 
-              const headingIntervalId = setInterval(() => {
-                if (headingStep >= headingSteps || !mapInstanceRef.current) {
-                  clearInterval(headingIntervalId);
-                  return;
-                }
+                  if (progress < 1) {
+                    requestAnimationFrame(animateTilt);
+                  } else {
+                    console.log('✅ Tilt complete');
+                  }
+                };
+
+                requestAnimationFrame(animateTilt);
+              }
+            }, 400);
+
+            // STEP 4: Smooth rotation (1200ms, starting at 800ms)
+            setTimeout(() => {
+              if (mapInstanceRef.current && mapInstanceRef.current.setHeading) {
+                console.log('🧭 Rotating map to route direction...');
                 
-                const progress = headingStep / headingSteps;
-                const easedProgress = easeInOutCubic(progress);
-                const currentHeading = targetHeading * easedProgress;
-                
-                if (mapInstanceRef.current.setHeading) {
-                  mapInstanceRef.current.setHeading(currentHeading);
-                }
-                headingStep++;
-              }, headingInterval);
-            }
-          }, 700);
+                const targetHeading = initialBearing;
+                const rotationDuration = 1200;
+                const rotationStartTime = performance.now();
+
+                const animateRotation = (currentTime: number) => {
+                  if (!mapInstanceRef.current) return;
+
+                  const elapsed = currentTime - rotationStartTime;
+                  const progress = Math.min(elapsed / rotationDuration, 1);
+                  const easedProgress = easeOutQuart(progress);
+                  
+                  const currentHeading = targetHeading * easedProgress;
+                  
+                  if (mapInstanceRef.current.setHeading) {
+                    mapInstanceRef.current.setHeading(currentHeading);
+                  }
+
+                  if (progress < 1) {
+                    requestAnimationFrame(animateRotation);
+                  } else {
+                    console.log('✅ Rotation complete');
+                  }
+                };
+
+                requestAnimationFrame(animateRotation);
+              }
+            }, 800);
+          }, 200); // 200ms initial delay for comfort
 
           // STEP 5: Ultra-smooth fade to dark mode (1500ms with easing, starting at 300ms)
           setTimeout(() => {
