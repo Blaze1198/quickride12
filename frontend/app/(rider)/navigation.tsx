@@ -854,47 +854,59 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
                 ],
               });
 
-          // Smooth zoom animation using incremental zoom changes
+          // Ultra-smooth zoom animation with easing, centered on rider
           const startZoom = mapInstanceRef.current.getZoom() || 14;
           const targetZoom = 18;
-          const zoomDuration = 1500; // 1.5 seconds
-          const zoomSteps = Math.abs(targetZoom - startZoom) * 10; // 10 frames per zoom level
-          const zoomIncrement = (targetZoom - startZoom) / zoomSteps;
-          const stepDuration = zoomDuration / zoomSteps;
+          const zoomDuration = 2000; // 2 seconds for very smooth feel
+          const zoomStartTime = Date.now();
           
-          let currentZoom = startZoom;
-          let zoomStep = 0;
+          // Easing function for smooth acceleration/deceleration
+          const easeInOutQuad = (t: number): number => {
+            return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+          };
 
-          // Smooth pan to location
-          mapInstanceRef.current.panTo(currentLocation);
+          // Smooth continuous zoom animation
+          const animateZoom = () => {
+            if (!mapInstanceRef.current) return;
 
-          // Animate zoom smoothly
-          const zoomInterval = setInterval(() => {
-            if (!mapInstanceRef.current || zoomStep >= zoomSteps) {
-              clearInterval(zoomInterval);
+            const elapsed = Date.now() - zoomStartTime;
+            const progress = Math.min(elapsed / zoomDuration, 1);
+            const easedProgress = easeInOutQuad(progress);
+            
+            // Calculate current zoom level with easing
+            const currentZoom = startZoom + ((targetZoom - startZoom) * easedProgress);
+            
+            // CRITICAL: Keep centering on rider location during zoom
+            mapInstanceRef.current.panTo(currentLocation);
+            mapInstanceRef.current.setZoom(currentZoom);
+
+            if (progress < 1) {
+              // Continue animation
+              requestAnimationFrame(animateZoom);
+            } else {
+              // Animation complete - set final values
+              mapInstanceRef.current.setZoom(targetZoom);
+              mapInstanceRef.current.panTo(currentLocation); // Final center
               
-              // Set final values after zoom completes
-              if (mapInstanceRef.current) {
-                mapInstanceRef.current.setZoom(targetZoom);
-                
-                // Set tilt and heading after zoom
-                if (mapInstanceRef.current.setTilt) {
+              // Now apply tilt and heading smoothly
+              setTimeout(() => {
+                if (mapInstanceRef.current && mapInstanceRef.current.setTilt) {
                   mapInstanceRef.current.setTilt(45);
                 }
-                
-                if (mapInstanceRef.current.setHeading) {
+              }, 100);
+              
+              setTimeout(() => {
+                if (mapInstanceRef.current && mapInstanceRef.current.setHeading) {
                   mapInstanceRef.current.setHeading(initialBearing);
                 }
-              }
+              }, 300);
               
               console.log('✅ Map transition complete - GPS navigation mode activated');
-              return;
             }
-            
-            currentZoom += zoomIncrement;
-            mapInstanceRef.current.setZoom(currentZoom);
-            zoomStep++;
-          }, stepDuration);
+          };
+
+          // Start the smooth zoom animation
+          requestAnimationFrame(animateZoom);
           console.log('📍 Map will follow your movement automatically');
           
           // Speak first instruction if possible
