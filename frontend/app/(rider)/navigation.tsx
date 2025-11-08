@@ -854,16 +854,28 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
                 ],
               });
               
-              console.log('✅ Dark mode applied');
-            }, 0); // Apply dark mode immediately
+          });
 
-          console.log('📍 GPS-style navigation mode activated - map will follow your movement');
+          // Use smooth native pan and zoom with single animation
+          mapInstanceRef.current.panTo(currentLocation);
+          mapInstanceRef.current.setZoom(18);
+          
+          // Set tilt and heading smoothly
+          if (mapInstanceRef.current.setTilt) {
+            mapInstanceRef.current.setTilt(45);
+          }
+          
+          if (mapInstanceRef.current.setHeading) {
+            mapInstanceRef.current.setHeading(initialBearing);
+          }
+
+          console.log('✅ Map transition complete - GPS navigation mode activated');
+          console.log('📍 Map will follow your movement automatically');
           
           // Speak first instruction if possible
           if (leg.steps[0]?.instructions) {
             speakInstruction(leg.steps[0].instructions);
           }
-        }, 200); // End of main transition orchestration delay
       } else {
           console.error('❌ Directions request failed:', status);
           Alert.alert('Error', 'Could not get directions');
