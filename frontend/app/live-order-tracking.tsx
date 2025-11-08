@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -6,12 +6,18 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Platform,
+  Dimensions,
+  ScrollView,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import Constants from 'expo-constants';
 import { Ionicons } from '@expo/vector-icons';
+import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import api from '../utils/api';
+
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 interface Order {
   id: string;
