@@ -925,29 +925,53 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
           handleIndicatorStyle={styles.bottomSheetIndicator}
         >
           <BottomSheetScrollView style={styles.bottomSheetContent}>
-            {/* Minimized View - Ultra Compact */}
+            {/* Minimized View - Shows navigation or job info */}
             <View style={styles.minimizedSection}>
-              <View style={styles.minimizedRow}>
-                <View style={styles.compactInfo}>
-                  <Text style={styles.compactEmoji}>
-                    {currentJob.type === 'order' ? '🍔' : '🏍️'}
-                  </Text>
-                  <Text style={styles.compactText}>
-                    ₱{currentJob.type === 'order' 
-                      ? currentJob.data.total_amount.toFixed(2)
-                      : currentJob.data.actual_fare.toFixed(2)}
-                  </Text>
-                  {distanceToDestination && (
-                    <>
-                      <Text style={styles.compactDivider}>•</Text>
-                      <Text style={styles.compactSubText}>{distanceToDestination}</Text>
-                      <Text style={styles.compactDivider}>•</Text>
-                      <Text style={styles.compactSubText}>{etaToDestination}</Text>
-                    </>
-                  )}
+              {isNavigating && currentStep ? (
+                // Navigation Mode - Show turn-by-turn instruction
+                <View style={styles.navigationMode}>
+                  <View style={styles.navigationHeader}>
+                    <View style={styles.navigationInfo}>
+                      <Text style={styles.navigationDistance}>{remainingDistance}</Text>
+                      <Text style={styles.navigationTime}>{remainingTime}</Text>
+                    </View>
+                    <TouchableOpacity onPress={stopNavigation} style={styles.stopNavButton}>
+                      <Ionicons name="close-circle" size={24} color="#FF6B6B" />
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.instructionRow}>
+                    <View style={styles.maneuverIcon}>
+                      <Ionicons name="arrow-up" size={32} color="#4CAF50" />
+                    </View>
+                    <Text style={styles.instructionText} numberOfLines={2}>
+                      {currentStep.instructions?.replace(/<[^>]*>/g, '') || 'Continue on current road'}
+                    </Text>
+                  </View>
                 </View>
-                <Ionicons name="chevron-up" size={20} color="#999" />
-              </View>
+              ) : (
+                // Normal Mode - Compact job info
+                <View style={styles.minimizedRow}>
+                  <View style={styles.compactInfo}>
+                    <Text style={styles.compactEmoji}>
+                      {currentJob.type === 'order' ? '🍔' : '🏍️'}
+                    </Text>
+                    <Text style={styles.compactText}>
+                      ₱{currentJob.type === 'order' 
+                        ? currentJob.data.total_amount.toFixed(2)
+                        : currentJob.data.actual_fare.toFixed(2)}
+                    </Text>
+                    {distanceToDestination && (
+                      <>
+                        <Text style={styles.compactDivider}>•</Text>
+                        <Text style={styles.compactSubText}>{distanceToDestination}</Text>
+                        <Text style={styles.compactDivider}>•</Text>
+                        <Text style={styles.compactSubText}>{etaToDestination}</Text>
+                      </>
+                    )}
+                  </View>
+                  <Ionicons name="chevron-up" size={20} color="#999" />
+                </View>
+              )}
             </View>
 
             {/* Full Details - Visible when dragged up */}
