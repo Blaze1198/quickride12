@@ -38,6 +38,14 @@ export default function RiderNavigationScreen() {
   const [etaToDestination, setEtaToDestination] = useState<string>('');
   const [mapError, setMapError] = useState<string>('');
   const [scriptLoaded, setScriptLoaded] = useState(false);
+  
+  // Turn-by-turn navigation states
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [currentStep, setCurrentStep] = useState<any>(null);
+  const [navigationSteps, setNavigationSteps] = useState<any[]>([]);
+  const [remainingDistance, setRemainingDistance] = useState<string>('');
+  const [remainingTime, setRemainingTime] = useState<string>('');
+  const directionsRendererRef = useRef<any>(null);
 
   useEffect(() => {
     fetchCurrentJob();
