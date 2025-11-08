@@ -53,6 +53,8 @@ export default function RiderLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="navigate" size={size} color={color} />
           ),
+          headerShown: false, // Hide header for immersive experience
+          tabBarStyle: { display: 'none' }, // Hide tab bar for full-screen map
         }}
       />
       <Tabs.Screen
