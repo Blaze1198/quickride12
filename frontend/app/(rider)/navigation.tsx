@@ -878,70 +878,38 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   minimizedSection: {
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    paddingVertical: 12,
+    paddingHorizontal: 4,
   },
-  minimizedHeader: {
+  minimizedRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
   },
-  jobTypeBadge: {
+  compactInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F9F9F9',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
+    flex: 1,
   },
-  jobTypeEmoji: {
-    fontSize: 20,
+  compactEmoji: {
+    fontSize: 24,
+    marginRight: 12,
+  },
+  compactText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#4CAF50',
     marginRight: 8,
   },
-  jobTypeText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-  },
-  earningsBadge: {
-    backgroundColor: '#4CAF50',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  earningsText: {
+  compactDivider: {
     fontSize: 16,
-    fontWeight: '700',
-    color: '#FFF',
+    color: '#DDD',
+    marginHorizontal: 6,
   },
-  minimizedETA: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 8,
-  },
-  etaItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  etaText: {
+  compactSubText: {
     fontSize: 14,
     color: '#666',
-    marginLeft: 4,
-  },
-  etaDot: {
-    fontSize: 14,
-    color: '#DDD',
-    marginHorizontal: 12,
-  },
-  pullUpHint: {
-    textAlign: 'center',
-    fontSize: 12,
-    color: '#999',
-    marginTop: 12,
+    fontWeight: '500',
   },
   detailsSection: {
     paddingTop: 20,
