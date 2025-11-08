@@ -792,36 +792,218 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
           setRemainingDistance(leg.distance.text);
           setRemainingTime(leg.duration.text);
 
-          // Set up navigation camera view - like Google Maps GPS mode
+          console.log('✅ Navigation started with', leg.steps.length, 'steps');
+          console.log('🎬 Starting smooth transition to navigation mode...');
+
+          // ========================================
+          // SMOOTH TRANSITION ORCHESTRATION
+          // ========================================
+          
           const currentLocation = { lat: userLocation.latitude, lng: userLocation.longitude };
           
-          // Smoothly animate to navigation view
-          mapInstanceRef.current.panTo(currentLocation);
-          mapInstanceRef.current.setZoom(18); // Close zoom for navigation
-          
-          // Enable tilt for 3D navigation perspective
-          if (mapInstanceRef.current.setTilt) {
-            mapInstanceRef.current.setTilt(45); // 45-degree angle for forward view
-          }
-          
-          // Set initial heading based on first step direction
+          // Calculate initial bearing for heading
+          let initialBearing = 0;
           if (leg.steps[0] && mapInstanceRef.current.setHeading) {
             const firstStepStart = leg.steps[0].start_location;
             const firstStepEnd = leg.steps[0].end_location;
-            const initialBearing = google.maps.geometry.spherical.computeHeading(
+            initialBearing = google.maps.geometry.spherical.computeHeading(
               firstStepStart,
               firstStepEnd
             );
-            mapInstanceRef.current.setHeading(initialBearing);
           }
 
-          console.log('✅ Navigation started with', leg.steps.length, 'steps');
-          console.log('📍 GPS-style navigation mode activated - map will follow your movement');
-          
-          // Automatically minimize bottom sheet to show more map
+          // STEP 1: Immediately start minimizing bottom sheet (300ms animation)
           if (bottomSheetRef.current) {
             bottomSheetRef.current.snapToIndex(0); // Snap to 12% (minimized)
+            console.log('📱 Bottom sheet minimizing...');
           }
+
+          // STEP 2: Start smooth zoom-in animation (1000ms)
+          setTimeout(() => {
+            if (mapInstanceRef.current) {
+              console.log('🔍 Zooming to navigation view...');
+              mapInstanceRef.current.panTo(currentLocation);
+              
+              // Smooth zoom transition from current zoom to 18
+              const startZoom = mapInstanceRef.current.getZoom() || 14;
+              const targetZoom = 18;
+              const zoomSteps = 20;
+              const zoomIncrement = (targetZoom - startZoom) / zoomSteps;
+              let currentZoomStep = 0;
+
+              const zoomInterval = setInterval(() => {
+                if (currentZoomStep >= zoomSteps || !mapInstanceRef.current) {
+                  clearInterval(zoomInterval);
+                  return;
+                }
+                const newZoom = startZoom + (zoomIncrement * currentZoomStep);
+                mapInstanceRef.current.setZoom(newZoom);
+                currentZoomStep++;
+              }, 50); // 50ms * 20 steps = 1000ms total
+            }
+          }, 100); // Start zoom after 100ms
+
+          // STEP 3: Gradually apply tilt (500ms, starting at 400ms)
+          setTimeout(() => {
+            if (mapInstanceRef.current && mapInstanceRef.current.setTilt) {
+              console.log('📐 Tilting map to 3D view...');
+              let currentTilt = 0;
+              const targetTilt = 45;
+              const tiltSteps = 10;
+              const tiltIncrement = targetTilt / tiltSteps;
+              let tiltStep = 0;
+
+              const tiltInterval = setInterval(() => {
+                if (tiltStep >= tiltSteps || !mapInstanceRef.current) {
+                  clearInterval(tiltInterval);
+                  return;
+                }
+                currentTilt += tiltIncrement;
+                if (mapInstanceRef.current.setTilt) {
+                  mapInstanceRef.current.setTilt(currentTilt);
+                }
+                tiltStep++;
+              }, 50); // 50ms * 10 steps = 500ms total
+            }
+          }, 400);
+
+          // STEP 4: Apply heading rotation (300ms, starting at 600ms)
+          setTimeout(() => {
+            if (mapInstanceRef.current && mapInstanceRef.current.setHeading) {
+              console.log('🧭 Rotating map to route direction...');
+              let currentHeading = 0;
+              const targetHeading = initialBearing;
+              const headingSteps = 6;
+              const headingIncrement = targetHeading / headingSteps;
+              let headingStep = 0;
+
+              const headingInterval = setInterval(() => {
+                if (headingStep >= headingSteps || !mapInstanceRef.current) {
+                  clearInterval(headingInterval);
+                  return;
+                }
+                currentHeading += headingIncrement;
+                if (mapInstanceRef.current.setHeading) {
+                  mapInstanceRef.current.setHeading(currentHeading);
+                }
+                headingStep++;
+              }, 50); // 50ms * 6 steps = 300ms total
+            }
+          }, 600);
+
+          // STEP 5: Fade to dark mode (800ms, starting at 200ms)
+          setTimeout(() => {
+            console.log('🌙 Transitioning to dark mode...');
+            
+            // Get current light mode (if any) or default
+            const lightStyles = mapInstanceRef.current.getOptions?.()?.styles || [];
+            
+            // Gradually fade to dark mode
+            const transitionSteps = 16;
+            let step = 0;
+
+            const darkModeInterval = setInterval(() => {
+              if (step >= transitionSteps || !mapInstanceRef.current) {
+                clearInterval(darkModeInterval);
+                return;
+              }
+
+              const progress = step / transitionSteps;
+              
+              // Interpolate colors from light to dark
+              const interpolateColor = (light: string, dark: string, progress: number) => {
+                // Simple color interpolation (for demo - could be enhanced)
+                return dark;
+              };
+
+              mapInstanceRef.current.setOptions({
+                styles: [
+                  { elementType: "geometry", stylers: [{ color: "#242f3e", lightness: (1 - progress) * 20 }] },
+                  { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+                  { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+                  {
+                    featureType: "administrative.locality",
+                    elementType: "labels.text.fill",
+                    stylers: [{ color: "#d59563" }],
+                  },
+                  {
+                    featureType: "poi",
+                    elementType: "labels.text.fill",
+                    stylers: [{ color: "#d59563" }],
+                  },
+                  {
+                    featureType: "poi.park",
+                    elementType: "geometry",
+                    stylers: [{ color: "#263c3f" }],
+                  },
+                  {
+                    featureType: "poi.park",
+                    elementType: "labels.text.fill",
+                    stylers: [{ color: "#6b9a76" }],
+                  },
+                  {
+                    featureType: "road",
+                    elementType: "geometry",
+                    stylers: [{ color: "#38414e" }],
+                  },
+                  {
+                    featureType: "road",
+                    elementType: "geometry.stroke",
+                    stylers: [{ color: "#212a37" }],
+                  },
+                  {
+                    featureType: "road",
+                    elementType: "labels.text.fill",
+                    stylers: [{ color: "#9ca5b3" }],
+                  },
+                  {
+                    featureType: "road.highway",
+                    elementType: "geometry",
+                    stylers: [{ color: "#746855" }],
+                  },
+                  {
+                    featureType: "road.highway",
+                    elementType: "geometry.stroke",
+                    stylers: [{ color: "#1f2835" }],
+                  },
+                  {
+                    featureType: "road.highway",
+                    elementType: "labels.text.fill",
+                    stylers: [{ color: "#f3d19c" }],
+                  },
+                  {
+                    featureType: "transit",
+                    elementType: "geometry",
+                    stylers: [{ color: "#2f3948" }],
+                  },
+                  {
+                    featureType: "transit.station",
+                    elementType: "labels.text.fill",
+                    stylers: [{ color: "#d59563" }],
+                  },
+                  {
+                    featureType: "water",
+                    elementType: "geometry",
+                    stylers: [{ color: "#17263c" }],
+                  },
+                  {
+                    featureType: "water",
+                    elementType: "labels.text.fill",
+                    stylers: [{ color: "#515c6d" }],
+                  },
+                  {
+                    featureType: "water",
+                    elementType: "labels.text.stroke",
+                    stylers: [{ color: "#17263c" }],
+                  },
+                ],
+              });
+
+              step++;
+            }, 50); // 50ms * 16 steps = 800ms total
+          }, 200);
+
+          console.log('📍 GPS-style navigation mode activated - map will follow your movement');
           
           // Speak first instruction if possible
           if (leg.steps[0]?.instructions) {
