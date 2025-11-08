@@ -705,11 +705,31 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
           setRemainingDistance(leg.distance.text);
           setRemainingTime(leg.duration.text);
 
-          // Center map on current location with navigation view
-          mapInstanceRef.current.setCenter({ lat: userLocation.latitude, lng: userLocation.longitude });
-          mapInstanceRef.current.setZoom(17);
+          // Set up navigation camera view - like Google Maps GPS mode
+          const currentLocation = { lat: userLocation.latitude, lng: userLocation.longitude };
+          
+          // Smoothly animate to navigation view
+          mapInstanceRef.current.panTo(currentLocation);
+          mapInstanceRef.current.setZoom(18); // Close zoom for navigation
+          
+          // Enable tilt for 3D navigation perspective
+          if (mapInstanceRef.current.setTilt) {
+            mapInstanceRef.current.setTilt(45); // 45-degree angle for forward view
+          }
+          
+          // Set initial heading based on first step direction
+          if (leg.steps[0] && mapInstanceRef.current.setHeading) {
+            const firstStepStart = leg.steps[0].start_location;
+            const firstStepEnd = leg.steps[0].end_location;
+            const initialBearing = google.maps.geometry.spherical.computeHeading(
+              firstStepStart,
+              firstStepEnd
+            );
+            mapInstanceRef.current.setHeading(initialBearing);
+          }
 
           console.log('✅ Navigation started with', leg.steps.length, 'steps');
+          console.log('📍 GPS-style navigation mode activated - map will follow your movement');
           
           // Speak first instruction if possible
           if (leg.steps[0]?.instructions) {
