@@ -962,8 +962,8 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
               });
 
               step++;
-            }, 50); // 50ms * 16 steps = 800ms total
-          }, 200);
+            }, transitionInterval); // Smooth fade over 1500ms
+          }, 300);
 
           console.log('📍 GPS-style navigation mode activated - map will follow your movement');
           
