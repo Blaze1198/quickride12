@@ -807,14 +807,14 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
             }
           }, 600);
 
-          // STEP 5: Fade to dark mode (800ms, starting at 200ms)
+          // STEP 5: Fade to dark mode with minimal distractions (800ms, starting at 200ms)
           setTimeout(() => {
-            console.log('🌙 Transitioning to dark mode...');
+            console.log('🌙 Transitioning to dark mode - hiding unnecessary markers...');
             
             // Get current light mode (if any) or default
             const lightStyles = mapInstanceRef.current.getOptions?.()?.styles || [];
             
-            // Gradually fade to dark mode
+            // Gradually fade to dark mode with CLEAN, MINIMAL styling
             const transitionSteps = 16;
             let step = 0;
 
@@ -825,38 +825,68 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
               }
 
               const progress = step / transitionSteps;
-              
-              // Interpolate colors from light to dark
-              const interpolateColor = (light: string, dark: string, progress: number) => {
-                // Simple color interpolation (for demo - could be enhanced)
-                return dark;
-              };
 
               mapInstanceRef.current.setOptions({
                 styles: [
+                  // Dark backgrounds
                   { elementType: "geometry", stylers: [{ color: "#242f3e", lightness: (1 - progress) * 20 }] },
                   { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
-                  { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+                  
+                  // HIDE ALL POIs (Points of Interest) - no clutter
+                  {
+                    featureType: "poi",
+                    stylers: [{ visibility: "off" }], // Hide all POI markers
+                  },
+                  {
+                    featureType: "poi.business",
+                    stylers: [{ visibility: "off" }],
+                  },
+                  {
+                    featureType: "poi.medical",
+                    stylers: [{ visibility: "off" }],
+                  },
+                  {
+                    featureType: "poi.school",
+                    stylers: [{ visibility: "off" }],
+                  },
+                  {
+                    featureType: "poi.government",
+                    stylers: [{ visibility: "off" }],
+                  },
+                  
+                  // Hide transit stations and stops
+                  {
+                    featureType: "transit.station",
+                    stylers: [{ visibility: "off" }],
+                  },
+                  
+                  // Minimal labels - only show essential street names
+                  {
+                    featureType: "road",
+                    elementType: "labels.text.fill",
+                    stylers: [{ color: "#9ca5b3", visibility: "simplified" }],
+                  },
+                  {
+                    featureType: "road",
+                    elementType: "labels.icon",
+                    stylers: [{ visibility: "off" }], // No road icons
+                  },
+                  
+                  // Hide business labels
+                  {
+                    featureType: "poi",
+                    elementType: "labels",
+                    stylers: [{ visibility: "off" }],
+                  },
+                  
+                  // Show only major landmarks (very minimal)
                   {
                     featureType: "administrative.locality",
                     elementType: "labels.text.fill",
-                    stylers: [{ color: "#d59563" }],
+                    stylers: [{ color: "#d59563", visibility: "simplified" }],
                   },
-                  {
-                    featureType: "poi",
-                    elementType: "labels.text.fill",
-                    stylers: [{ color: "#d59563" }],
-                  },
-                  {
-                    featureType: "poi.park",
-                    elementType: "geometry",
-                    stylers: [{ color: "#263c3f" }],
-                  },
-                  {
-                    featureType: "poi.park",
-                    elementType: "labels.text.fill",
-                    stylers: [{ color: "#6b9a76" }],
-                  },
+                  
+                  // Dark roads
                   {
                     featureType: "road",
                     elementType: "geometry",
@@ -867,11 +897,8 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
                     elementType: "geometry.stroke",
                     stylers: [{ color: "#212a37" }],
                   },
-                  {
-                    featureType: "road",
-                    elementType: "labels.text.fill",
-                    stylers: [{ color: "#9ca5b3" }],
-                  },
+                  
+                  // Highways highlighted
                   {
                     featureType: "road.highway",
                     elementType: "geometry",
@@ -887,16 +914,8 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
                     elementType: "labels.text.fill",
                     stylers: [{ color: "#f3d19c" }],
                   },
-                  {
-                    featureType: "transit",
-                    elementType: "geometry",
-                    stylers: [{ color: "#2f3948" }],
-                  },
-                  {
-                    featureType: "transit.station",
-                    elementType: "labels.text.fill",
-                    stylers: [{ color: "#d59563" }],
-                  },
+                  
+                  // Dark water
                   {
                     featureType: "water",
                     elementType: "geometry",
@@ -904,13 +923,20 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
                   },
                   {
                     featureType: "water",
-                    elementType: "labels.text.fill",
-                    stylers: [{ color: "#515c6d" }],
+                    elementType: "labels",
+                    stylers: [{ visibility: "off" }], // Hide water labels
+                  },
+                  
+                  // Hide park labels
+                  {
+                    featureType: "poi.park",
+                    elementType: "geometry",
+                    stylers: [{ color: "#263c3f" }],
                   },
                   {
-                    featureType: "water",
-                    elementType: "labels.text.stroke",
-                    stylers: [{ color: "#17263c" }],
+                    featureType: "poi.park",
+                    elementType: "labels",
+                    stylers: [{ visibility: "off" }],
                   },
                 ],
               });
