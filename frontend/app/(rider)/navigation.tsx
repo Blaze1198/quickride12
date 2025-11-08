@@ -933,17 +933,19 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
 
       // Create or update rider marker with direction cone (flashlight effect)
       if (!riderMarkerRef.current) {
-        // Create blue dot marker (like Google Maps)
+        // Create arrow marker pointing in direction of travel
         riderMarkerRef.current = new google.maps.Marker({
           position: currentLatLng,
           map: mapInstanceRef.current,
           icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 10,
+            path: 'M 0,-2 L -1.5,2 L 0,1 L 1.5,2 Z', // Arrow shape
             fillColor: '#4285F4',
             fillOpacity: 1,
             strokeColor: '#FFFFFF',
-            strokeWeight: 3,
+            strokeWeight: 2,
+            scale: 6,
+            rotation: bearing, // Rotate arrow based on direction
+            anchor: new google.maps.Point(0, 0),
           },
           zIndex: 2000,
         });
