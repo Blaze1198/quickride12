@@ -45,7 +45,10 @@ export default function RiderNavigationScreen() {
   const [navigationSteps, setNavigationSteps] = useState<any[]>([]);
   const [remainingDistance, setRemainingDistance] = useState<string>('');
   const [remainingTime, setRemainingTime] = useState<string>('');
+  const [currentBearing, setCurrentBearing] = useState<number>(0);
   const directionsRendererRef = useRef<any>(null);
+  const riderMarkerRef = useRef<any>(null);
+  const directionConeRef = useRef<any>(null);
 
   useEffect(() => {
     fetchCurrentJob();
