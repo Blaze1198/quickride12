@@ -765,11 +765,23 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
     setNavigationSteps([]);
     setRemainingDistance('');
     setRemainingTime('');
+    setCurrentBearing(0);
     previousLocationRef.current = null;
     
     if (directionsRendererRef.current) {
       directionsRendererRef.current.setMap(null);
       directionsRendererRef.current = null;
+    }
+
+    // Remove rider marker and direction cone
+    if (riderMarkerRef.current) {
+      riderMarkerRef.current.setMap(null);
+      riderMarkerRef.current = null;
+    }
+    
+    if (directionConeRef.current) {
+      directionConeRef.current.setMap(null);
+      directionConeRef.current = null;
     }
 
     // Reset map to normal view
