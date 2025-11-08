@@ -28,7 +28,7 @@ export default function RiderNavigationScreen() {
   
   // ALL HOOKS AT THE TOP
   const insets = useSafeAreaInsets();
-  const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
+  const snapPoints = useMemo(() => ['12%', '50%', '90%'], []); // More minimal first snap point
   
   const [currentJob, setCurrentJob] = useState<any>(null);
   const [loading, setLoading] = useState(true);
