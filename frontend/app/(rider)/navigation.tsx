@@ -854,20 +854,47 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
                 ],
               });
 
-          // Use smooth native pan and zoom with single animation
-          mapInstanceRef.current.panTo(currentLocation);
-          mapInstanceRef.current.setZoom(18);
+          // Smooth zoom animation using incremental zoom changes
+          const startZoom = mapInstanceRef.current.getZoom() || 14;
+          const targetZoom = 18;
+          const zoomDuration = 1500; // 1.5 seconds
+          const zoomSteps = Math.abs(targetZoom - startZoom) * 10; // 10 frames per zoom level
+          const zoomIncrement = (targetZoom - startZoom) / zoomSteps;
+          const stepDuration = zoomDuration / zoomSteps;
           
-          // Set tilt and heading smoothly
-          if (mapInstanceRef.current.setTilt) {
-            mapInstanceRef.current.setTilt(45);
-          }
-          
-          if (mapInstanceRef.current.setHeading) {
-            mapInstanceRef.current.setHeading(initialBearing);
-          }
+          let currentZoom = startZoom;
+          let zoomStep = 0;
 
-          console.log('✅ Map transition complete - GPS navigation mode activated');
+          // Smooth pan to location
+          mapInstanceRef.current.panTo(currentLocation);
+
+          // Animate zoom smoothly
+          const zoomInterval = setInterval(() => {
+            if (!mapInstanceRef.current || zoomStep >= zoomSteps) {
+              clearInterval(zoomInterval);
+              
+              // Set final values after zoom completes
+              if (mapInstanceRef.current) {
+                mapInstanceRef.current.setZoom(targetZoom);
+                
+                // Set tilt and heading after zoom
+                if (mapInstanceRef.current.setTilt) {
+                  mapInstanceRef.current.setTilt(45);
+                }
+                
+                if (mapInstanceRef.current.setHeading) {
+                  mapInstanceRef.current.setHeading(initialBearing);
+                }
+              }
+              
+              console.log('✅ Map transition complete - GPS navigation mode activated');
+              return;
+            }
+            
+            currentZoom += zoomIncrement;
+            mapInstanceRef.current.setZoom(currentZoom);
+            zoomStep++;
+          }, stepDuration);
           console.log('📍 Map will follow your movement automatically');
           
           // Speak first instruction if possible
