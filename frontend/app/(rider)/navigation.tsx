@@ -731,6 +731,11 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
           console.log('✅ Navigation started with', leg.steps.length, 'steps');
           console.log('📍 GPS-style navigation mode activated - map will follow your movement');
           
+          // Automatically minimize bottom sheet to show more map
+          if (bottomSheetRef.current) {
+            bottomSheetRef.current.snapToIndex(0); // Snap to 12% (minimized)
+          }
+          
           // Speak first instruction if possible
           if (leg.steps[0]?.instructions) {
             speakInstruction(leg.steps[0].instructions);
