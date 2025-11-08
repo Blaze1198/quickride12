@@ -737,16 +737,39 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
     setNavigationSteps([]);
     setRemainingDistance('');
     setRemainingTime('');
+    previousLocationRef.current = null;
     
     if (directionsRendererRef.current) {
       directionsRendererRef.current.setMap(null);
       directionsRendererRef.current = null;
     }
 
-    // Reload normal route view
+    // Reset map to normal view
     if (mapInstanceRef.current) {
+      // Reset zoom
       mapInstanceRef.current.setZoom(14);
+      
+      // Reset heading (rotation) to north
+      if (mapInstanceRef.current.setHeading) {
+        mapInstanceRef.current.setHeading(0);
+      }
+      
+      // Reset tilt to flat view
+      if (mapInstanceRef.current.setTilt) {
+        mapInstanceRef.current.setTilt(0);
+      }
+      
+      // Re-center on current location if available
+      if (userLocation) {
+        mapInstanceRef.current.panTo({
+          lat: userLocation.latitude,
+          lng: userLocation.longitude
+        });
+      }
     }
+    
+    // Reload the normal route to show overview
+    loadMap();
   };
 
   // Text-to-speech for navigation instructions
