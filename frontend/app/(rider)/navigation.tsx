@@ -841,7 +841,6 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
                 requestAnimationFrame(animateRotation);
               }
             }, 800);
-          }, 200); // 200ms initial delay for comfort
 
             // STEP 5: Silky-smooth dark mode fade (1800ms, starting immediately)
             setTimeout(() => {
