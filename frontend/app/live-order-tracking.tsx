@@ -481,7 +481,10 @@ export default function LiveOrderTrackingScreen() {
               }
             },
             travelMode: 'DRIVE',
-            routingPreference: 'TRAFFIC_AWARE'
+            routingPreference: 'TRAFFIC_AWARE',
+            computeAlternativeRoutes: false,
+            languageCode: 'en-US',
+            units: 'METRIC'
           })
         }
       );
