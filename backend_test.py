@@ -1,21 +1,19 @@
 #!/usr/bin/env python3
 """
-Backend Testing Script for "Start Navigation" Button Investigation
-Testing rider navigation functionality and related APIs to diagnose
-the error/unexpected behavior when clicking Start Navigation button
+Backend API Testing for Live Order Tracking - Route Line Issue Investigation
+Focus: Testing rider location API and route line functionality
 """
 
 import requests
 import json
 import time
-import uuid
 from datetime import datetime, timezone
-import sys
 
-# Backend URL from frontend environment
-BACKEND_URL = "https://track-delivery-5.preview.emergentagent.com/api"
+# Configuration
+BASE_URL = "https://track-delivery-5.preview.emergentagent.com/api"
+HEADERS = {"Content-Type": "application/json"}
 
-class NavigationTester:
+class LiveTrackingTester:
     def __init__(self):
         self.session = requests.Session()
         self.rider_token = None
