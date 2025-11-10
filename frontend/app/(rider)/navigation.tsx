@@ -639,8 +639,27 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
         await api.put(`/rider/rides/${currentJob.data.id}/status`, { status: newStatus });
       }
       
-      Alert.alert('Success', 'Status updated successfully');
-      fetchCurrentJob();
+      // Check if order/ride is completed
+      if (newStatus === 'delivered' || newStatus === 'completed') {
+        Alert.alert(
+          'Success', 
+          'Order completed successfully! Great job!',
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                // Clear navigation state and redirect to rider home
+                setIsNavigating(false);
+                setCurrentJob(null);
+                router.replace('/(rider)');
+              }
+            }
+          ]
+        );
+      } else {
+        Alert.alert('Success', 'Status updated successfully');
+        fetchCurrentJob();
+      }
     } catch (error: any) {
       Alert.alert('Error', error.response?.data?.detail || 'Failed to update status');
     }
