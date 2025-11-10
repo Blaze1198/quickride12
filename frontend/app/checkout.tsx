@@ -920,11 +920,21 @@ export default function CheckoutScreen() {
             </TouchableOpacity>
             
             <TouchableOpacity
-              style={styles.confirmOrderButton}
+              style={[styles.confirmOrderButton, loading && styles.confirmOrderButtonDisabled]}
               onPress={confirmAndPlaceOrder}
+              disabled={loading}
             >
-              <Ionicons name="checkmark-circle" size={24} color="#FFF" />
-              <Text style={styles.confirmOrderText}>Confirm & Place Order</Text>
+              {loading ? (
+                <>
+                  <ActivityIndicator color="#FFF" />
+                  <Text style={styles.confirmOrderText}>Processing...</Text>
+                </>
+              ) : (
+                <>
+                  <Ionicons name="checkmark-circle" size={24} color="#FFF" />
+                  <Text style={styles.confirmOrderText}>Confirm & Place Order</Text>
+                </>
+              )}
             </TouchableOpacity>
           </View>
         </SafeAreaView>
