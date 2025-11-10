@@ -231,6 +231,21 @@ class NavigationTester:
             self.log(f"❌ Error updating order status: {str(e)}", "ERROR")
             return False
             
+        # Manually assign the order to our test rider to ensure we have control
+        try:
+            # Use rider session to accept the delivery
+            rider_headers = {"Authorization": f"Bearer {self.rider_token}"}
+            response = self.session.post(f"{BACKEND_URL}/orders/{self.test_order_id}/accept-delivery", 
+                                       headers=rider_headers)
+            if response.status_code == 200:
+                self.log("✅ Order manually assigned to test rider")
+            else:
+                self.log(f"⚠️ Manual assignment failed: {response.status_code} - {response.text}", "WARNING")
+                # Continue anyway, auto-assignment might have worked
+        except Exception as e:
+            self.log(f"⚠️ Error in manual assignment: {str(e)}", "WARNING")
+            # Continue anyway
+            
         return True
         
     def test_rider_current_order_api(self):
