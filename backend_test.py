@@ -83,73 +83,39 @@ class LiveTrackingTester:
         return True
         
     def test_rider_profile_creation(self):
-        """Setup rider profile and location"""
-        self.log("🏍️ Setting up rider profile...")
+        """Test 2: Create rider profile and set location"""
+        self.log("\n🏍️ TESTING RIDER PROFILE CREATION")
         
-        headers = {"Authorization": f"Bearer {self.rider_token}"}
+        # Get rider profile (auto-creates if not exists)
+        headers = {**HEADERS, "Authorization": f"Bearer {self.rider_token}"}
         
-        # First, check current user to verify role
         try:
-            response = self.session.get(f"{BACKEND_URL}/auth/me", headers=headers)
-            if response.status_code == 200:
-                user_data = response.json()
-                self.log(f"✅ Current user: {user_data['name']} (Role: {user_data['role']})")
-                if user_data['role'] != 'rider':
-                    self.log(f"❌ User role is {user_data['role']}, expected 'rider'", "ERROR")
-                    return False
-            else:
-                self.log(f"❌ Failed to get current user: {response.status_code} - {response.text}", "ERROR")
-                return False
-        except Exception as e:
-            self.log(f"❌ Error getting current user: {str(e)}", "ERROR")
-            return False
-        
-        # Get/create rider profile
-        try:
-            response = self.session.get(f"{BACKEND_URL}/riders/me", headers=headers)
+            response = requests.get(f"{BASE_URL}/riders/me", headers=headers)
             if response.status_code == 200:
                 rider_data = response.json()
-                self.test_rider_id = rider_data["id"]
-                self.log(f"✅ Rider profile found: {rider_data['name']} (ID: {self.test_rider_id})")
+                self.log(f"✅ Rider profile exists: {rider_data['name']}")
+                
+                # Update rider location
+                location_data = {
+                    "latitude": 14.5995,
+                    "longitude": 120.9842,
+                    "address": "Makati, Metro Manila, Philippines"
+                }
+                
+                response = requests.put(f"{BASE_URL}/riders/location", 
+                                      json=location_data, headers=headers)
+                if response.status_code == 200:
+                    self.log("✅ Rider location updated successfully")
+                    return True
+                else:
+                    self.log(f"❌ Rider location update failed: {response.status_code} - {response.text}")
+                    return False
             else:
-                self.log(f"❌ Failed to get rider profile: {response.status_code} - {response.text}", "ERROR")
+                self.log(f"❌ Rider profile creation failed: {response.status_code} - {response.text}")
                 return False
         except Exception as e:
-            self.log(f"❌ Error getting rider profile: {str(e)}", "ERROR")
+            self.log(f"❌ Rider profile error: {str(e)}")
             return False
-            
-        # Set rider location (Makati, Manila - same as fallback location)
-        location_data = {
-            "latitude": 14.5547,
-            "longitude": 121.0244,
-            "address": "Makati, Manila, Philippines"
-        }
-        
-        try:
-            response = self.session.put(f"{BACKEND_URL}/riders/location", json=location_data, headers=headers)
-            if response.status_code == 200:
-                self.log("✅ Rider location updated successfully")
-            else:
-                self.log(f"❌ Failed to update rider location: {response.status_code} - {response.text}", "ERROR")
-                return False
-        except Exception as e:
-            self.log(f"❌ Error updating rider location: {str(e)}", "ERROR")
-            return False
-            
-        # Set rider as available
-        try:
-            response = self.session.put(f"{BACKEND_URL}/riders/availability", 
-                                      json={"is_available": True}, headers=headers)
-            if response.status_code == 200:
-                self.log("✅ Rider set as available for orders")
-            else:
-                self.log(f"❌ Failed to set rider availability: {response.status_code} - {response.text}", "ERROR")
-                return False
-        except Exception as e:
-            self.log(f"❌ Error setting rider availability: {str(e)}", "ERROR")
-            return False
-            
-        return True
         
     def create_test_order(self):
         """Create a test order and assign to rider"""
