@@ -718,7 +718,7 @@ agent_communication:
       ❌ Cannot verify if "Top picks on delivery™" section shows restaurants
       
       BACKEND VERIFICATION (SUCCESSFUL):
-      - API endpoint: https://livemap-service.preview.emergentagent.com/api/restaurants
+      - API endpoint: https://track-delivery-5.preview.emergentagent.com/api/restaurants
       - Status: 200 OK
       - Restaurant count: 12 restaurants returned
       - Data structure: Complete with names, descriptions, images, ratings, locations

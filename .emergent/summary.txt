@@ -1,16 +1,25 @@
 <analysis>
-The AI engineer's work involved an extensive evolution of a FoodPanda-like app, transitioning from initial UI redesigns to introducing a new QuickRide moto-taxi service. Key stages included a detailed overhaul of the customer home screen (banner, categories, search), refinement of admin dashboards with real-time tracking and Google Maps integration, and the comprehensive build-out of the moto-taxi feature, spanning backend models, new endpoints, and frontend screens for selection, booking, and tracking. Significant effort was spent resolving UI inconsistencies (navbar text, service card sizing, color themes), fixing critical frontend routing issues after login, and persistent Google Maps API key configuration problems. The process was highly iterative, with constant user feedback driving subsequent modifications and debugging efforts. The core challenge was integrating new features while maintaining and refining existing ones, often requiring careful file modifications and environment restarts.
+The AI engineer's work primarily concentrated on enhancing the QuickRide application's mapping and navigation functionalities for both riders and customers. The initial phase addressed critical map re-initialization issues in rider navigation due to  dependencies and fixed authentication persistence using . This led to a significant UI/UX overhaul, transforming static map views into dynamic, full-screen Google Maps integrated with draggable bottom sheets, resembling FoodPanda/Uber Eats. Key improvements included custom icon markers, migration from Google Directions API to Routes API, and robust error handling.
+
+A continuous iterative process followed, refining map animations and transitions. The engineer tackled multiple syntax errors, implemented smooth zoom effects, auto-follow navigation, dark mode (later reverted), and directional rider markers with flashlight cones. Performance was a recurring concern, culminating in the removal of dark mode styling due to perceived lag. The work demonstrates an agile approach, directly addressing user feedback and progressively enhancing the app's real-time tracking and navigation experience.
 </analysis>
 
 <product_requirements>
-The application, originally QuickBite and now QuickRide, is a FoodPanda-like mobile delivery service for the Philippines, supporting customer, restaurant, rider, and admin roles. It features multi-factor authentication and a 25% delivery fee. Automated GCash payment via a payment gateway (Xendit) is a planned core feature. Previous enhancements included functional menus, order management, role-based login, collapsible headers, and order history. Recent major requirements included a comprehensive UI redesign of the customer home screen with dynamic banners, category filtering, top picks, modern restaurant cards, full-screen search, and a consolidated header. A desktop-optimized admin dashboard with live order tracking, Google Maps integration, user management (ban/suspend), and real-time updates was requested. Most recently, a moto-taxi service was added, offering ride-hailing with map-based pickup/drop-off, real-time fare estimation, live tracking, rider profiles, instant/scheduled booking, multi-stops, and a detailed cancellation policy. The app was rebranded to QuickRide, removing role selection, and required a uniform red/orange theme. Customer and rider live tracking features were also added.
+The QuickRide app, a delivery service in the Philippines, targets customer, restaurant, rider, and admin roles. A core requirement is robust live tracking and navigation. Previous work involved refining existing rider navigation and customer live order tracking, requiring real-time location updates and map integration.
+Key explicit requests and implemented features include:
+- **Customer Interactive Map**: An interactive Google Maps location picker on the home screen for exact delivery points, including quick selection dropdowns (Home, Work, School, Current Location) and a search bar, integrating into a checkout map verification step.
+- **Rider Location Features**: Riders should see their current location, toggle availability, and auto-assignment should prioritize nearest available riders within 10km. A dropdown and Google Places search for riders to change their real-time location.
+- **Restaurant Location Editor**: A map modal for restaurants to accurately edit their location.
+- **Live Tracking UI/UX Enhancement**: Full-screen Google Maps with draggable bottom sheets for order details, minimal UI, and hidden navigation tabs for an immersive experience (FoodPanda/Uber Eats style).
+- **Advanced Rider Navigation**: Full turn-by-turn navigation with real-time directions, GPS-style auto-follow, smooth zoom, tilting, thick blue route lines, directional arrow markers with a flashlight cone, and cinematic transitions.
+- **Performance**: Smoother, more gradual transitions and removal of features causing lag.
 </product_requirements>
 
 <key_technical_concepts>
-- **Frontend**: Expo, React Native, Expo Router, React Navigation, Zustand, Animated API, , , , .
-- **Backend**: FastAPI, MongoDB, , , .
-- **Third-party Integration**: Google Maps API,  (planned for Xendit).
-- **UI/UX Principles**: Responsive design, keyboard handling, safe area management, real-time updates, iterative design.
+- **Frontend**: Expo, React Native, Expo Router, React Navigation, Zustand (with ), , , , Geolocation API, , , .
+- **Backend**: FastAPI, MongoDB.
+- **Third-party Integration**: Google Maps API (Maps JavaScript API, Places API, Geocoding API, Routes API).
+- **UI/UX Principles**: Responsive design, real-time updates, map interaction, native-like animations, ref-based state management, error handling.
 </key_technical_concepts>
 
 <code_architecture>
@@ -18,94 +27,67 @@ The application uses a monorepo structure with  (FastAPI) and  (Expo/React Nativ
 
 
 
--   : Central FastAPI backend.
-    -   **Importance**: Handles all API endpoints.
-    -   **Changes**: Added  model and GCash endpoints (initial plan). Later, comprehensive ride service enums, models ( model, updated  model), and API endpoints for ride booking, tracking, and management were inserted. Admin endpoints for user ban/suspend/approve and live order/rider monitoring were also added.  renamed to .
--   : Backend environment variables.
-    -   **Importance**: Stores critical configuration.
-    -   **Changes**: Placeholders for Xendit API keys;  added.
--   : Expo app configuration.
-    -   **Importance**: Defines app metadata.
-    -   **Changes**:  changed from QuickBite to QuickRide.
--   : Frontend environment variables.
-    -   **Importance**: Stores critical configuration for Expo.
-    -   **Changes**:  added.
--   : Root layout for Expo Router.
-    -   **Importance**: Global layout and authentication routing.
-    -   **Changes**: Modified authentication redirect logic (lines 54-64) to route to  initially, then to  for direct sign-in.
--   : Root route, redirects to login.
-    -   **Importance**: Entry point for unauthenticated users.
-    -   **Changes**: Redirects to .
--   : User login screen.
-    -   **Importance**: Handles user authentication.
-    -   **Changes**: Removed role selection UI (customer, restaurant, rider cards). Modified to go directly to email/password input.  state and its usage were removed. Styles were updated to reflect new UI and match  branding. Involved significant debugging due to cached errors and duplicate styles.
--   : User sign-in screen (similar to login).
-    -   **Importance**: Secondary authentication screen.
-    -   **Changes**: Modified redirect after successful sign-in to .
--   : User registration screen.
-    -   **Importance**: Handles new user sign-ups.
-    -   **Changes**: Modified redirect after successful registration to .
--   : Customer's home dashboard.
-    -   **Importance**: Primary UI for food delivery, restaurant discovery.
-    -   **Changes**: Heavily modified for UI redesign: auto-sliding banner, category icons, Top Picks, restaurant cards, full-screen search, notification dropdown. Header layout adjusted (removed Home text). Added a service toggle button in the header for switching to moto-taxi.
--   : Customer tab navigation layout.
-    -   **Importance**: Defines customer-specific tabs.
-    -   **Changes**: Tab bar height and padding adjusted to ensure text visibility.
--   : Customer order history and active orders.
-    -   **Importance**: Manages user orders.
-    -   **Changes**: Added a Track Live button for active food deliveries, navigating to . New styles for the track button were added.
--   : Admin tab navigation layout.
-    -   **Importance**: Defines admin-specific tabs.
-    -   **Changes**: Tab bar height and padding adjusted for consistency. Added a new tab for Live Tracking to .
--   : New admin page for live order tracking.
-    -   **Importance**: Provides real-time overview of orders and rider locations on a map.
-    -   **Changes**: Created. Uses  component and fetches live order data. Initial import path issues were fixed.
--   : Admin user management.
-    -   **Importance**: Lists and manages users.
-    -   **Changes**: Enhanced with action buttons for ban/suspend/approve users, and associated styles.
--   : Admin restaurant management.
-    -   **Importance**: Lists and manages restaurants.
-    -   **Changes**: Enhanced with approve/reject functionality for restaurants.
--   : New component for displaying live orders on Google Maps.
-    -   **Importance**: Reusable map component for tracking.
-    -   **Changes**: Created. Accesses Google Maps API key via .
--   : New screen for choosing between food delivery and moto-taxi.
-    -   **Importance**: Entry point after login for service selection.
-    -   **Changes**: Created. Initially had large cards, which were then made more compact, centered, simplified (removing features, keeping title), and finally enhanced with gradient backgrounds and better spacing. Info text moved to the bottom.
--   : New screen for booking moto-taxi rides.
-    -   **Importance**: Customer interface for requesting rides.
-    -   **Changes**: Created.
--   : New screen for live tracking moto-taxi rides.
-    -   **Importance**: Customer interface for tracking active rides.
-    -   **Changes**: Created.
--   : Rider tab navigation layout.
-    -   **Importance**: Defines rider-specific tabs.
-    -   **Changes**: Tab bar height and padding adjusted. Added a Navigation tab linking to .
--   : Rider dashboard.
-    -   **Importance**: Primary interface for riders to manage deliveries/rides.
-    -   **Changes**: Enhanced with a service toggle (food delivery/ride service) and updated to display both food delivery and ride requests. New styles added for ride-specific UI elements.
--   : New screen for rider navigation with directions.
-    -   **Importance**: Provides live location and directions for riders to customers.
-    -   **Changes**: Created.
--   : New component for live customer order tracking.
-    -   **Importance**: Enables customers to track their food delivery rider's location.
-    -   **Changes**: Created.
--   : A new page for promotional offers.
-    -   **Importance**: Serves as the navigation target for clicking the promotional banner.
-    -   **Changes**: Created as a new file.
+- : Central FastAPI backend.
+    - **Importance**: Handles all API endpoints.
+    - **Changes**: Made  and  fields optional in the  model to fix No restaurants found error in customer home screen.
+- : Backend environment variables.
+    - **Importance**: Stores critical configuration.
+    - **Changes**:  was added during a brief attempt to integrate Mapbox.
+- : Expo app configuration.
+    - **Importance**: Defines app metadata and exposes  environment variables.
+    - **Changes**: Added  field to expose .
+- : Frontend package dependencies.
+    - **Importance**: Manages frontend libraries.
+    - **Changes**: Added  and  for draggable UI, and  (later superseded).
+- : Root layout for the Expo app.
+    - **Importance**: Handles global layout and authentication initialization.
+    - **Changes**: Integrated  to persist and load user session from .
+- : Rider's tab navigation layout.
+    - **Importance**: Manages the rider's primary navigation tabs.
+    - **Changes**: Updated  for the  screen to hide  and  for an immersive, full-screen navigation.
+- : Rider's live navigation screen.
+    - **Importance**: Provides live location, directions, and turn-by-turn guidance for riders.
+    - **Changes**:
+        - Optimized  dependencies and used  to prevent map re-initialization.
+        - Upgraded map markers to custom SVG icons for better recognition.
+        - Redesigned UI to a full-screen Google Map with a draggable bottom sheet for job details.
+        - Implemented turn-by-turn navigation state, Start Navigation button, and functions for voice guidance.
+        - Integrated Google Maps GPS-style auto-follow, camera rotation, smooth zoom, and tilt using native API calls.
+        - Auto-minimizes bottom sheet and transitions map view on navigation start.
+        - Route line color changed to blue and thickness increased.
+        - Rider marker changed to a directional arrow with a flashlight cone, rotating with bearing.
+        - Implemented smooth, sequential animations for bottom sheet minimization and map camera movements, using native Google Maps methods instead of .
+        - Introduced dark mode map styling, then removed it due to perceived performance issues.
+        - Simplified map to show only essential delivery markers.
+        - Fixed multiple syntax errors related to  and function closures in animation logic.
+- : Customer's live order tracking screen.
+    - **Importance**: Enables customers to track their food delivery rider's location and route.
+    - **Changes**:
+        - Optimized  dependencies and used  to prevent map re-initialization.
+        - Modified  to ensure it loads even without rider location (showing customer location initially).
+        - Replaced deprecated Google Maps Directions API calls with Routes API for route drawing.
+        -  now correctly redraws the route upon  changes without full map re-initialization.
+        - Redesigned UI to a full-screen Google Map with a draggable bottom sheet for order details.
+        - Fixed React hooks error by ensuring hooks are called unconditionally at the top of the component.
+- : Zustand store for authentication.
+    - **Importance**: Manages user authentication state.
+    - **Changes**: Integrated  to persist  and  data for continuous sessions.
 </code_architecture>
 
 <pending_tasks>
--   Fully integrate automated GCash payment via Xendit, requiring API keys for backend service layer and webhook handling.
--   Implement full functionality for remaining profile sub-pages (e.g., Saved Addresses).
--   Continue refining Restaurant and Rider specific screens (e.g., , ).
--   Resolve persistent Google Maps API key configuration issues for the admin dashboard.
+- Fully integrate automated GCash payment via Xendit.
+- Implement full functionality for remaining profile sub-pages (e.g., Saved Addresses).
+- Continue refining other Restaurant and Rider specific screens (e.g., , ).
+- Resolve persistent Google Maps API key configuration issues for the admin dashboard.
+- Consider Mapbox integration for Expo web if higher performance is needed, noting the different integration approach required.
 </pending_tasks>
 
 <current_work>
-The immediate work involved creating a live tracking feature for riders. This included building a new rider navigation screen, , which is intended to provide live location and directions for riders to guide them to customers. To integrate this into the rider's application flow, the  file was updated to include a new Navigation tab. This ensures that riders can easily access the newly implemented navigation functionality from their main interface. This action addresses the user's explicit request for riders to be guided with directions. The previous action involved restarting the frontend to apply these changes.
+The immediate focus was on refining the visual performance and transitions of the map in the rider's navigation screen (). The user requested a smoother, more gradual zoom transition, specifically 1 second only duration, with the map being movable by the user and including tilting, also emphasizing that the bottom sheet minimize first then zoom, not simultaneous. The AI engineer implemented these sequential and native Google Maps-style animations.
+
+The very last user feedback stated, can you please not make it into dark i believe it is the one causing the lags, indicating a suspicion that the recently implemented dark mode map styling was negatively impacting performance. The AI engineer acknowledged this and immediately confirmed, Perfect! Let me remove the dark mode styling which could be causing the performance issues. This is where the work left off.
 </current_work>
 
 <optional_next_step>
-Restart the frontend to apply the changes for the new rider navigation screen.
+Remove the dark mode styling from the rider's navigation map to address the user's performance concerns.
 </optional_next_step>
