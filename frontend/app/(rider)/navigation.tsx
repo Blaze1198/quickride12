@@ -16,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import api from '../../utils/api';
+import { useAuthStore } from '../../store/authStore';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
