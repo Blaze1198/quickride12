@@ -84,6 +84,12 @@ export default function RiderAvailableScreen() {
   }
 
   useEffect(() => {
+    // Wait for auth to load and verify user is a rider before fetching
+    if (authLoading || !user || user.role !== 'rider') {
+      console.log('⚠️ Waiting for authentication or user is not a rider');
+      return;
+    }
+
     fetchData();
     fetchRiderAvailability();
     fetchRiderLocation();
@@ -94,7 +100,7 @@ export default function RiderAvailableScreen() {
       fetchNearbyOrders();
     }, 10000);
     return () => clearInterval(interval);
-  }, [serviceType]);
+  }, [serviceType, user, authLoading]);
 
   const fetchRiderAvailability = async () => {
     // Guard: Only fetch if user is a rider
