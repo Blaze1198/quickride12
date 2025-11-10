@@ -22,12 +22,11 @@ class LiveTrackingTester:
         self.order_id = None
         self.restaurant_id = None
         
-    def log(self, message, level="INFO"):
-        """Log messages with timestamp"""
+    def log(self, message):
         timestamp = datetime.now().strftime("%H:%M:%S")
-        print(f"[{timestamp}] {level}: {message}")
+        print(f"[{timestamp}] {message}")
         
-    def create_test_accounts(self):
+    def test_auth_and_setup(self):
         """Create test rider and customer accounts"""
         self.log("🔧 Creating test accounts for navigation testing...")
         
