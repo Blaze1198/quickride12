@@ -39,6 +39,8 @@ export default function LiveOrderTrackingScreen() {
   const mapInstanceRef = useRef<any>(null); // Track if map is already initialized
   const initializedOrderIdRef = useRef<string | null>(null); // Track initialized order ID
   const bottomSheetRef = useRef<BottomSheet>(null); // Bottom sheet control
+  const riderMarkerRef = useRef<any>(null); // Track rider marker for updates
+  const routePolylineRef = useRef<any>(null); // Track route polyline for updates
   
   // ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL RETURNS
   const insets = useSafeAreaInsets();
