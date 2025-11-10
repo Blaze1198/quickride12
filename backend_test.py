@@ -172,7 +172,8 @@ class NavigationTester:
             self.log(f"❌ Error getting restaurants: {str(e)}", "ERROR")
             return False
             
-        # Create order as customer
+        # Create order as customer (use separate session)
+        customer_session = requests.Session()
         headers = {"Authorization": f"Bearer {self.customer_token}"}
         order_data = {
             "restaurant_id": restaurant["id"],
