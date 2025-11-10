@@ -291,6 +291,9 @@ frontend:
           ✅ Syntax errors in smooth transition animations fixed
           ✅ App loads normally and navigation screen is accessible
           ✅ Ready for normal testing and usage
+      - working: false
+        agent: "user"
+        comment: "User reports: Still getting 403 errors in console for rider screen. Errors appearing for /riders/me, /riders/location, /riders/nearby-orders endpoints despite multiple fix attempts with role guards and auth loading checks."
       - working: true
         agent: "testing"
         comment: |
