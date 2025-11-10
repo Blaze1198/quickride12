@@ -198,7 +198,7 @@ class NavigationTester:
         }
         
         try:
-            response = self.session.post(f"{BACKEND_URL}/orders", json=order_data, headers=headers)
+            response = customer_session.post(f"{BACKEND_URL}/orders", json=order_data, headers=headers)
             if response.status_code == 200:
                 order = response.json()
                 self.test_order_id = order["id"]
