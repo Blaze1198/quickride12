@@ -292,7 +292,7 @@ export default function LiveOrderTrackingScreen() {
 
     // Rider marker (Real-time location - Blue)
     if (riderLocation) {
-      const riderMarker = new google.maps.Marker({
+      riderMarkerRef.current = new google.maps.Marker({
         position: {
           lat: riderLocation.latitude,
           lng: riderLocation.longitude,
