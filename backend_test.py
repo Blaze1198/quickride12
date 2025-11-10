@@ -215,7 +215,7 @@ class NavigationTester:
             
         # Update order status to ready_for_pickup to trigger auto-assignment
         try:
-            response = self.session.put(f"{BACKEND_URL}/orders/{self.test_order_id}/status",
+            response = customer_session.put(f"{BACKEND_URL}/orders/{self.test_order_id}/status",
                                       json={"status": "ready_for_pickup"}, headers=headers)
             if response.status_code == 200:
                 result = response.json()
