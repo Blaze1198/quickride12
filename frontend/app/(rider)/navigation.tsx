@@ -22,6 +22,7 @@ const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function RiderNavigationScreen() {
   const router = useRouter();
+  const { user } = useAuthStore();
   const mapRef = useRef<any>(null);
   const mapInstanceRef = useRef<any>(null); // Track if map is already initialized
   const currentJobIdRef = useRef<string | null>(null); // Track current job ID
@@ -30,6 +31,17 @@ export default function RiderNavigationScreen() {
   // ALL HOOKS AT THE TOP
   const insets = useSafeAreaInsets();
   const snapPoints = useMemo(() => ['12%', '50%', '90%'], []); // More minimal first snap point
+  
+  // Check if user is a rider
+  useEffect(() => {
+    if (user && user.role !== 'rider') {
+      Alert.alert(
+        'Access Denied',
+        'This section is only accessible to riders. Please log in with a rider account.',
+        [{ text: 'OK', onPress: () => router.replace('/(auth)/login') }]
+      );
+    }
+  }, [user]);
   
   const [currentJob, setCurrentJob] = useState<any>(null);
   const [loading, setLoading] = useState(true);
