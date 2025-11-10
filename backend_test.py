@@ -15,11 +15,12 @@ HEADERS = {"Content-Type": "application/json"}
 
 class LiveTrackingTester:
     def __init__(self):
-        self.session = requests.Session()
-        self.rider_token = None
         self.customer_token = None
-        self.test_order_id = None
-        self.test_rider_id = None
+        self.rider_token = None
+        self.customer_id = None
+        self.rider_id = None
+        self.order_id = None
+        self.restaurant_id = None
         
     def log(self, message, level="INFO"):
         """Log messages with timestamp"""
