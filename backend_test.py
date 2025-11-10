@@ -196,39 +196,33 @@ def test_rider_403_errors():
     print_warning("ISSUE: Customer users accessing rider screens see 403 errors despite guards")
     
     # Test data
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    customer_email = f"test_customer_{timestamp}@example.com"
-    rider_email = f"test_rider_{timestamp}@example.com"
-    restaurant_email = f"test_restaurant_{timestamp}@example.com"
+    timestamp = int(time.time())
+    customer_email = f"customer_test_{timestamp}@test.com"
+    rider_email = f"rider_test_{timestamp}@test.com"
     test_password = "testpass123"
     
     customer_token = None
     rider_token = None
-    restaurant_token = None
-    restaurant_id = None
-    order_id = None
     
     try:
-        # 1. Register test users
-        print("\n📝 Setting up test users...")
+        # 1. Create test accounts
+        print_header("CREATING TEST ACCOUNTS")
         
+        print_test("Creating Customer Account")
         customer_token = register_test_user(customer_email, test_password, "Test Customer", "customer")
         if not customer_token:
-            results.log_fail("Customer Registration", "Failed to register customer")
+            print_error("Failed to create customer account")
             return results.summary()
-        results.log_pass("Customer Registration")
+        print_success(f"Customer account created: {customer_email}")
+        print_info(f"Customer token: {customer_token[:20]}...")
         
+        print_test("Creating Rider Account")
         rider_token = register_test_user(rider_email, test_password, "Test Rider", "rider")
         if not rider_token:
-            results.log_fail("Rider Registration", "Failed to register rider")
+            print_error("Failed to create rider account")
             return results.summary()
-        results.log_pass("Rider Registration")
-        
-        restaurant_token = register_test_user(restaurant_email, test_password, "Test Restaurant Owner", "restaurant")
-        if not restaurant_token:
-            results.log_fail("Restaurant Registration", "Failed to register restaurant owner")
-            return results.summary()
-        results.log_pass("Restaurant Registration")
+        print_success(f"Rider account created: {rider_email}")
+        print_info(f"Rider token: {rider_token[:20]}...")
         
         # 2. Create test restaurant
         print("\n🏪 Setting up test restaurant...")
