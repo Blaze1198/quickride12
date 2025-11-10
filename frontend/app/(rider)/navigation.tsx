@@ -22,7 +22,7 @@ const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function RiderNavigationScreen() {
   const router = useRouter();
-  const { user } = useAuthStore();
+  const { user, isLoading: authLoading } = useAuthStore();
   const mapRef = useRef<any>(null);
   const mapInstanceRef = useRef<any>(null); // Track if map is already initialized
   const currentJobIdRef = useRef<string | null>(null); // Track current job ID
