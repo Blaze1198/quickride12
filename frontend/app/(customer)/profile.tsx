@@ -69,34 +69,8 @@ export default function ProfileScreen() {
   };
 
   const handleLogout = () => {
-    if (Platform.OS === 'web') {
-      const confirmed = window.confirm('Are you sure you want to logout?');
-      if (confirmed) {
-        performLogout();
-      }
-    } else {
-      Alert.alert('Logout', 'Are you sure you want to logout?', [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Logout',
-          style: 'destructive',
-          onPress: performLogout,
-        },
-      ]);
-    }
-  };
-
-  const performLogout = async () => {
-    try {
-      await api.post('/auth/logout');
-    } catch (error) {
-      console.error('Logout error:', error);
-    } finally {
-      setAuthToken(null);
-      authLogout();
-      clearCart();
-      router.replace('/(auth)/login');
-    }
+    // Navigate to logout page instead of showing alert
+    router.push('/logout');
   };
 
   return (
