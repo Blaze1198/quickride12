@@ -294,6 +294,9 @@ frontend:
       - working: false
         agent: "user"
         comment: "User reports: Still getting 403 errors in console for rider screen. Errors appearing for /riders/me, /riders/location, /riders/nearby-orders endpoints despite multiple fix attempts with role guards and auth loading checks."
+      - working: false
+        agent: "user"
+        comment: "User reports: When clicking 'Start Navigation' button on rider navigation screen, an error/unexpected behavior occurs. Screenshot provided showing the issue. Need testing agent to investigate."
       - working: true
         agent: "testing"
         comment: |
