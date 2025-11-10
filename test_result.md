@@ -157,11 +157,11 @@ backend:
 frontend:
   - task: "Rider Navigation Screen with Live Directions"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/app/(rider)/navigation.tsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
