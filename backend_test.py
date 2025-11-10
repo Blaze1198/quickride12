@@ -27,55 +27,57 @@ class LiveTrackingTester:
         print(f"[{timestamp}] {message}")
         
     def test_auth_and_setup(self):
-        """Create test rider and customer accounts"""
-        self.log("🔧 Creating test accounts for navigation testing...")
+        """Test 1: Create customer and rider accounts for testing"""
+        self.log("🔐 TESTING AUTHENTICATION & SETUP")
         
-        # Create test rider account
-        rider_data = {
-            "email": f"test-rider-nav-{int(time.time())}@example.com",
+        # Create customer account
+        customer_data = {
+            "email": f"customer_test_{int(time.time())}@test.com",
             "password": "testpass123",
-            "name": "Test Navigation Rider",
-            "role": "rider",
+            "name": "Test Customer",
+            "role": "customer",
             "phone": "+63 912 345 6789"
         }
         
         try:
-            response = self.session.post(f"{BACKEND_URL}/auth/register", json=rider_data)
+            response = requests.post(f"{BASE_URL}/auth/register", 
+                                   json=customer_data, headers=HEADERS)
             if response.status_code == 200:
                 data = response.json()
-                self.rider_token = data["session_token"]
-                self.log(f"✅ Rider account created: {rider_data['email']}")
-                self.log(f"   Session token: {self.rider_token[:20]}...")
+                self.customer_token = data["session_token"]
+                self.customer_id = data["user"]["id"]
+                self.log(f"✅ Customer created: {customer_data['email']}")
+                self.log(f"   Customer ID: {self.customer_id}")
             else:
-                self.log(f"❌ Failed to create rider account: {response.status_code} - {response.text}", "ERROR")
+                self.log(f"❌ Customer creation failed: {response.status_code} - {response.text}")
                 return False
         except Exception as e:
-            self.log(f"❌ Error creating rider account: {str(e)}", "ERROR")
+            self.log(f"❌ Customer creation error: {str(e)}")
             return False
             
-        # Create test customer account
-        customer_data = {
-            "email": f"test-customer-nav-{int(time.time())}@example.com",
+        # Create rider account
+        rider_data = {
+            "email": f"rider_test_{int(time.time())}@test.com",
             "password": "testpass123",
-            "name": "Test Navigation Customer",
-            "role": "customer",
+            "name": "Test Rider",
+            "role": "rider",
             "phone": "+63 912 345 6790"
         }
         
         try:
-            # Use a new session for customer to avoid cookie conflicts
-            customer_session = requests.Session()
-            response = customer_session.post(f"{BACKEND_URL}/auth/register", json=customer_data)
+            response = requests.post(f"{BASE_URL}/auth/register", 
+                                   json=rider_data, headers=HEADERS)
             if response.status_code == 200:
                 data = response.json()
-                self.customer_token = data["session_token"]
-                self.log(f"✅ Customer account created: {customer_data['email']}")
-                self.log(f"   Session token: {self.customer_token[:20]}...")
+                self.rider_token = data["session_token"]
+                self.rider_id = data["user"]["id"]
+                self.log(f"✅ Rider created: {rider_data['email']}")
+                self.log(f"   Rider ID: {self.rider_id}")
             else:
-                self.log(f"❌ Failed to create customer account: {response.status_code} - {response.text}", "ERROR")
+                self.log(f"❌ Rider creation failed: {response.status_code} - {response.text}")
                 return False
         except Exception as e:
-            self.log(f"❌ Error creating customer account: {str(e)}", "ERROR")
+            self.log(f"❌ Rider creation error: {str(e)}")
             return False
             
         return True
