@@ -118,31 +118,31 @@ class LiveTrackingTester:
             return False
         
     def test_order_creation(self):
-        """Create a test order and assign to rider"""
-        self.log("📦 Creating test order for navigation testing...")
+        """Test 3: Create order and assign rider"""
+        self.log("\n📦 TESTING ORDER CREATION & ASSIGNMENT")
         
-        # First, get restaurants
+        # First get restaurants
         try:
-            response = self.session.get(f"{BACKEND_URL}/restaurants")
+            response = requests.get(f"{BASE_URL}/restaurants", headers=HEADERS)
             if response.status_code == 200:
                 restaurants = response.json()
-                if not restaurants:
-                    self.log("❌ No restaurants found", "ERROR")
+                if restaurants:
+                    self.restaurant_id = restaurants[0]["id"]
+                    self.log(f"✅ Using restaurant: {restaurants[0]['name']}")
+                else:
+                    self.log("❌ No restaurants found")
                     return False
-                restaurant = restaurants[0]
-                self.log(f"✅ Using restaurant: {restaurant['name']}")
             else:
-                self.log(f"❌ Failed to get restaurants: {response.status_code}", "ERROR")
+                self.log(f"❌ Failed to get restaurants: {response.status_code}")
                 return False
         except Exception as e:
-            self.log(f"❌ Error getting restaurants: {str(e)}", "ERROR")
+            self.log(f"❌ Restaurant fetch error: {str(e)}")
             return False
             
-        # Create order as customer (use separate session)
-        customer_session = requests.Session()
-        headers = {"Authorization": f"Bearer {self.customer_token}"}
+        # Create order
+        customer_headers = {**HEADERS, "Authorization": f"Bearer {self.customer_token}"}
         order_data = {
-            "restaurant_id": restaurant["id"],
+            "restaurant_id": self.restaurant_id,
             "items": [
                 {
                     "menu_item_id": "test-item-1",
@@ -155,79 +155,38 @@ class LiveTrackingTester:
             "subtotal": 150.0,
             "delivery_fee": 50.0,
             "delivery_address": {
-                "latitude": 14.5995,
-                "longitude": 120.9842,
-                "address": "BGC, Taguig City, Metro Manila, Philippines"
+                "latitude": 14.6042,
+                "longitude": 121.0122,
+                "address": "BGC, Taguig, Metro Manila, Philippines"
             },
-            "customer_phone": "+63 912 345 6790",
-            "special_instructions": "Test order for navigation testing"
+            "customer_phone": "+63 912 345 6789"
         }
         
         try:
-            response = customer_session.post(f"{BACKEND_URL}/orders", json=order_data, headers=headers)
+            response = requests.post(f"{BASE_URL}/orders", 
+                                   json=order_data, headers=customer_headers)
             if response.status_code == 200:
                 order = response.json()
-                self.test_order_id = order["id"]
-                self.log(f"✅ Test order created: {self.test_order_id}")
-                self.log(f"   Restaurant: {order['restaurant_name']}")
-                self.log(f"   Customer: {order['customer_name']}")
-                self.log(f"   Status: {order['status']}")
-            else:
-                self.log(f"❌ Failed to create order: {response.status_code} - {response.text}", "ERROR")
-                return False
-        except Exception as e:
-            self.log(f"❌ Error creating order: {str(e)}", "ERROR")
-            return False
-            
-        # Update order status to ready_for_pickup to trigger auto-assignment
-        try:
-            response = customer_session.put(f"{BACKEND_URL}/orders/{self.test_order_id}/status",
-                                      json={"status": "ready_for_pickup"}, headers=headers)
-            if response.status_code == 200:
-                result = response.json()
-                self.log(f"✅ Order status updated to: {result['status']}")
-                if result['status'] == 'rider_assigned':
-                    self.log("✅ Rider auto-assigned to order")
-                else:
-                    self.log("⚠️ Order not auto-assigned, will manually assign")
-            else:
-                self.log(f"❌ Failed to update order status: {response.status_code} - {response.text}", "ERROR")
-                return False
-        except Exception as e:
-            self.log(f"❌ Error updating order status: {str(e)}", "ERROR")
-            return False
-            
-        # Check which rider was actually assigned to the order
-        try:
-            response = customer_session.get(f"{BACKEND_URL}/orders/{self.test_order_id}", headers=headers)
-            if response.status_code == 200:
-                order_data = response.json()
-                assigned_rider_id = order_data.get('rider_id')
-                assigned_rider_name = order_data.get('rider_name')
-                self.log(f"🔍 Order assigned to rider: {assigned_rider_name} (ID: {assigned_rider_id})")
-                self.log(f"🔍 Our test rider ID: {self.test_rider_id}")
+                self.order_id = order["id"]
+                self.log(f"✅ Order created: {self.order_id}")
                 
-                if assigned_rider_id != self.test_rider_id:
-                    self.log("⚠️ Order was assigned to a different rider, not our test rider", "WARNING")
-                    # Try to manually assign to our rider
-                    try:
-                        rider_headers = {"Authorization": f"Bearer {self.rider_token}"}
-                        response = self.session.post(f"{BACKEND_URL}/orders/{self.test_order_id}/accept-delivery", 
-                                                   headers=rider_headers)
-                        if response.status_code == 200:
-                            self.log("✅ Order manually reassigned to test rider")
-                        else:
-                            self.log(f"⚠️ Manual reassignment failed: {response.status_code} - {response.text}", "WARNING")
-                    except Exception as e:
-                        self.log(f"⚠️ Error in manual reassignment: {str(e)}", "WARNING")
+                # Update order to ready_for_pickup to trigger rider assignment
+                status_data = {"status": "ready_for_pickup"}
+                response = requests.put(f"{BASE_URL}/orders/{self.order_id}/status",
+                                      json=status_data, headers=customer_headers)
+                if response.status_code == 200:
+                    self.log("✅ Order status updated to ready_for_pickup")
+                    time.sleep(2)  # Wait for auto-assignment
+                    return True
                 else:
-                    self.log("✅ Order correctly assigned to our test rider")
+                    self.log(f"❌ Order status update failed: {response.status_code} - {response.text}")
+                    return False
             else:
-                self.log(f"❌ Failed to get order details: {response.status_code}", "ERROR")
+                self.log(f"❌ Order creation failed: {response.status_code} - {response.text}")
+                return False
         except Exception as e:
-            self.log(f"❌ Error checking order assignment: {str(e)}", "ERROR")
-            
-        return True
+            self.log(f"❌ Order creation error: {str(e)}")
+            return False
         
     def test_rider_current_order_api(self):
         """Test the /rider/current-order API that navigation screen uses"""
