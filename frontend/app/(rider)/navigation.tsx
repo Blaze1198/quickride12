@@ -739,116 +739,24 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
           setTimeout(() => {
             console.log('🗺️ Step 2: Starting map transition...');
             
-            // Apply dark mode immediately
+            // Apply minimal clean styling (NO dark mode - keeps it fast)
             mapInstanceRef.current.setOptions({
                 styles: [
-                  // Dark backgrounds
-                  { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
-                  { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
-                  
-                  // HIDE ALL POIs (Points of Interest) - no clutter
+                  // HIDE ALL POIs (Points of Interest) - no clutter, keep it clean
                   {
                     featureType: "poi",
-                    stylers: [{ visibility: "off" }], // Hide all POI markers
+                    stylers: [{ visibility: "off" }],
                   },
                   {
                     featureType: "poi.business",
                     stylers: [{ visibility: "off" }],
                   },
                   {
-                    featureType: "poi.medical",
-                    stylers: [{ visibility: "off" }],
-                  },
-                  {
-                    featureType: "poi.school",
-                    stylers: [{ visibility: "off" }],
-                  },
-                  {
-                    featureType: "poi.government",
-                    stylers: [{ visibility: "off" }],
-                  },
-                  
-                  // Hide transit stations and stops
-                  {
                     featureType: "transit.station",
                     stylers: [{ visibility: "off" }],
                   },
-                  
-                  // Minimal labels - only show essential street names
-                  {
-                    featureType: "road",
-                    elementType: "labels.text.fill",
-                    stylers: [{ color: "#9ca5b3", visibility: "simplified" }],
-                  },
-                  {
-                    featureType: "road",
-                    elementType: "labels.icon",
-                    stylers: [{ visibility: "off" }], // No road icons
-                  },
-                  
-                  // Hide business labels
                   {
                     featureType: "poi",
-                    elementType: "labels",
-                    stylers: [{ visibility: "off" }],
-                  },
-                  
-                  // Show only major landmarks (very minimal)
-                  {
-                    featureType: "administrative.locality",
-                    elementType: "labels.text.fill",
-                    stylers: [{ color: "#d59563", visibility: "simplified" }],
-                  },
-                  
-                  // Dark roads
-                  {
-                    featureType: "road",
-                    elementType: "geometry",
-                    stylers: [{ color: "#38414e" }],
-                  },
-                  {
-                    featureType: "road",
-                    elementType: "geometry.stroke",
-                    stylers: [{ color: "#212a37" }],
-                  },
-                  
-                  // Highways highlighted
-                  {
-                    featureType: "road.highway",
-                    elementType: "geometry",
-                    stylers: [{ color: "#746855" }],
-                  },
-                  {
-                    featureType: "road.highway",
-                    elementType: "geometry.stroke",
-                    stylers: [{ color: "#1f2835" }],
-                  },
-                  {
-                    featureType: "road.highway",
-                    elementType: "labels.text.fill",
-                    stylers: [{ color: "#f3d19c" }],
-                  },
-                  
-                  // Dark water
-                  {
-                    featureType: "water",
-                    elementType: "geometry",
-                    stylers: [{ color: "#17263c" }],
-                  },
-                  {
-                    featureType: "water",
-                    elementType: "labels",
-                    stylers: [{ visibility: "off" }], // Hide water labels
-                  },
-                  
-                  // Hide park labels
-                  {
-                    featureType: "poi.park",
-                    elementType: "geometry",
-                    stylers: [{ color: "#263c3f" }],
-                  },
-                  {
-                    featureType: "poi.park",
                     elementType: "labels",
                     stylers: [{ visibility: "off" }],
                   },
