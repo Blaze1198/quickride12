@@ -1205,19 +1205,7 @@ async def create_rider_profile(rider_data: Dict[str, Any], request: Request):
     await db.riders.insert_one(rider.dict())
     return rider
 
-@api_router.get("/riders/me")
-async def get_my_rider_profile(request: Request):
-    """Get current user's rider profile"""
-    user = await require_auth(request)
-    
-    if user.role != UserRole.RIDER:
-        raise HTTPException(status_code=403, detail="Not a rider")
-    
-    rider = await db.riders.find_one({"user_id": user.id})
-    if not rider:
-        return None
-    
-    return Rider(**rider)
+# Duplicate endpoint removed - using the auto-creating version above
 
 @api_router.put("/riders/location")
 async def update_rider_location(location: Location, request: Request):
