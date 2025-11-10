@@ -367,7 +367,7 @@ export default function LiveOrderTrackingScreen() {
             // Decode polyline and draw route
             const path = google.maps.geometry.encoding.decodePath(route.polyline.encodedPolyline);
             
-            new google.maps.Polyline({
+            routePolylineRef.current = new google.maps.Polyline({
               path: path,
               geodesic: true,
               strokeColor: '#2196F3',
