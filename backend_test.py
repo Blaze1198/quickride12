@@ -224,180 +224,20 @@ def test_rider_403_errors():
         print_success(f"Rider account created: {rider_email}")
         print_info(f"Rider token: {rider_token[:20]}...")
         
-        # 2. Create test restaurant
-        print("\n🏪 Setting up test restaurant...")
-        restaurant_id = create_test_restaurant(restaurant_token)
-        if not restaurant_id:
-            results.log_fail("Restaurant Creation", "Failed to create test restaurant")
-            return results.summary()
-        results.log_pass("Restaurant Creation")
+        # 2. Test rider endpoints without authentication (should get 401)
+        test_rider_endpoints_no_auth(results)
         
-        # 3. Create test order
-        print("\n📦 Creating test order...")
-        order_id = create_test_order(customer_token, restaurant_id)
-        if not order_id:
-            results.log_fail("Order Creation", "Failed to create test order")
-            return results.summary()
-        results.log_pass("Order Creation")
+        # 3. Test rider endpoints with customer authentication (should get 403)
+        test_rider_endpoints_customer_auth(results, customer_token)
         
-        # 4. Test GET /api/rider/current-order (no active order)
-        print("\n🚴 Testing rider current order endpoint...")
-        response = make_request("GET", "/rider/current-order", auth_token=rider_token)
-        if response and response.status_code == 200:
-            data = response.json()
-            if data is None:  # No active order expected
-                results.log_pass("Rider Current Order (No Active Order)")
-            else:
-                results.log_fail("Rider Current Order (No Active Order)", f"Expected null, got: {data}")
-        else:
-            results.log_fail("Rider Current Order (No Active Order)", f"HTTP {response.status_code if response else 'No response'}")
+        # 4. Test rider endpoints with rider authentication (should work)
+        test_rider_endpoints_rider_auth(results, rider_token)
         
-        # 5. Test unauthorized access to rider endpoint
-        response = make_request("GET", "/rider/current-order", auth_token=customer_token)
-        if response and response.status_code == 403:
-            results.log_pass("Rider Current Order (Unauthorized Access)")
-        else:
-            results.log_fail("Rider Current Order (Unauthorized Access)", f"Expected 403, got {response.status_code if response else 'No response'}")
+        # 5. Test specific guard scenarios
+        test_specific_guard_scenarios(results, customer_token, rider_token)
         
-        # 6. Update order status to assign rider
-        print("\n📋 Updating order status to assign rider...")
-        # First, update order to ready_for_pickup to trigger rider assignment
-        status_update = {"status": "ready_for_pickup"}
-        response = make_request("PUT", f"/orders/{order_id}/status", status_update, auth_token=restaurant_token)
-        if response and response.status_code == 200:
-            results.log_pass("Order Status Update to Ready for Pickup")
-            
-            # Check if rider was auto-assigned
-            response = make_request("GET", f"/orders/{order_id}", auth_token=customer_token)
-            if response and response.status_code == 200:
-                order_data = response.json()
-                if order_data.get("rider_id"):
-                    results.log_pass("Auto Rider Assignment")
-                else:
-                    results.log_pass("Order Status Update (No Auto Assignment - Expected)")
-        else:
-            results.log_fail("Order Status Update", f"HTTP {response.status_code if response else 'No response'}")
-        
-        # 7. Create rider profile first (auto-created by calling /riders/me)
-        print("\n👤 Creating rider profile...")
-        response = make_request("GET", "/riders/me", auth_token=rider_token)
-        if response and response.status_code == 200:
-            results.log_pass("Rider Profile Creation")
-        else:
-            results.log_fail("Rider Profile Creation", f"HTTP {response.status_code if response else 'No response'}")
-        
-        # 8. Test PUT /api/riders/location
-        print("\n📍 Testing rider location update...")
-        location_data = {
-            "latitude": 14.5995,
-            "longitude": 120.9842,
-            "address": "Makati City, Metro Manila"
-        }
-        response = make_request("PUT", "/riders/location", location_data, auth_token=rider_token)
-        if response and response.status_code == 200:
-            data = response.json()
-            if data.get("message") == "Location updated":
-                results.log_pass("Rider Location Update")
-            else:
-                results.log_fail("Rider Location Update", f"Unexpected response: {data}")
-        else:
-            results.log_fail("Rider Location Update", f"HTTP {response.status_code if response else 'No response'}")
-        
-        # 8. Test unauthorized location update
-        response = make_request("PUT", "/riders/location", location_data, auth_token=customer_token)
-        if response and response.status_code == 403:
-            results.log_pass("Rider Location Update (Unauthorized)")
-        else:
-            results.log_fail("Rider Location Update (Unauthorized)", f"Expected 403, got {response.status_code if response else 'No response'}")
-        
-        # 9. Test GET /api/orders/{order_id}/rider-location
-        print("\n🗺️ Testing customer rider location tracking...")
-        response = make_request("GET", f"/orders/{order_id}/rider-location", auth_token=customer_token)
-        if response and response.status_code == 200:
-            data = response.json()
-            expected_keys = ["rider_assigned", "location"]
-            if all(key in data for key in expected_keys):
-                results.log_pass("Customer Rider Location Tracking")
-            else:
-                results.log_fail("Customer Rider Location Tracking", f"Missing keys in response: {data}")
-        else:
-            results.log_fail("Customer Rider Location Tracking", f"HTTP {response.status_code if response else 'No response'}")
-        
-        # 10. Test unauthorized access to rider location
-        # Create another customer to test unauthorized access
-        other_customer_token = register_test_user(f"other_customer_{timestamp}@example.com", test_password, "Other Customer", "customer")
-        if other_customer_token:
-            response = make_request("GET", f"/orders/{order_id}/rider-location", auth_token=other_customer_token)
-            if response and response.status_code == 403:
-                results.log_pass("Customer Rider Location (Unauthorized Access)")
-            else:
-                results.log_fail("Customer Rider Location (Unauthorized Access)", f"Expected 403, got {response.status_code if response else 'No response'}")
-        
-        # 11. Test non-existent order
-        fake_order_id = str(uuid.uuid4())
-        response = make_request("GET", f"/orders/{fake_order_id}/rider-location", auth_token=customer_token)
-        if response and response.status_code == 404:
-            results.log_pass("Rider Location for Non-existent Order")
-        else:
-            results.log_fail("Rider Location for Non-existent Order", f"Expected 404, got {response.status_code if response else 'No response'}")
-        
-        # 12. Test rider current order after assignment (simulate assignment)
-        print("\n🔄 Testing rider current order with active order...")
-        # We need to manually set the rider's current_order_id for this test
-        # Since we can't directly update the database, we'll test the endpoint behavior
-        response = make_request("GET", "/rider/current-order", auth_token=rider_token)
-        if response and response.status_code == 200:
-            # The response could be null if no order is assigned, which is acceptable
-            results.log_pass("Rider Current Order Endpoint Response")
-        else:
-            results.log_fail("Rider Current Order Endpoint Response", f"HTTP {response.status_code if response else 'No response'}")
-        
-        # 13. Test location update with different coordinates
-        print("\n📍 Testing rider location update with new coordinates...")
-        new_location_data = {
-            "latitude": 14.5547,
-            "longitude": 121.0244,
-            "address": "BGC, Taguig City"
-        }
-        response = make_request("PUT", "/riders/location", new_location_data, auth_token=rider_token)
-        if response and response.status_code == 200:
-            results.log_pass("Rider Location Update (New Coordinates)")
-        else:
-            results.log_fail("Rider Location Update (New Coordinates)", f"HTTP {response.status_code if response else 'No response'}")
-        
-        # 14. Verify location was updated
-        response = make_request("GET", f"/orders/{order_id}/rider-location", auth_token=customer_token)
-        if response and response.status_code == 200:
-            data = response.json()
-            location = data.get("location")
-            if location and location.get("latitude") == 14.5547 and location.get("longitude") == 121.0244:
-                results.log_pass("Location Update Verification")
-            else:
-                results.log_pass("Location Tracking Response (Location may not be updated due to no active assignment)")
-        else:
-            results.log_fail("Location Update Verification", f"HTTP {response.status_code if response else 'No response'}")
-        
-        # 15. Test authentication requirements
-        print("\n🔐 Testing authentication requirements...")
-        
-        # Test without auth token
-        response = make_request("GET", "/rider/current-order")
-        if response and response.status_code == 401:
-            results.log_pass("Authentication Required (Rider Current Order)")
-        else:
-            results.log_fail("Authentication Required (Rider Current Order)", f"Expected 401, got {response.status_code if response else 'No response'}")
-        
-        response = make_request("GET", f"/orders/{order_id}/rider-location")
-        if response and response.status_code == 401:
-            results.log_pass("Authentication Required (Rider Location)")
-        else:
-            results.log_fail("Authentication Required (Rider Location)", f"Expected 401, got {response.status_code if response else 'No response'}")
-        
-        response = make_request("PUT", "/riders/location", location_data)
-        if response and response.status_code == 401:
-            results.log_pass("Authentication Required (Location Update)")
-        else:
-            results.log_fail("Authentication Required (Location Update)", f"Expected 401, got {response.status_code if response else 'No response'}")
+        # 6. Analyze guard effectiveness
+        analyze_guard_effectiveness(results)
         
     except Exception as e:
         results.log_fail("Test Execution", f"Unexpected error: {str(e)}")
