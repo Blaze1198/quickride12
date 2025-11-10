@@ -739,29 +739,7 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
           setTimeout(() => {
             console.log('🗺️ Step 2: Starting map transition...');
             
-            // Apply minimal clean styling (NO dark mode - keeps it fast)
-            mapInstanceRef.current.setOptions({
-                styles: [
-                  // HIDE ALL POIs (Points of Interest) - no clutter, keep it clean
-                  {
-                    featureType: "poi",
-                    stylers: [{ visibility: "off" }],
-                  },
-                  {
-                    featureType: "poi.business",
-                    stylers: [{ visibility: "off" }],
-                  },
-                  {
-                    featureType: "transit.station",
-                    stylers: [{ visibility: "off" }],
-                  },
-                  {
-                    featureType: "poi",
-                    elementType: "labels",
-                    stylers: [{ visibility: "off" }],
-                  },
-                ],
-              });
+            // Keep map styling minimal for best performance - no extra styling
 
             // Ultra-smooth zoom animation - 1 second like Google Maps
             const startZoom = mapInstanceRef.current.getZoom() || 14;
