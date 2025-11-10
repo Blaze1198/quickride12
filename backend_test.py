@@ -239,6 +239,19 @@ class NavigationTester:
         
         headers = {"Authorization": f"Bearer {self.rider_token}"}
         
+        # First, check rider profile to see current_order_id
+        try:
+            response = self.session.get(f"{BACKEND_URL}/riders/me", headers=headers)
+            if response.status_code == 200:
+                rider_data = response.json()
+                self.log(f"🔍 Rider current_order_id: {rider_data.get('current_order_id')}")
+                if not rider_data.get('current_order_id'):
+                    self.log("⚠️ Rider has no current_order_id set", "WARNING")
+            else:
+                self.log(f"❌ Failed to get rider profile: {response.status_code}", "ERROR")
+        except Exception as e:
+            self.log(f"❌ Error getting rider profile: {str(e)}", "ERROR")
+        
         try:
             response = self.session.get(f"{BACKEND_URL}/rider/current-order", headers=headers)
             if response.status_code == 200:
