@@ -15,39 +15,61 @@ BACKEND_URL = "https://track-delivery-5.preview.emergentagent.com/api"
 
 class SessionLossInvestigator:
     def __init__(self):
-        self.customer_token = None
-        self.rider_token = None
-        self.customer_id = None
-        self.rider_id = None
-        self.order_id = None
-        self.restaurant_id = None
+        self.session_token = None
+        self.user_data = None
+        self.test_results = []
         
-    def log(self, message):
-        timestamp = datetime.now().strftime("%H:%M:%S")
-        print(f"[{timestamp}] {message}")
+    def log_result(self, test_name, status, details):
+        """Log test results"""
+        result = {
+            "test": test_name,
+            "status": status,
+            "details": details,
+            "timestamp": datetime.now().isoformat()
+        }
+        self.test_results.append(result)
         
-    def test_auth_and_setup(self):
-        """Test 1: Create customer and rider accounts for testing"""
-        self.log("🔐 TESTING AUTHENTICATION & SETUP")
+        status_icon = "✅" if status == "PASS" else "❌" if status == "FAIL" else "⚠️"
+        print(f"{status_icon} {test_name}: {details}")
         
-        # Create customer account
-        customer_data = {
-            "email": f"customer_test_{int(time.time())}@test.com",
-            "password": "testpass123",
-            "name": "Test Customer",
-            "role": "customer",
+    def create_test_rider_account(self):
+        """Create a test rider account for authentication testing"""
+        print("\n🔧 SETUP: Creating test rider account...")
+        
+        # Create unique test account
+        timestamp = int(time.time())
+        test_email = f"test.rider.{timestamp}@example.com"
+        test_password = "TestRider123!"
+        
+        register_data = {
+            "email": test_email,
+            "password": test_password,
+            "name": "Test Session Rider",
+            "role": "rider",
             "phone": "+63 912 345 6789"
         }
         
         try:
-            response = requests.post(f"{BASE_URL}/auth/register", 
-                                   json=customer_data, headers=HEADERS)
+            response = requests.post(f"{BACKEND_URL}/auth/register", json=register_data)
+            
             if response.status_code == 200:
                 data = response.json()
-                self.customer_token = data["session_token"]
-                self.customer_id = data["user"]["id"]
-                self.log(f"✅ Customer created: {customer_data['email']}")
-                self.log(f"   Customer ID: {self.customer_id}")
+                self.session_token = data.get("session_token")
+                self.user_data = data.get("user")
+                
+                self.log_result("Account Creation", "PASS", 
+                              f"Created rider account: {test_email}")
+                self.log_result("Session Token Received", "PASS", 
+                              f"Token: {self.session_token[:20]}...")
+                return True
+            else:
+                self.log_result("Account Creation", "FAIL", 
+                              f"HTTP {response.status_code}: {response.text}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Account Creation", "FAIL", f"Exception: {str(e)}")
+            return False
             else:
                 self.log(f"❌ Customer creation failed: {response.status_code} - {response.text}")
                 return False
