@@ -97,6 +97,12 @@ export default function RiderAvailableScreen() {
   }, [serviceType]);
 
   const fetchRiderAvailability = async () => {
+    // Guard: Only fetch if user is a rider
+    if (!user || user.role !== 'rider') {
+      console.log('⚠️ Skipping rider availability fetch - user is not a rider');
+      return;
+    }
+
     try {
       const response = await api.get('/riders/me');
       setIsAvailable(response.data.is_available !== false);
@@ -106,6 +112,12 @@ export default function RiderAvailableScreen() {
   };
 
   const fetchRiderLocation = async () => {
+    // Guard: Only fetch if user is a rider
+    if (!user || user.role !== 'rider') {
+      console.log('⚠️ Skipping rider location fetch - user is not a rider');
+      return;
+    }
+
     try {
       const response = await api.get('/riders/me');
       if (response.data.current_location) {
