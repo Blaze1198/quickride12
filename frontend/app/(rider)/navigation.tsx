@@ -729,17 +729,18 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
             );
           }
 
-          // Minimize bottom sheet immediately (smooth native animation)
+          // STEP 1: Minimize bottom sheet FIRST (sequential, not simultaneous)
+          console.log('📱 Step 1: Minimizing bottom sheet...');
           if (bottomSheetRef.current) {
             bottomSheetRef.current.snapToIndex(0);
-            console.log('📱 Bottom sheet minimized');
           }
 
-          // Use Google Maps native smooth panTo with animation
-          console.log('🗺️ Applying smooth map transition...');
-          
-          // Apply dark mode immediately
-          mapInstanceRef.current.setOptions({
+          // STEP 2: Wait for bottom sheet to finish minimizing, THEN animate map
+          setTimeout(() => {
+            console.log('🗺️ Step 2: Starting map transition...');
+            
+            // Apply dark mode immediately
+            mapInstanceRef.current.setOptions({
                 styles: [
                   // Dark backgrounds
                   { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
