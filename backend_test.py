@@ -86,6 +86,22 @@ class NavigationTester:
         
         headers = {"Authorization": f"Bearer {self.rider_token}"}
         
+        # First, check current user to verify role
+        try:
+            response = self.session.get(f"{BACKEND_URL}/auth/me", headers=headers)
+            if response.status_code == 200:
+                user_data = response.json()
+                self.log(f"✅ Current user: {user_data['name']} (Role: {user_data['role']})")
+                if user_data['role'] != 'rider':
+                    self.log(f"❌ User role is {user_data['role']}, expected 'rider'", "ERROR")
+                    return False
+            else:
+                self.log(f"❌ Failed to get current user: {response.status_code} - {response.text}", "ERROR")
+                return False
+        except Exception as e:
+            self.log(f"❌ Error getting current user: {str(e)}", "ERROR")
+            return False
+        
         # Get/create rider profile
         try:
             response = self.session.get(f"{BACKEND_URL}/riders/me", headers=headers)
