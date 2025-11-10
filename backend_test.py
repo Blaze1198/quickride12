@@ -187,6 +187,205 @@ class LiveTrackingTester:
         except Exception as e:
             self.log(f"❌ Order creation error: {str(e)}")
             return False
+            
+    def test_rider_location_api(self):
+        """Test 4: Test rider location API with different authentication scenarios"""
+        self.log("\n🎯 TESTING RIDER LOCATION API - MAIN FOCUS")
+        
+        if not self.order_id:
+            self.log("❌ No order ID available for testing")
+            return False
+            
+        # Test 1: No authentication
+        self.log("Test 4.1: No authentication")
+        try:
+            response = requests.get(f"{BASE_URL}/orders/{self.order_id}/rider-location", 
+                                  headers=HEADERS)
+            self.log(f"   Status: {response.status_code}")
+            if response.status_code == 401:
+                self.log("   ✅ Correctly returns 401 for no auth")
+            else:
+                self.log(f"   ❌ Expected 401, got {response.status_code}")
+        except Exception as e:
+            self.log(f"   ❌ Error: {str(e)}")
+            
+        # Test 2: Rider authentication (should fail - riders can't access this endpoint)
+        self.log("Test 4.2: Rider authentication")
+        rider_headers = {**HEADERS, "Authorization": f"Bearer {self.rider_token}"}
+        try:
+            response = requests.get(f"{BASE_URL}/orders/{self.order_id}/rider-location", 
+                                  headers=rider_headers)
+            self.log(f"   Status: {response.status_code}")
+            if response.status_code == 403:
+                self.log("   ✅ Correctly returns 403 for rider auth")
+            else:
+                self.log(f"   ❌ Expected 403, got {response.status_code}")
+                self.log(f"   Response: {response.text}")
+        except Exception as e:
+            self.log(f"   ❌ Error: {str(e)}")
+            
+        # Test 3: Customer authentication (should work)
+        self.log("Test 4.3: Customer authentication (CRITICAL TEST)")
+        customer_headers = {**HEADERS, "Authorization": f"Bearer {self.customer_token}"}
+        try:
+            response = requests.get(f"{BASE_URL}/orders/{self.order_id}/rider-location", 
+                                  headers=customer_headers)
+            self.log(f"   Status: {response.status_code}")
+            
+            if response.status_code == 200:
+                data = response.json()
+                self.log("   ✅ SUCCESS: Customer can access rider location")
+                self.log(f"   Response data: {json.dumps(data, indent=2)}")
+                
+                # Check if rider is assigned and has location
+                if data.get("rider_assigned"):
+                    if data.get("location"):
+                        self.log("   ✅ Rider location data available")
+                        return True
+                    else:
+                        self.log("   ⚠️ Rider assigned but no location data")
+                        return False
+                else:
+                    self.log("   ⚠️ No rider assigned to order yet")
+                    return False
+            elif response.status_code == 403:
+                self.log("   ❌ CRITICAL: 403 Forbidden for customer - THIS IS THE PROBLEM!")
+                self.log(f"   Response: {response.text}")
+                return False
+            else:
+                self.log(f"   ❌ Unexpected status: {response.status_code}")
+                self.log(f"   Response: {response.text}")
+                return False
+        except Exception as e:
+            self.log(f"   ❌ Error: {str(e)}")
+            return False
+            
+    def test_order_data_access(self):
+        """Test 5: Test order data access"""
+        self.log("\n📋 TESTING ORDER DATA ACCESS")
+        
+        if not self.order_id:
+            self.log("❌ No order ID available for testing")
+            return False
+            
+        customer_headers = {**HEADERS, "Authorization": f"Bearer {self.customer_token}"}
+        
+        try:
+            response = requests.get(f"{BASE_URL}/orders/{self.order_id}", 
+                                  headers=customer_headers)
+            self.log(f"Status: {response.status_code}")
+            
+            if response.status_code == 200:
+                order = response.json()
+                self.log("✅ Order data accessible")
+                self.log(f"   Order status: {order.get('status')}")
+                self.log(f"   Rider assigned: {bool(order.get('rider_id'))}")
+                self.log(f"   Rider ID: {order.get('rider_id')}")
+                self.log(f"   Rider name: {order.get('rider_name')}")
+                self.log(f"   Has delivery address: {bool(order.get('delivery_address'))}")
+                
+                if order.get('delivery_address'):
+                    addr = order['delivery_address']
+                    self.log(f"   Delivery coordinates: {addr.get('latitude')}, {addr.get('longitude')}")
+                    
+                return True
+            else:
+                self.log(f"❌ Order access failed: {response.status_code} - {response.text}")
+                return False
+        except Exception as e:
+            self.log(f"❌ Order access error: {str(e)}")
+            return False
+            
+    def test_rider_availability_and_assignment(self):
+        """Test 6: Test rider availability and assignment process"""
+        self.log("\n🚀 TESTING RIDER AVAILABILITY & ASSIGNMENT")
+        
+        rider_headers = {**HEADERS, "Authorization": f"Bearer {self.rider_token}"}
+        
+        # Set rider as available
+        try:
+            availability_data = {"is_available": True}
+            response = requests.put(f"{BASE_URL}/riders/availability", 
+                                  json=availability_data, headers=rider_headers)
+            if response.status_code == 200:
+                self.log("✅ Rider set to available")
+            else:
+                self.log(f"❌ Failed to set rider availability: {response.status_code}")
+                
+            # Check rider status
+            response = requests.get(f"{BASE_URL}/riders/me", headers=rider_headers)
+            if response.status_code == 200:
+                rider_data = response.json()
+                self.log(f"   Rider status: {rider_data.get('status')}")
+                self.log(f"   Is available: {rider_data.get('is_available')}")
+                self.log(f"   Current order: {rider_data.get('current_order_id')}")
+                return True
+            else:
+                self.log(f"❌ Failed to get rider status: {response.status_code}")
+                return False
+        except Exception as e:
+            self.log(f"❌ Rider availability error: {str(e)}")
+            return False
+            
+    def run_comprehensive_test(self):
+        """Run all tests in sequence"""
+        self.log("🎯 STARTING COMPREHENSIVE LIVE TRACKING API TESTS")
+        self.log("=" * 60)
+        
+        results = {}
+        
+        # Test 1: Authentication & Setup
+        results["auth_setup"] = self.test_auth_and_setup()
+        if not results["auth_setup"]:
+            self.log("❌ CRITICAL: Authentication setup failed - cannot continue")
+            return results
+            
+        # Test 2: Rider Profile
+        results["rider_profile"] = self.test_rider_profile_creation()
+        
+        # Test 3: Rider Availability
+        results["rider_availability"] = self.test_rider_availability_and_assignment()
+        
+        # Test 4: Order Creation
+        results["order_creation"] = self.test_order_creation()
+        
+        # Test 5: Order Data Access
+        results["order_data"] = self.test_order_data_access()
+        
+        # Test 6: Rider Location API (MAIN FOCUS)
+        results["rider_location_api"] = self.test_rider_location_api()
+        
+        # Summary
+        self.log("\n" + "=" * 60)
+        self.log("🎯 TEST RESULTS SUMMARY")
+        self.log("=" * 60)
+        
+        for test_name, result in results.items():
+            status = "✅ PASS" if result else "❌ FAIL"
+            self.log(f"{test_name.upper().replace('_', ' ')}: {status}")
+            
+        # Critical analysis
+        self.log("\n🔍 CRITICAL ANALYSIS FOR ROUTE LINE ISSUE:")
+        
+        if not results.get("rider_location_api"):
+            self.log("❌ ROUTE LINE ISSUE CONFIRMED:")
+            self.log("   - Customer cannot access rider location API (403 Forbidden)")
+            self.log("   - Without rider location data, route line cannot be drawn")
+            self.log("   - This explains why markers show but no route line appears")
+            self.log("\n🔧 REQUIRED FIX:")
+            self.log("   - Fix authorization in /api/orders/{order_id}/rider-location endpoint")
+            self.log("   - Ensure customers can access rider location for their own orders")
+        else:
+            self.log("✅ RIDER LOCATION API WORKING:")
+            self.log("   - Customer can successfully access rider location")
+            self.log("   - Issue may be in frontend route drawing logic")
+            self.log("   - Check Google Maps Routes API calls and polyline rendering")
+            
+        return results
+
+if __name__ == "__main__":
+    tester = LiveTrackingTester()
+    results = tester.run_comprehensive_test()
         
     def test_rider_current_order_api(self):
         """Test the /rider/current-order API that navigation screen uses"""
