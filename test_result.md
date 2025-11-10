@@ -331,6 +331,82 @@ frontend:
           ✅ App loads normally and all screens are accessible
           ✅ Ready for normal operation and testing
           ✅ Simplified navigation transition code is working correctly
+      - working: false
+        agent: "testing"
+        comment: |
+          🚨 CRITICAL ISSUE CONFIRMED: 403 FORBIDDEN ERRORS ON RIDER SCREENS
+          
+          COMPREHENSIVE TESTING COMPLETED: Diagnosed persistent 403 errors when customers access rider screens
+          
+          ISSUE CONFIRMED:
+          ✅ Backend logs show continuous 403 errors on rider endpoints:
+          - GET /api/riders/me → 403 Forbidden
+          - PUT /api/riders/location → 403 Forbidden  
+          - GET /api/riders/nearby-orders?radius=10 → 403 Forbidden
+          - GET /api/rider/current-order → 403 Forbidden
+          - GET /api/rider/current-ride → 403 Forbidden
+          
+          BACKEND API TESTING RESULTS (21/21 tests passed):
+          ✅ All rider endpoints correctly return 401 without authentication
+          ✅ All rider endpoints correctly return 403 with customer authentication
+          ✅ All rider endpoints work correctly (200) with rider authentication
+          ✅ Backend authentication and authorization working perfectly
+          
+          ROOT CAUSE ANALYSIS:
+          ❌ Frontend guards are NOT preventing API calls despite implementation
+          ❌ Race condition: API calls execute BEFORE auth loading completes
+          ❌ useEffect hooks may not properly depend on [user, authLoading]
+          ❌ Guards show "Access Restricted" screen but API calls still happen
+          
+          SPECIFIC PROBLEMATIC API CALLS (from rider screens):
+          1. /(rider)/index.tsx:
+             - fetchRiderAvailability() → GET /riders/me (lines 105-118)
+             - fetchRiderLocation() → GET /riders/me (lines 120-136)  
+             - fetchNearbyOrders() → GET /riders/nearby-orders (lines 219-232)
+          
+          2. /(rider)/navigation.tsx:
+             - fetchCurrentJob() → GET /rider/current-order (lines 164-205)
+             - fetchCurrentJob() → GET /rider/current-ride (lines 164-205)
+             - updateRiderLocation() → PUT /riders/location (lines 149-162)
+          
+          GUARD IMPLEMENTATION ANALYSIS:
+          ✅ Early return guards implemented (lines 68-84 in index.tsx, 1090-1106 in navigation.tsx)
+          ✅ useEffect guards implemented with role checks
+          ✅ Console warning messages implemented
+          ❌ BUT: API calls still execute despite guards
+          
+          TIMING ISSUE IDENTIFIED:
+          - useEffect hooks run before authLoading completes
+          - Guards check user.role but user might be null initially
+          - API calls execute in the gap between component mount and auth completion
+          
+          REQUIRED FIXES:
+          1. Add authLoading checks to ALL useEffect guards:
+             ```
+             if (authLoading || !user || user.role !== 'rider') {
+               console.log('⚠️ Waiting for authentication or user is not a rider');
+               return;
+             }
+             ```
+          
+          2. Update useEffect dependencies to include authLoading:
+             ```
+             }, [user, authLoading]);
+             ```
+          
+          3. Prevent API calls during auth loading state
+          
+          4. Consider adding global API interceptor to block rider calls for non-riders
+          
+          IMPACT:
+          🚨 CRITICAL: Customer users see continuous 403 errors in browser console
+          🚨 Poor user experience with console spam
+          🚨 Potential performance impact from failed API calls
+          
+          CONCLUSION:
+          ❌ Guards are implemented but NOT EFFECTIVE due to timing issues
+          ❌ Frontend needs immediate fix to prevent API calls during auth loading
+          ❌ This is a HIGH PRIORITY issue affecting user experience
 
   - task: "Customer Live Order Tracking"
     implemented: true
