@@ -82,7 +82,7 @@ class LiveTrackingTester:
             
         return True
         
-    def setup_rider_profile(self):
+    def test_rider_profile_creation(self):
         """Setup rider profile and location"""
         self.log("🏍️ Setting up rider profile...")
         
