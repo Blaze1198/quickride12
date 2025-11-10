@@ -408,6 +408,42 @@ export default function LiveOrderTrackingScreen() {
       return;
     }
 
+    const google = (window as any).google;
+    if (!google || !google.maps) {
+      console.log('⚠️ Google Maps not available');
+      return;
+    }
+
+    // Update rider marker position
+    if (riderMarkerRef.current) {
+      const newPosition = {
+        lat: riderLocation.latitude,
+        lng: riderLocation.longitude,
+      };
+      riderMarkerRef.current.setPosition(newPosition);
+      console.log('✅ Rider marker position updated');
+    } else {
+      // Create rider marker if it doesn't exist
+      riderMarkerRef.current = new google.maps.Marker({
+        position: {
+          lat: riderLocation.latitude,
+          lng: riderLocation.longitude,
+        },
+        map: mapInstanceRef.current,
+        icon: {
+          path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+          scale: 7,
+          fillColor: '#2196F3',
+          fillOpacity: 1,
+          strokeColor: '#FFF',
+          strokeWeight: 2,
+          rotation: riderLocation.heading || 0,
+        },
+        title: `Rider: ${order.rider_name || 'On the way'}`,
+      });
+      console.log('✅ Rider marker created');
+    }
+
     try {
       const apiKey = 'AIzaSyA0m1oRlXLQWjxacqjEJ6zJW3WvmOWvQkQ';
       
@@ -457,27 +493,30 @@ export default function LiveOrderTrackingScreen() {
         const route = data.routes[0];
         console.log('✅ Route updated successfully');
         
-        // Decode polyline and draw route (this will replace the old route)
-        if ((window as any).google && (window as any).google.maps && (window as any).google.maps.geometry) {
-          const path = (window as any).google.maps.geometry.encoding.decodePath(route.polyline.encodedPolyline);
-          
-          new (window as any).google.maps.Polyline({
-            path: path,
-            geodesic: true,
-            strokeColor: '#2196F3',
-            strokeOpacity: 0.8,
-            strokeWeight: 4,
-            map: mapInstanceRef.current
-          });
-
-          // Update distance and ETA
-          const distanceKm = (route.distanceMeters / 1000).toFixed(1);
-          const durationMin = Math.ceil(parseInt(route.duration.replace('s', '')) / 60);
-          setDistance(`${distanceKm} km`);
-          setEta(`${durationMin} min`);
-          
-          console.log(`📍 Updated route: ${distanceKm}km, ETA: ${durationMin}min`);
+        // Remove old polyline if it exists
+        if (routePolylineRef.current) {
+          routePolylineRef.current.setMap(null);
         }
+        
+        // Decode polyline and draw new route
+        const path = google.maps.geometry.encoding.decodePath(route.polyline.encodedPolyline);
+        
+        routePolylineRef.current = new google.maps.Polyline({
+          path: path,
+          geodesic: true,
+          strokeColor: '#2196F3',
+          strokeOpacity: 0.8,
+          strokeWeight: 4,
+          map: mapInstanceRef.current
+        });
+
+        // Update distance and ETA
+        const distanceKm = (route.distanceMeters / 1000).toFixed(1);
+        const durationMin = Math.ceil(parseInt(route.duration.replace('s', '')) / 60);
+        setDistance(`${distanceKm} km`);
+        setEta(`${durationMin} min`);
+        
+        console.log(`📍 Updated route: ${distanceKm}km, ETA: ${durationMin}min`);
       }
     } catch (error) {
       console.error('❌ Error updating route:', error);
