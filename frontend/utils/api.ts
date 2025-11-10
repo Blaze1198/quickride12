@@ -53,12 +53,28 @@ api.interceptors.request.use(
   }
 );
 
-// Handle visibility change to restore auth on tab focus
-if (typeof document !== 'undefined') {
+// Multiple event listeners for better browser compatibility
+if (typeof window !== 'undefined') {
+  // Primary: visibilitychange (modern browsers)
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) {
       restoreAuthToken();
-      console.log('👁️ Tab visible - auth token checked');
+      console.log('👁️ Tab visible (visibilitychange) - auth token checked');
+    }
+  });
+
+  // Backup: focus event (when window regains focus)
+  window.addEventListener('focus', () => {
+    restoreAuthToken();
+    console.log('👁️ Window focused - auth token checked');
+  });
+
+  // Additional: pageshow (when page becomes visible, including from cache)
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+      // Page loaded from cache (bfcache)
+      restoreAuthToken();
+      console.log('👁️ Page shown from cache - auth token checked');
     }
   });
 }
