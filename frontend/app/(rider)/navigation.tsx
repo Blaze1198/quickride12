@@ -1179,42 +1179,6 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
     );
   }
 
-  // Initialize idle map (no active job) - MUST be at top level for hooks
-  useEffect(() => {
-    // Only initialize if no current job and conditions are met
-    if (!currentJob && Platform.OS === 'web' && mapRef.current && userLocation) {
-      const google = (window as any).google;
-      if (google && google.maps && !mapInstanceRef.current) {
-        const map = new google.maps.Map(mapRef.current, {
-          center: { lat: userLocation.latitude, lng: userLocation.longitude },
-          zoom: 15,
-          disableDefaultUI: false,
-          zoomControl: true,
-          mapTypeControl: false,
-          streetViewControl: false,
-          fullscreenControl: false,
-        });
-        
-        // Add rider marker
-        new google.maps.Marker({
-          position: { lat: userLocation.latitude, lng: userLocation.longitude },
-          map: map,
-          icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 10,
-            fillColor: '#FF6B6B',
-            fillOpacity: 1,
-            strokeColor: '#FFF',
-            strokeWeight: 3,
-          },
-          title: 'Your Location'
-        });
-        
-        mapInstanceRef.current = map;
-      }
-    }
-  }, [currentJob, userLocation]);
-
   // Show rider's current location on map even without active job
   if (!currentJob) {
     return (
