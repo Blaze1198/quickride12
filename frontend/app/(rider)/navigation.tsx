@@ -1143,15 +1143,70 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
     );
   }
 
+  // Show rider's current location on map even without active job
   if (!currentJob) {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.emptyContainer}>
-          <Ionicons name="bicycle-outline" size={80} color="#CCC" />
-          <Text style={styles.emptyText}>No Active Job</Text>
-          <Text style={styles.emptySubtext}>Accept an order or ride to start navigation</Text>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View style={styles.container}>
+          {/* Full-screen Map showing rider's current location */}
+          {Platform.OS === 'web' ? (
+            <View style={styles.fullScreenMap}>
+              <div ref={mapRef} style={{ width: '100%', height: '100%' }} />
+            </View>
+          ) : null}
+
+          {/* Info overlay */}
+          <View style={styles.noJobOverlay}>
+            <View style={styles.noJobCard}>
+              <Ionicons name="bicycle-outline" size={60} color="#FF6B6B" />
+              <Text style={styles.noJobTitle}>Ready for Delivery</Text>
+              <Text style={styles.noJobSubtext}>Your current location is shown on the map</Text>
+              <Text style={styles.noJobSubtext}>Accept an order to start navigation</Text>
+            </View>
+          </View>
         </View>
-      </SafeAreaView>
+
+        {/* Initialize map with rider's location */}
+        {Platform.OS === 'web' && userLocation && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                if (typeof google !== 'undefined' && google.maps) {
+                  const mapElement = document.querySelector('[style*="width: 100%; height: 100%"]');
+                  if (mapElement && !mapElement.dataset.initialized) {
+                    const map = new google.maps.Map(mapElement, {
+                      center: { lat: ${userLocation.latitude}, lng: ${userLocation.longitude} },
+                      zoom: 15,
+                      disableDefaultUI: false,
+                      zoomControl: true,
+                      mapTypeControl: false,
+                      streetViewControl: false,
+                      fullscreenControl: false,
+                    });
+                    
+                    // Add rider marker
+                    new google.maps.Marker({
+                      position: { lat: ${userLocation.latitude}, lng: ${userLocation.longitude} },
+                      map: map,
+                      icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 10,
+                        fillColor: '#FF6B6B',
+                        fillOpacity: 1,
+                        strokeColor: '#FFF',
+                        strokeWeight: 3,
+                      },
+                      title: 'Your Location'
+                    });
+                    
+                    mapElement.dataset.initialized = 'true';
+                  }
+                }
+              `,
+            }}
+          />
+        )}
+      </GestureHandlerRootView>
     );
   }
 
