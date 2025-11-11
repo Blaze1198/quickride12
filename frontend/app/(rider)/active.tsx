@@ -40,10 +40,22 @@ export default function RiderActiveScreen() {
 
   const fetchOrders = async () => {
     try {
-      const response = await api.get('/orders');
-      setOrders(response.data);
+      // Fetch rider's active deliveries (assigned and in progress)
+      const currentOrder = await api.get('/rider/current-order');
+      const currentRide = await api.get('/rider/current-ride');
+      
+      const activeOrders = [];
+      if (currentOrder.data) {
+        activeOrders.push(currentOrder.data);
+      }
+      if (currentRide.data) {
+        activeOrders.push(currentRide.data);
+      }
+      
+      setOrders(activeOrders);
     } catch (error) {
-      console.error('Error fetching orders:', error);
+      console.error('Error fetching active orders:', error);
+      setOrders([]);
     } finally {
       setLoading(false);
       setRefreshing(false);
