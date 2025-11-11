@@ -30,10 +30,10 @@ const hookPatterns = [
   /useRouter\s*\(/
 ];
 
-// Early return patterns
+// Component-level early return patterns (not inside functions or useEffect)
 const earlyReturnPatterns = [
-  /if\s*\([^)]*\)\s*{\s*return/,
-  /if\s*\([^)]*\)\s*return/
+  /^\s*if\s*\([^)]*\)\s*{\s*return\s*\(/,
+  /^\s*if\s*\([^)]*\)\s*return\s*\(/
 ];
 
 lines.forEach((line, index) => {
