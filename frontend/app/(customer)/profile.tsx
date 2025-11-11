@@ -34,38 +34,23 @@ export default function ProfileScreen() {
   };
 
   const handleSavedAddresses = () => {
-    showAlert(
-      'Saved Addresses',
-      'Manage your delivery addresses for faster checkout.'
-    );
+    router.push('/saved-addresses');
   };
 
   const handlePaymentMethods = () => {
-    showAlert(
-      'Payment Methods',
-      'Add and manage your payment methods including GCash, Credit Cards, and Cash on Delivery.'
-    );
+    router.push('/payment-methods');
   };
 
   const handleNotifications = () => {
-    showAlert(
-      'Notifications',
-      'Manage your notification preferences for orders, promotions, and updates.'
-    );
+    router.push('/notifications-settings');
   };
 
   const handleHelpSupport = () => {
-    showAlert(
-      'Help & Support',
-      'Contact us:\n\nEmail: support@quickbite.ph\nPhone: +63 917 123 4567\n\nOperating Hours:\n9:00 AM - 9:00 PM (Mon-Sun)'
-    );
+    router.push('/help-support');
   };
 
   const handleAbout = () => {
-    showAlert(
-      'About QuickBite',
-      'Version 1.0.0\n\nQuickBite is your favorite food delivery platform in the Philippines. Order from the best restaurants and get your food delivered fast!\n\n© 2025 QuickBite Philippines'
-    );
+    router.push('/about');
   };
 
   const handleLogout = () => {
