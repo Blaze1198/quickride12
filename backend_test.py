@@ -289,6 +289,11 @@ class BackendTester:
         if rider_user:
             self.log(f"🔍 Rider user ID: {rider_user['id']} (Role: {rider_user['role']})")
         
+        # Verify we have the correct customer token
+        if customer_user["role"] != "customer":
+            self.log(f"❌ CRITICAL: Expected customer role but got {customer_user['role']}", "ERROR")
+            return False
+        
         # Test 3: Create test order
         self.log("\n📋 TEST 3: Create Test Order")
         self.test_order_id = self.create_test_order(self.customer_token, logged_in_customer_id)
