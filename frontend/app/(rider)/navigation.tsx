@@ -1251,15 +1251,39 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
             </View>
           ) : null}
 
-          {/* Info overlay */}
-          <View style={styles.noJobOverlay}>
-            <View style={styles.noJobCard}>
-              <Ionicons name="bicycle-outline" size={60} color="#FF6B6B" />
-              <Text style={styles.noJobTitle}>Ready for Delivery</Text>
-              <Text style={styles.noJobSubtext}>Your current location is shown on the map</Text>
-              <Text style={styles.noJobSubtext}>Accept an order to start navigation</Text>
-            </View>
-          </View>
+          {/* Draggable Bottom Sheet for idle state */}
+          <BottomSheet
+            ref={bottomSheetRef}
+            index={0}
+            snapPoints={['12%', '30%', '60%']}
+            enablePanDownToClose={false}
+            handleIndicatorStyle={{ backgroundColor: '#DDD' }}
+            backgroundStyle={{ backgroundColor: '#FFF' }}
+          >
+            <BottomSheetScrollView style={styles.bottomSheetContent}>
+              <View style={styles.idleSheetHeader}>
+                <Ionicons name="bicycle-outline" size={40} color="#FF6B6B" />
+                <Text style={styles.idleSheetTitle}>Ready for Delivery</Text>
+              </View>
+              
+              <View style={styles.idleSheetBody}>
+                <View style={styles.idleInfoRow}>
+                  <Ionicons name="location" size={20} color="#666" />
+                  <Text style={styles.idleInfoText}>Your current location is shown on the map</Text>
+                </View>
+                
+                <View style={styles.idleInfoRow}>
+                  <Ionicons name="notifications" size={20} color="#666" />
+                  <Text style={styles.idleInfoText}>Accept an order from the Available tab to start navigation</Text>
+                </View>
+                
+                <View style={styles.idleInfoRow}>
+                  <Ionicons name="map" size={20} color="#666" />
+                  <Text style={styles.idleInfoText}>Swipe up to see more details about your location</Text>
+                </View>
+              </View>
+            </BottomSheetScrollView>
+          </BottomSheet>
         </View>
       </GestureHandlerRootView>
     );
