@@ -178,6 +178,26 @@ export default function RiderActiveScreen() {
         </Text>
       </View>
 
+      {item.status === 'ready_for_pickup' && (
+        <TouchableOpacity
+          style={styles.pickupButton}
+          onPress={() => handlePickup(item.id)}
+        >
+          <Ionicons name="checkmark-circle" size={24} color="#FFF" />
+          <Text style={styles.pickupButtonText}>Mark as Picked Up</Text>
+        </TouchableOpacity>
+      )}
+
+      {item.status === 'picked_up' && (
+        <TouchableOpacity
+          style={styles.startDeliveryButton}
+          onPress={() => handleCompleteDelivery(item.id)}
+        >
+          <Ionicons name="navigate-circle" size={24} color="#FFF" />
+          <Text style={styles.startDeliveryButtonText}>Start Delivery</Text>
+        </TouchableOpacity>
+      )}
+
       {item.status === 'out_for_delivery' && (
         <TouchableOpacity
           style={styles.completeButton}
