@@ -775,6 +775,42 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: |
+      CRITICAL: React Hooks Error Persists in Rider Navigation Screen
+      
+      ERROR: "Rendered more hooks than during the previous render" at RiderNavigationScreen (navigation.tsx:1147:12)
+      
+      ATTEMPTED FIX:
+      - Moved useEffect from inside if (!currentJob) block to top level
+      - Made logic conditional inside the hook
+      - Added proper dependencies [currentJob, userLocation]
+      
+      ERROR STILL PERSISTS after restart
+      
+      POSSIBLE CAUSES:
+      1. There may be OTHER hooks still inside conditionals
+      2. Hook order may still be inconsistent
+      3. Early returns happening before all hooks are called
+      4. Auth guards (if user.role !== 'rider') returning early
+      5. Multiple useEffect hooks with different conditions
+      
+      FILE: /app/frontend/app/(rider)/navigation.tsx
+      
+      TESTING NEEDED:
+      1. Analyze ALL hooks in the component
+      2. Check if any hooks are called conditionally
+      3. Verify hook order is always the same
+      4. Check early returns (auth guard, loading, no job)
+      5. Count total hooks and verify consistency
+      6. Test with different states (has job, no job, not rider)
+      
+      DELIVERABLES:
+      1. List of ALL hooks in the component
+      2. Identify which hooks are problematic
+      3. Provide corrected component structure
+      4. Ensure all hooks at top level before any conditionals
+      
+  - agent: "main"
+    message: |
       CRITICAL: Live Order Tracking Route Line Not Displaying - Customer Logged In
       
       ISSUE: Customer is logged in but live order tracking does not show route line from rider to delivery location.
