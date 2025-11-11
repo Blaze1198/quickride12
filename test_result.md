@@ -810,6 +810,56 @@ agent_communication:
       4. Root cause of discrepancy
       5. Working solution
       
+  - agent: "testing"
+    message: |
+      ✅ ROOT CAUSE IDENTIFIED: Active Tab Status Filtering Issue
+      
+      CRITICAL ISSUE INVESTIGATED: Active Deliveries Tab shows "No active deliveries" while Navigation tab shows delivery details
+      
+      COMPREHENSIVE BACKEND TESTING COMPLETED:
+      ✅ Created comprehensive test script to investigate the issue
+      ✅ Tested /rider/current-order and /rider/current-ride endpoints
+      ✅ Verified backend logic is working correctly
+      ✅ Found existing rider with active order in database
+      
+      ROOT CAUSE IDENTIFIED:
+      🔍 STATUS FILTERING MISMATCH: Active tab filters orders by status but Navigation tab doesn't
+      
+      TECHNICAL ANALYSIS:
+      ✅ Backend endpoints (/rider/current-order, /rider/current-ride) working correctly
+      ✅ Both tabs fetch from same endpoints as intended
+      ✅ Database shows rider with current_order_id: "2256e423-2c5b-44c0-bed8-ed30727ac7d3"
+      ✅ Corresponding order exists with status: "ready_for_pickup"
+      ✅ Order is properly assigned to rider (rider_id matches)
+      
+      THE PROBLEM:
+      ❌ Active tab (line 161-163 in active.tsx) filters orders:
+          orders.filter((o) => o.status === 'rider_assigned' || o.status === 'out_for_delivery')
+      ✅ Navigation tab displays whatever /rider/current-order returns (no filtering)
+      
+      EXAMPLE SCENARIO:
+      - Rider has order with status "ready_for_pickup" 
+      - Navigation tab: Shows order (no filtering)
+      - Active tab: Hides order (filtered out because status is not 'rider_assigned' or 'out_for_delivery')
+      
+      SOLUTION NEEDED:
+      Update Active tab filtering to include all relevant statuses:
+      - "rider_assigned" 
+      - "picked_up"
+      - "out_for_delivery" 
+      - "ready_for_pickup" (MISSING - this is the issue)
+      
+      TESTING EVIDENCE:
+      ✅ Created test rider and order, verified endpoints work correctly
+      ✅ Found real rider in database with current_order_id set to order with "ready_for_pickup" status
+      ✅ Backend auto-assignment and manual assignment logic both correctly set current_order_id
+      ✅ Issue is purely frontend filtering logic, not backend data
+      
+      CONCLUSION:
+      ✅ CRITICAL BUG IDENTIFIED: Active tab status filter excludes valid active orders
+      ✅ Navigation tab works correctly because it doesn't filter by status
+      ✅ Fix required: Update Active tab status filter to include "ready_for_pickup"
+      
   - agent: "main"
     message: |
       CRITICAL: React Hooks Error Persists in Rider Navigation Screen
