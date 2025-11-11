@@ -27,9 +27,21 @@ DB_NAME = "test_database"
 
 class BackendTester:
     def __init__(self):
-        self.customer_token = None
         self.rider_token = None
+        self.rider_user = None
         self.test_order_id = None
+        self.db = None
+        
+    def setup_db(self):
+        """Setup MongoDB connection"""
+        try:
+            client = MongoClient(MONGO_URL)
+            self.db = client[DB_NAME]
+            self.log("✅ Connected to MongoDB")
+            return True
+        except Exception as e:
+            self.log(f"❌ Failed to connect to MongoDB: {str(e)}", "ERROR")
+            return False
         
     def log(self, message, level="INFO"):
         """Log test messages with timestamp"""
@@ -50,7 +62,7 @@ class BackendTester:
             if response.status_code == 200:
                 data = response.json()
                 self.log(f"✅ Registered {role}: {name} ({email})")
-                return data["session_token"], data["user"]["id"]
+                return data["session_token"], data["user"]
             else:
                 self.log(f"❌ Registration failed: {response.status_code} - {response.text}", "ERROR")
                 return None, None
