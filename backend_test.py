@@ -19,7 +19,6 @@ BACKEND_URL = "https://track-delivery-5.preview.emergentagent.com/api"
 
 class BackendTester:
     def __init__(self):
-        self.session = requests.Session()
         self.customer_token = None
         self.rider_token = None
         self.admin_token = None
