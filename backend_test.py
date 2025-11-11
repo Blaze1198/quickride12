@@ -71,390 +71,373 @@ class BackendTester:
             self.log(f"❌ Registration error: {str(e)}", "ERROR")
             return None, None
     
-    def get_current_user(self, token):
-        """Get current user info using token"""
+    def test_rider_endpoints(self, rider_token):
+        """Test the rider endpoints that both Active and Navigation tabs use"""
+        self.log("\n🎯 TESTING RIDER ENDPOINTS")
+        self.log("=" * 50)
+        
+        headers = {"Authorization": f"Bearer {rider_token}"}
+        
+        # Test 1: /rider/current-order endpoint
+        self.log("\n📋 Test 1: GET /rider/current-order")
         try:
-            headers = {"Authorization": f"Bearer {token}"}
-            response = requests.get(f"{BACKEND_URL}/auth/me", headers=headers)
-            
-            if response.status_code == 200:
-                user = response.json()
-                self.log(f"✅ Current user: {user['name']} (ID: {user['id']}, Role: {user['role']})")
-                return user
-            else:
-                self.log(f"❌ Get user failed: {response.status_code} - {response.text}", "ERROR")
-                return None
-                
-        except Exception as e:
-            self.log(f"❌ Get user error: {str(e)}", "ERROR")
-            return None
-    
-    def create_test_order(self, customer_token):
-        """Create a test order for testing"""
-        try:
-            headers = {"Authorization": f"Bearer {customer_token}"}
-            
-            # First get restaurants
-            restaurants_response = requests.get(f"{BACKEND_URL}/restaurants")
-            if restaurants_response.status_code != 200:
-                self.log("❌ Failed to get restaurants", "ERROR")
-                return None
-                
-            restaurants = restaurants_response.json()
-            if not restaurants:
-                self.log("❌ No restaurants available", "ERROR")
-                return None
-                
-            restaurant = restaurants[0]
-            
-            order_data = {
-                "restaurant_id": restaurant["id"],
-                "items": [
-                    {
-                        "menu_item_id": "test-item-1",
-                        "name": "Test Burger",
-                        "price": 150.0,
-                        "quantity": 1
-                    }
-                ],
-                "total_amount": 200.0,
-                "subtotal": 150.0,
-                "delivery_fee": 50.0,
-                "delivery_address": {
-                    "latitude": 14.5995,
-                    "longitude": 120.9842,
-                    "address": "Test Customer Address, Makati City"
-                },
-                "customer_phone": "+63 912 345 6789",
-                "special_instructions": "Test order for route line investigation"
-            }
-            
-            response = requests.post(f"{BACKEND_URL}/orders", json=order_data, headers=headers)
-            
-            if response.status_code == 200:
-                order = response.json()
-                self.log(f"✅ Created test order: {order['id']}")
-                return order["id"]
-            else:
-                self.log(f"❌ Order creation failed: {response.status_code} - {response.text}", "ERROR")
-                return None
-                
-        except Exception as e:
-            self.log(f"❌ Order creation error: {str(e)}", "ERROR")
-            return None
-    
-    def get_order_details(self, order_id, token):
-        """Get order details"""
-        try:
-            headers = {"Authorization": f"Bearer {token}"}
-            response = requests.get(f"{BACKEND_URL}/orders/{order_id}", headers=headers)
-            
-            if response.status_code == 200:
-                order = response.json()
-                self.log(f"✅ Order details retrieved: {order_id}")
-                self.log(f"   Customer ID in order: {order.get('customer_id')}")
-                self.log(f"   Order status: {order.get('status')}")
-                self.log(f"   Rider ID: {order.get('rider_id', 'None')}")
-                return order
-            else:
-                self.log(f"❌ Get order failed: {response.status_code} - {response.text}", "ERROR")
-                return None
-                
-        except Exception as e:
-            self.log(f"❌ Get order error: {str(e)}", "ERROR")
-            return None
-    
-    def test_rider_location_endpoint(self, order_id, token, user_type="customer"):
-        """Test the rider location endpoint that's causing 403 errors"""
-        try:
-            headers = {"Authorization": f"Bearer {token}"}
-            response = requests.get(f"{BACKEND_URL}/orders/{order_id}/rider-location", headers=headers)
-            
-            self.log(f"🔍 Testing rider location endpoint as {user_type}")
-            self.log(f"   URL: GET {BACKEND_URL}/orders/{order_id}/rider-location")
-            self.log(f"   Status: {response.status_code}")
-            
+            response = requests.get(f"{BACKEND_URL}/rider/current-order", headers=headers)
+            self.log(f"Status Code: {response.status_code}")
             if response.status_code == 200:
                 data = response.json()
-                self.log(f"✅ Rider location response: {json.dumps(data, indent=2)}")
+                self.log(f"Response: {json.dumps(data, indent=2, default=str)}")
                 return data
-            elif response.status_code == 403:
-                self.log(f"❌ 403 FORBIDDEN - This is the reported issue!")
-                self.log(f"   Response: {response.text}")
-                return None
             else:
-                self.log(f"❌ Unexpected status: {response.status_code} - {response.text}", "ERROR")
+                self.log(f"Error: {response.text}")
                 return None
-                
         except Exception as e:
-            self.log(f"❌ Rider location test error: {str(e)}", "ERROR")
+            self.log(f"❌ Error testing /rider/current-order: {str(e)}", "ERROR")
+            return None
+        
+        # Test 2: /rider/current-ride endpoint
+        self.log("\n📋 Test 2: GET /rider/current-ride")
+        try:
+            response = requests.get(f"{BACKEND_URL}/rider/current-ride", headers=headers)
+            self.log(f"Status Code: {response.status_code}")
+            if response.status_code == 200:
+                data = response.json()
+                self.log(f"Response: {json.dumps(data, indent=2, default=str)}")
+                return data
+            else:
+                self.log(f"Error: {response.text}")
+                return None
+        except Exception as e:
+            self.log(f"❌ Error testing /rider/current-ride: {str(e)}", "ERROR")
             return None
     
-    def assign_rider_to_order(self, order_id, rider_token):
-        """Assign rider to order and update rider location"""
+    def check_rider_profile(self, rider_token, user_id):
+        """Check rider profile in database and API"""
+        self.log("\n🔍 CHECKING RIDER PROFILE")
+        self.log("=" * 50)
+        
+        # Get rider profile from API
+        headers = {"Authorization": f"Bearer {rider_token}"}
         try:
-            # First create rider profile
-            headers = {"Authorization": f"Bearer {rider_token}"}
-            rider_response = requests.get(f"{BACKEND_URL}/riders/me", headers=headers)
-            
-            if rider_response.status_code == 200:
-                rider = rider_response.json()
-                self.log(f"✅ Rider profile: {rider['name']} (ID: {rider['id']})")
-                
-                # Update rider location
-                location_data = {
-                    "latitude": 14.5555,
-                    "longitude": 121.026,
-                    "address": "Approaching restaurant"
-                }
-                
-                location_response = requests.put(
-                    f"{BACKEND_URL}/riders/location", 
-                    json=location_data, 
-                    headers=headers
-                )
-                
-                if location_response.status_code == 200:
-                    self.log("✅ Rider location updated")
-                    
-                    # Update order status to ready_for_pickup to trigger auto-assignment
-                    status_response = requests.put(
-                        f"{BACKEND_URL}/orders/{order_id}/status",
-                        json={"status": "ready_for_pickup"},
-                        headers=headers
-                    )
-                    
-                    if status_response.status_code == 200:
-                        self.log("✅ Order status updated to ready_for_pickup (should trigger auto-assignment)")
-                        return True
-                    else:
-                        self.log(f"❌ Status update failed: {status_response.status_code} - {status_response.text}")
-                        return False
-                else:
-                    self.log(f"❌ Location update failed: {location_response.status_code}")
-                    return False
+            response = requests.get(f"{BACKEND_URL}/riders/me", headers=headers)
+            if response.status_code == 200:
+                rider_api = response.json()
+                self.log(f"✅ Rider profile from API: {json.dumps(rider_api, indent=2, default=str)}")
             else:
-                self.log(f"❌ Rider profile failed: {rider_response.status_code}")
-                return False
+                self.log(f"❌ Failed to get rider profile from API: {response.status_code} - {response.text}")
+                rider_api = None
+        except Exception as e:
+            self.log(f"❌ Error getting rider profile from API: {str(e)}", "ERROR")
+            rider_api = None
+        
+        # Check rider profile in database
+        try:
+            rider_db = self.db.riders.find_one({"user_id": user_id})
+            if rider_db:
+                # Remove MongoDB _id for cleaner output
+                rider_db.pop('_id', None)
+                self.log(f"✅ Rider profile from DB: {json.dumps(rider_db, indent=2, default=str)}")
+            else:
+                self.log(f"❌ No rider profile found in database for user_id: {user_id}")
+        except Exception as e:
+            self.log(f"❌ Error checking rider profile in DB: {str(e)}", "ERROR")
+            rider_db = None
+        
+        return rider_api, rider_db
+    
+    def check_orders_assigned_to_rider(self, rider_id):
+        """Check if there are any orders assigned to this rider"""
+        self.log(f"\n🔍 CHECKING ORDERS ASSIGNED TO RIDER: {rider_id}")
+        self.log("=" * 50)
+        
+        try:
+            # Find orders assigned to this rider
+            orders = list(self.db.orders.find({"rider_id": rider_id}))
+            
+            if orders:
+                self.log(f"✅ Found {len(orders)} orders assigned to rider:")
+                for order in orders:
+                    order.pop('_id', None)  # Remove MongoDB _id
+                    self.log(f"  📦 Order {order['id']}: Status={order['status']}, Customer={order['customer_name']}")
+                    self.log(f"      Restaurant: {order['restaurant_name']}")
+                    self.log(f"      Amount: ₱{order['total_amount']}")
+                    self.log(f"      Created: {order['created_at']}")
+                    self.log("")
+            else:
+                self.log(f"❌ No orders found assigned to rider {rider_id}")
+            
+            return orders
+        except Exception as e:
+            self.log(f"❌ Error checking orders for rider: {str(e)}", "ERROR")
+            return []
+    
+    def investigate_existing_data(self):
+        """Investigate existing data in the database to understand the issue"""
+        self.log("\n🔍 INVESTIGATING EXISTING DATABASE DATA")
+        self.log("=" * 60)
+        
+        try:
+            # Check all riders
+            riders = list(self.db.riders.find())
+            self.log(f"\n👥 Found {len(riders)} riders in database:")
+            for rider in riders:
+                rider.pop('_id', None)
+                self.log(f"  🏍️ Rider {rider['name']} (ID: {rider['id']})")
+                self.log(f"      User ID: {rider['user_id']}")
+                self.log(f"      Status: {rider.get('status', 'N/A')}")
+                self.log(f"      Current Order ID: {rider.get('current_order_id', 'None')}")
+                self.log(f"      Current Ride ID: {rider.get('current_ride_id', 'None')}")
+                self.log(f"      Available: {rider.get('is_available', 'N/A')}")
+                self.log("")
+            
+            # Check recent orders
+            orders = list(self.db.orders.find().sort("created_at", -1).limit(20))
+            self.log(f"\n📦 Found {len(orders)} recent orders:")
+            for order in orders:
+                order.pop('_id', None)
+                self.log(f"  📋 Order {order['id']}: {order['status']}")
+                self.log(f"      Customer: {order['customer_name']}")
+                self.log(f"      Restaurant: {order['restaurant_name']}")
+                self.log(f"      Rider ID: {order.get('rider_id', 'None')}")
+                self.log(f"      Rider Name: {order.get('rider_name', 'None')}")
+                self.log(f"      Amount: ₱{order['total_amount']}")
+                self.log(f"      Created: {order['created_at']}")
+                self.log("")
+            
+            # Find orders with riders assigned
+            assigned_orders = list(self.db.orders.find({"rider_id": {"$ne": None}}))
+            self.log(f"\n🎯 Found {len(assigned_orders)} orders with riders assigned:")
+            for order in assigned_orders:
+                order.pop('_id', None)
+                self.log(f"  📋 Order {order['id']}: {order['status']}")
+                self.log(f"      Rider ID: {order['rider_id']}")
+                self.log(f"      Rider Name: {order.get('rider_name', 'Unknown')}")
+                
+                # Check if rider profile has this order as current
+                rider = self.db.riders.find_one({"id": order['rider_id']})
+                if rider:
+                    current_order_match = rider.get('current_order_id') == order['id']
+                    self.log(f"      Rider current_order_id matches: {current_order_match}")
+                    if not current_order_match:
+                        self.log(f"      ⚠️ MISMATCH: Rider current_order_id is '{rider.get('current_order_id')}' but order is assigned to rider")
+                else:
+                    self.log(f"      ❌ Rider profile not found for ID: {order['rider_id']}")
+                self.log("")
                 
         except Exception as e:
-            self.log(f"❌ Rider assignment error: {str(e)}", "ERROR")
-            return False
+            self.log(f"❌ Error investigating existing data: {str(e)}", "ERROR")
     
-    def test_specific_order_from_report(self):
-        """Test the specific order ID mentioned in the user report"""
-        self.log("🔍 TESTING SPECIFIC ORDER FROM USER REPORT")
-        reported_order_id = "5b0483fd-3ab8-4750-b392-8987185975fa"
+    def create_test_scenario(self):
+        """Create a complete test scenario to reproduce the issue"""
+        self.log("\n🚀 CREATING TEST SCENARIO")
+        self.log("=" * 60)
         
-        # Create a customer to test with
-        customer_email = f"test-customer-{uuid.uuid4().hex[:8]}@test.com"
-        customer_token, customer_id = self.register_user(
-            customer_email, "password123", "Test Customer", "customer"
+        # Step 1: Create test rider
+        timestamp = int(datetime.now().timestamp())
+        rider_email = f"test_rider_{timestamp}@test.com"
+        rider_token, rider_user = self.register_user(
+            rider_email, "testpass123", "Test Active Rider", "rider"
+        )
+        
+        if not rider_token:
+            self.log("❌ Cannot continue without rider account")
+            return None
+        
+        # Step 2: Check rider profile
+        rider_api, rider_db = self.check_rider_profile(rider_token, rider_user['id'])
+        if not rider_db:
+            self.log("❌ Cannot continue without rider profile")
+            return None
+        
+        # Step 3: Test endpoints before assignment (should return null)
+        self.log("\n📋 TESTING ENDPOINTS BEFORE ORDER ASSIGNMENT")
+        current_order_before = self.test_rider_endpoints(rider_token)
+        
+        # Step 4: Create customer and order
+        customer_email = f"test_customer_{timestamp}@test.com"
+        customer_token, customer_user = self.register_user(
+            customer_email, "testpass123", "Test Customer", "customer"
         )
         
         if not customer_token:
-            self.log("❌ Cannot create test customer", "ERROR")
-            return False
+            self.log("❌ Cannot continue without customer account")
+            return None
         
-        # Verify customer user
-        customer_user = self.get_current_user(customer_token)
-        if not customer_user or customer_user["role"] != "customer":
-            self.log("❌ Customer authentication failed", "ERROR")
-            return False
+        # Create restaurant owner and get restaurant
+        restaurant_owner_email = f"test_restaurant_{timestamp}@test.com"
+        restaurant_owner_token, restaurant_owner_user = self.register_user(
+            restaurant_owner_email, "testpass123", "Test Restaurant Owner", "restaurant"
+        )
         
-        # Try to get the reported order details
-        self.log(f"🔍 Attempting to get order details for: {reported_order_id}")
-        order_details = self.get_order_details(reported_order_id, customer_token)
+        if not restaurant_owner_token:
+            self.log("❌ Cannot continue without restaurant owner account")
+            return None
         
-        if order_details:
-            self.log(f"✅ Found reported order: {reported_order_id}")
-            self.log(f"   Order customer ID: {order_details.get('customer_id')}")
-            self.log(f"   Test customer ID: {customer_id}")
-            
-            if order_details.get('customer_id') != customer_id:
-                self.log("✅ DIAGNOSIS: Order belongs to different customer (expected 403)")
-            
-            # Test rider location endpoint
-            result = self.test_rider_location_endpoint(reported_order_id, customer_token, "test customer")
-            
-            if result is None:
-                self.log("✅ CONFIRMED: 403 error occurs when customer tries to access order they don't own")
-                return True
+        # Get auto-created restaurant
+        headers = {"Authorization": f"Bearer {restaurant_owner_token}"}
+        try:
+            response = requests.get(f"{BACKEND_URL}/restaurants/owner/my", headers=headers)
+            if response.status_code == 200:
+                restaurant = response.json()
+                self.log(f"✅ Restaurant created: {restaurant['name']}")
             else:
-                self.log("❌ SECURITY ISSUE: Customer can access order they don't own", "ERROR")
-                return False
-        else:
-            self.log(f"❌ Reported order {reported_order_id} not found or not accessible")
-            return False
+                self.log(f"❌ Failed to get restaurant: {response.status_code} - {response.text}")
+                return None
+        except Exception as e:
+            self.log(f"❌ Error getting restaurant: {str(e)}", "ERROR")
+            return None
+        
+        # Create order
+        order_data = {
+            "restaurant_id": restaurant['id'],
+            "items": [
+                {
+                    "menu_item_id": "test-item-1",
+                    "name": "Test Burger",
+                    "price": 150.0,
+                    "quantity": 1
+                }
+            ],
+            "total_amount": 200.0,
+            "subtotal": 150.0,
+            "delivery_fee": 50.0,
+            "delivery_address": {
+                "latitude": 14.5995,
+                "longitude": 120.9842,
+                "address": "BGC, Taguig City, Metro Manila"
+            },
+            "customer_phone": customer_user['phone'],
+            "special_instructions": "Test order for active delivery debugging"
+        }
+        
+        headers = {"Authorization": f"Bearer {customer_token}"}
+        try:
+            response = requests.post(f"{BACKEND_URL}/orders", json=order_data, headers=headers)
+            if response.status_code == 200:
+                order = response.json()
+                self.log(f"✅ Order created: {order['id']}")
+            else:
+                self.log(f"❌ Failed to create order: {response.status_code} - {response.text}")
+                return None
+        except Exception as e:
+            self.log(f"❌ Error creating order: {str(e)}", "ERROR")
+            return None
+        
+        # Step 5: Manually assign order to rider (simulate auto-assignment)
+        self.log(f"\n🔧 MANUALLY ASSIGNING ORDER {order['id']} TO RIDER {rider_db['id']}")
+        try:
+            # Update order with rider assignment
+            order_update = {
+                "rider_id": rider_db['id'],
+                "rider_name": rider_db['name'],
+                "rider_phone": rider_db['phone'],
+                "status": "rider_assigned",
+                "updated_at": datetime.now()
+            }
+            
+            result = self.db.orders.update_one(
+                {"id": order['id']},
+                {"$set": order_update}
+            )
+            
+            if result.modified_count > 0:
+                self.log(f"✅ Order {order['id']} assigned to rider {rider_db['name']}")
+            else:
+                self.log(f"❌ Failed to assign order {order['id']} to rider")
+            
+            # Update rider with current order
+            rider_update = {
+                "current_order_id": order['id'],
+                "status": "busy"
+            }
+            
+            result = self.db.riders.update_one(
+                {"id": rider_db['id']},
+                {"$set": rider_update}
+            )
+            
+            if result.modified_count > 0:
+                self.log(f"✅ Rider {rider_db['name']} current_order_id set to {order['id']}")
+            else:
+                self.log(f"❌ Failed to update rider current_order_id")
+                
+        except Exception as e:
+            self.log(f"❌ Error assigning order to rider: {str(e)}", "ERROR")
+            return None
+        
+        # Step 6: Test endpoints after assignment (should return order data)
+        self.log("\n📋 TESTING ENDPOINTS AFTER ORDER ASSIGNMENT")
+        current_order_after = self.test_rider_endpoints(rider_token)
+        
+        # Step 7: Check database state
+        self.check_orders_assigned_to_rider(rider_db['id'])
+        
+        # Step 8: Final rider profile check
+        self.log("\n🔍 FINAL RIDER PROFILE CHECK")
+        rider_api_final, rider_db_final = self.check_rider_profile(rider_token, rider_user['id'])
+        
+        return {
+            "rider_token": rider_token,
+            "rider_user": rider_user,
+            "rider_profile": rider_db_final,
+            "order": order,
+            "current_order_before": current_order_before,
+            "current_order_after": current_order_after
+        }
     
-    def run_comprehensive_test(self):
-        """Run comprehensive test to identify the 403 error root cause"""
-        self.log("🚀 STARTING COMPREHENSIVE LIVE ORDER TRACKING TEST")
+    def run_investigation(self):
+        """Run the complete investigation"""
+        self.log("🔍 ACTIVE DELIVERIES TAB INVESTIGATION")
+        self.log("=" * 60)
+        self.log("ISSUE: Navigation tab shows delivery, Active tab shows 'No active deliveries'")
+        self.log("BOTH TABS: Now fetch from /rider/current-order and /rider/current-ride")
+        self.log("OBJECTIVE: Find why endpoints return different data for same rider")
         self.log("=" * 60)
         
-        # Test 1: Create test accounts
-        self.log("\n📋 TEST 1: Creating Test Accounts")
+        # Setup database connection
+        if not self.setup_db():
+            return
         
-        # Create customer account
-        customer_email = f"test-customer-{uuid.uuid4().hex[:8]}@test.com"
-        self.customer_token, customer_id = self.register_user(
-            customer_email, "password123", "Test Customer", "customer"
-        )
+        # First, investigate existing data
+        self.investigate_existing_data()
         
-        if not self.customer_token:
-            self.log("❌ CRITICAL: Cannot create customer account", "ERROR")
-            return False
+        # Then create and test a complete scenario
+        result = self.create_test_scenario()
         
-        # Create rider account
-        rider_email = f"test-rider-{uuid.uuid4().hex[:8]}@test.com"
-        self.rider_token, rider_id = self.register_user(
-            rider_email, "password123", "Test Navigation Rider", "rider"
-        )
+        # Summary
+        self.log("\n🎯 INVESTIGATION SUMMARY")
+        self.log("=" * 60)
+        if result:
+            self.log("✅ Created test rider and order")
+            self.log("✅ Tested endpoints before and after assignment")
+            self.log("✅ Verified database state")
         
-        if not self.rider_token:
-            self.log("❌ CRITICAL: Cannot create rider account", "ERROR")
-            return False
+        self.log("\nKEY FINDINGS:")
+        self.log("1. /rider/current-order depends on rider.current_order_id being set")
+        self.log("2. /rider/current-ride depends on rider.current_ride_id being set")
+        self.log("3. Order assignment must update BOTH order.rider_id AND rider.current_order_id")
+        self.log("4. If rider.current_order_id is null, endpoints return null even if orders are assigned")
         
-        # Test 2: Verify logged-in customer ID
-        self.log("\n📋 TEST 2: Verify Customer Authentication")
-        customer_user = self.get_current_user(self.customer_token)
-        if not customer_user or customer_user["role"] != "customer":
-            self.log("❌ CRITICAL: Customer authentication failed", "ERROR")
-            return False
+        self.log("\nROOT CAUSE ANALYSIS:")
+        self.log("- Check if rider.current_order_id is properly set during order assignment")
+        self.log("- Verify auto-assignment logic updates rider profile correctly")
+        self.log("- Ensure manual order acceptance updates rider.current_order_id")
         
-        rider_user = self.get_current_user(self.rider_token)
-        if not rider_user or rider_user["role"] != "rider":
-            self.log("❌ CRITICAL: Rider authentication failed", "ERROR")
-            return False
-        
-        logged_in_customer_id = customer_user["id"]
-        self.log(f"🔍 Logged-in customer ID: {logged_in_customer_id}")
-        
-        # Test 3: Create test order
-        self.log("\n📋 TEST 3: Create Test Order")
-        self.test_order_id = self.create_test_order(self.customer_token)
-        
-        if not self.test_order_id:
-            self.log("❌ CRITICAL: Cannot create test order", "ERROR")
-            return False
-        
-        # Test 4: Verify order ownership
-        self.log("\n📋 TEST 4: Verify Order Ownership")
-        order_details = self.get_order_details(self.test_order_id, self.customer_token)
-        
-        if not order_details:
-            self.log("❌ CRITICAL: Cannot get order details", "ERROR")
-            return False
-        
-        order_customer_id = order_details.get("customer_id")
-        self.log(f"🔍 Customer ID in order: {order_customer_id}")
-        self.log(f"🔍 Logged-in customer ID: {logged_in_customer_id}")
-        
-        if order_customer_id == logged_in_customer_id:
-            self.log("✅ OWNERSHIP MATCH: Customer owns the order")
-        else:
-            self.log("❌ OWNERSHIP MISMATCH: Customer does NOT own the order", "ERROR")
-            return False
-        
-        # Test 5: Test rider location endpoint WITHOUT rider assigned
-        self.log("\n📋 TEST 5: Test Rider Location Endpoint (No Rider Assigned)")
-        result = self.test_rider_location_endpoint(self.test_order_id, self.customer_token, "customer")
-        
-        if result is not None:
-            self.log("✅ Endpoint accessible when no rider assigned")
-            self.log(f"   Response: {json.dumps(result, indent=2)}")
-        else:
-            self.log("❌ 403 ERROR: Customer cannot access their own order's rider location")
-            self.log("   This suggests a backend authorization bug")
-            return False
-        
-        # Test 6: Assign rider and test again
-        self.log("\n📋 TEST 6: Assign Rider and Test Rider Location Endpoint")
-        rider_assigned = self.assign_rider_to_order(self.test_order_id, self.rider_token)
-        
-        if rider_assigned:
-            # Wait a moment for assignment to process
-            import time
-            time.sleep(2)
-            
-            # Get updated order details
-            updated_order = self.get_order_details(self.test_order_id, self.customer_token)
-            if updated_order and updated_order.get("rider_id"):
-                self.log(f"✅ Rider assigned: {updated_order.get('rider_name')} (ID: {updated_order.get('rider_id')})")
-                
-                # Test rider location endpoint again
-                result = self.test_rider_location_endpoint(self.test_order_id, self.customer_token, "customer")
-                
-                if result is not None:
-                    self.log("✅ SUCCESS: Customer can access rider location after assignment")
-                    self.log(f"   Response: {json.dumps(result, indent=2)}")
-                    return True
-                else:
-                    self.log("❌ STILL FAILING: 403 error persists even with rider assigned")
-                    return False
-            else:
-                self.log("❌ Rider assignment may have failed")
-                return False
-        else:
-            self.log("❌ Rider assignment failed")
-            return False
-        
-        return False
+        return result
 
 def main():
-    """Main test execution"""
-    print("🔍 LIVE ORDER TRACKING ROUTE LINE INVESTIGATION")
-    print("=" * 60)
-    print("Issue: Customer gets 403 Forbidden on /api/orders/{order_id}/rider-location")
-    print("Goal: Identify root cause and provide solution")
-    print("=" * 60)
-    
+    """Main function"""
     tester = BackendTester()
     
     try:
-        # First test the specific order from the user report
-        specific_order_test = tester.test_specific_order_from_report()
+        result = tester.run_investigation()
         
-        # Then run comprehensive test with fresh data
-        comprehensive_test = tester.run_comprehensive_test()
-        
-        print("\n" + "=" * 60)
-        print("🎯 INVESTIGATION SUMMARY")
-        print("=" * 60)
-        
-        if comprehensive_test:
-            print("✅ ISSUE RESOLVED: Route line should now work correctly")
-            print("\n💡 FINDINGS:")
-            print("- Backend authorization logic is working correctly")
-            print("- Customer can access rider location for their own orders")
-            print("- The 403 error was likely due to customer viewing wrong order")
+        if result:
+            print("\n✅ Investigation completed successfully")
         else:
-            print("❌ ISSUE PERSISTS: Backend authorization problem confirmed")
-            print("\n🔍 ROOT CAUSE ANALYSIS:")
+            print("\n❌ Investigation failed")
             
-            if specific_order_test:
-                print("✅ DIAGNOSIS: Customer is trying to access order that belongs to different customer")
-                print("\n💡 SOLUTION:")
-                print("1. Customer should log in as the correct account that placed the order")
-                print("2. Or customer should track their own orders, not others' orders")
-                print("3. Check order history to find orders belonging to current customer")
-            else:
-                print("❌ BACKEND BUG CONFIRMED: Authorization logic has issues")
-                print("\n🔍 BACKEND ISSUES FOUND:")
-                print("1. Customer cannot access rider location for their own orders")
-                print("2. Authorization check in server.py line 2275 may be incorrect")
-                print("3. Database query or ID comparison may be failing")
-                
-                print("\n💡 RECOMMENDED FIXES:")
-                print("1. Review backend authorization logic in /api/orders/{order_id}/rider-location")
-                print("2. Check if customer_id comparison is working correctly")
-                print("3. Verify database queries are returning correct data")
-                print("4. Add debug logging to authorization checks")
-        
-    except KeyboardInterrupt:
-        print("\n⚠️ Test interrupted by user")
     except Exception as e:
-        print(f"\n❌ CRITICAL ERROR: {str(e)}")
+        print(f"\n❌ Investigation failed with error: {str(e)}")
         import traceback
         traceback.print_exc()
 
