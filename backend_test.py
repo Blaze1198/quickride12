@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 """
-Backend Testing Script for Live Order Tracking Route Line Issue
-Critical Issue: Customer Authorization 403 Forbidden Errors
+Backend Testing Script for Active Deliveries Tab Issue Investigation
 
-This script tests the specific issue where customers get 403 errors
-when trying to access rider location for their own orders.
+CRITICAL ISSUE: 
+- Rider's Navigation tab shows active delivery with full details
+- Rider's Active tab shows "No active deliveries"
+- Data inconsistency between tabs that should show same data
+
+Both tabs now fetch from /rider/current-order and /rider/current-ride endpoints.
+This script will investigate the root cause.
 """
 
 import requests
@@ -13,9 +17,13 @@ import uuid
 from datetime import datetime
 import os
 import sys
+import pymongo
+from pymongo import MongoClient
 
-# Get backend URL from frontend .env
+# Configuration
 BACKEND_URL = "https://track-delivery-5.preview.emergentagent.com/api"
+MONGO_URL = "mongodb://localhost:27017"
+DB_NAME = "test_database"
 
 class BackendTester:
     def __init__(self):
