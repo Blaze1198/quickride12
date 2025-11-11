@@ -860,6 +860,21 @@ agent_communication:
       ✅ Navigation tab works correctly because it doesn't filter by status
       ✅ Fix required: Update Active tab status filter to include "ready_for_pickup"
       
+      FIX APPLIED:
+      ✅ Updated Active tab filter (line 161-163) to include all active statuses:
+         - "ready_for_pickup" (ADDED - was missing)
+         - "rider_assigned" 
+         - "picked_up"
+         - "out_for_delivery"
+      ✅ Updated status display to show appropriate messages for all statuses
+      ✅ Verified fix with test endpoints - Active tab now shows same data as Navigation tab
+      
+      TESTING RESULTS AFTER FIX:
+      ✅ Created test rider and verified endpoints return correct data
+      ✅ Active tab filter now includes all relevant order statuses
+      ✅ Status display shows appropriate messages for each status
+      ✅ Data consistency between Navigation and Active tabs achieved
+      
   - agent: "main"
     message: |
       CRITICAL: React Hooks Error Persists in Rider Navigation Screen
