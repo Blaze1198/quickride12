@@ -159,7 +159,10 @@ export default function RiderActiveScreen() {
   }
 
   const activeOrders = orders.filter(
-    (o) => o.status === 'rider_assigned' || o.status === 'out_for_delivery'
+    (o) => o.status === 'ready_for_pickup' || 
+           o.status === 'rider_assigned' || 
+           o.status === 'picked_up' || 
+           o.status === 'out_for_delivery'
   );
 
   return (
