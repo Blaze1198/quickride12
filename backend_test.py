@@ -19,22 +19,18 @@ BACKEND_URL = "https://track-delivery-5.preview.emergentagent.com/api"
 
 class BackendTester:
     def __init__(self):
-        self.session_token = None
-        self.user_data = None
-        self.test_results = []
+        self.session = requests.Session()
+        self.customer_token = None
+        self.rider_token = None
+        self.admin_token = None
+        self.test_order_id = None
+        self.customer_id = None
+        self.rider_id = None
         
-    def log_result(self, test_name, status, details):
-        """Log test results"""
-        result = {
-            "test": test_name,
-            "status": status,
-            "details": details,
-            "timestamp": datetime.now().isoformat()
-        }
-        self.test_results.append(result)
-        
-        status_icon = "✅" if status == "PASS" else "❌" if status == "FAIL" else "⚠️"
-        print(f"{status_icon} {test_name}: {details}")
+    def log(self, message, level="INFO"):
+        """Log test messages with timestamp"""
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        print(f"[{timestamp}] {level}: {message}")
         
     def create_test_rider_account(self):
         """Create a test rider account for authentication testing"""
