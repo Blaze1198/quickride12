@@ -1,19 +1,23 @@
 #!/usr/bin/env python3
 """
-Backend Testing Script for Session Loss Investigation
-Testing authentication persistence and session validation
+Backend Testing Script for Live Order Tracking Route Line Issue
+Critical Issue: Customer Authorization 403 Forbidden Errors
+
+This script tests the specific issue where customers get 403 errors
+when trying to access rider location for their own orders.
 """
 
 import requests
 import json
-import time
-import sys
+import uuid
 from datetime import datetime
+import os
+import sys
 
-# Configuration
+# Get backend URL from frontend .env
 BACKEND_URL = "https://track-delivery-5.preview.emergentagent.com/api"
 
-class SessionLossInvestigator:
+class BackendTester:
     def __init__(self):
         self.session_token = None
         self.user_data = None
