@@ -775,6 +775,43 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: |
+      CRITICAL: Active Deliveries Tab Shows No Deliveries Despite Navigation Tab Showing Details
+      
+      USER REPORT: 
+      - Navigation tab shows active delivery with details
+      - Active tab shows "No active deliveries"
+      - Data inconsistency between tabs
+      
+      FIX ATTEMPTED:
+      - Changed Active tab to fetch from /rider/current-order and /rider/current-ride
+      - Same endpoints as Navigation tab uses
+      - Should show same data
+      
+      ISSUE PERSISTS after restart
+      
+      TESTING NEEDED:
+      1. Test /rider/current-order endpoint with rider token
+      2. Test /rider/current-ride endpoint with rider token  
+      3. Verify what Navigation tab is fetching vs Active tab
+      4. Check if rider actually has assigned orders
+      5. Check order status and rider_id assignment
+      6. Verify API responses are correct
+      7. Test data flow from backend to frontend
+      
+      FILES TO TEST:
+      - /app/frontend/app/(rider)/active.tsx (fetchOrders function)
+      - /app/frontend/app/(rider)/navigation.tsx (fetchCurrentJob function)
+      - /app/backend/server.py (rider endpoints line 2229-2290)
+      
+      DELIVERABLES:
+      1. API response from /rider/current-order
+      2. API response from /rider/current-ride
+      3. Comparison with Navigation tab data
+      4. Root cause of discrepancy
+      5. Working solution
+      
+  - agent: "main"
+    message: |
       CRITICAL: React Hooks Error Persists in Rider Navigation Screen
       
       ERROR: "Rendered more hooks than during the previous render" at RiderNavigationScreen (navigation.tsx:1147:12)
