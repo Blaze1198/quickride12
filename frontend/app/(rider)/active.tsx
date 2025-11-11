@@ -67,6 +67,45 @@ export default function RiderActiveScreen() {
     fetchOrders();
   };
 
+  const handlePickup = async (orderId: string) => {
+    const confirmed = Platform.OS === 'web'
+      ? window.confirm('Mark this order as picked up?')
+      : await new Promise((resolve) => {
+          Alert.alert(
+            'Pickup Order',
+            'Confirm you have picked up this order?',
+            [
+              { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
+              { text: 'Confirm', onPress: () => resolve(true) },
+            ]
+          );
+        });
+
+    if (!confirmed) return;
+
+    try {
+      await api.put(`/orders/${orderId}/status`, { status: 'picked_up' });
+      
+      if (Platform.OS === 'web') {
+        window.alert('Order marked as picked up!');
+      } else {
+        Alert.alert('Success', 'Order marked as picked up!');
+      }
+      
+      fetchOrders();
+    } catch (error: any) {
+      console.error('Error updating status:', error);
+      
+      const message = error.response?.data?.detail || 'Failed to update status.';
+      
+      if (Platform.OS === 'web') {
+        window.alert(`Error: ${message}`);
+      } else {
+        Alert.alert('Error', message);
+      }
+    }
+  };
+
   const handleCompleteDelivery = async (orderId: string) => {
     const confirmed = Platform.OS === 'web'
       ? window.confirm('Mark this delivery as complete?')
