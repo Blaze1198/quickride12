@@ -103,6 +103,8 @@ class NavigationCrashTester:
         """Test rider profile APIs required for navigation"""
         print("🧑‍🚴 Testing rider profile APIs...")
         
+        # Use a fresh session for rider
+        rider_session = requests.Session()
         headers = {"Authorization": f"Bearer {self.rider_token}"}
         
         # First check user role
