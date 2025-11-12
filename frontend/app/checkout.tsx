@@ -1157,6 +1157,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     minHeight: 56,
   },
+  inputContainerError: {
+    borderColor: '#FF6B6B',
+    borderWidth: 2,
+    backgroundColor: '#FFF5F5',
+  },
+  errorText: {
+    fontSize: 12,
+    color: '#FF6B6B',
+    marginTop: 4,
+    marginLeft: 4,
+  },
   inputIcon: {
     marginRight: 12,
   },
