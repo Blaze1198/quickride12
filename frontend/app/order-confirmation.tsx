@@ -316,6 +316,75 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 24,
   },
+  topCard: {
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
+  },
+  timeEstimateBox: {
+    marginBottom: 16,
+  },
+  timeEstimateText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  deliveryInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  iconCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FFF0F5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  deliveryTextContainer: {
+    flex: 1,
+  },
+  deliveryTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 4,
+  },
+  deliverySubtext: {
+    fontSize: 13,
+    color: '#666',
+    lineHeight: 18,
+  },
+  sectionContainer: {
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
+  },
   confettiContainer: {
     position: 'absolute',
     top: 60,
