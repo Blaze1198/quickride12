@@ -205,14 +205,15 @@ function RiderAvailableContent() {
   const fetchNearbyOrders = async () => {
     // Guard: Only fetch if user is a rider
     if (!user || user.role !== 'rider') {
-      console.log('⚠️ Skipping nearby orders fetch - user is not a rider');
       return;
     }
 
     try {
       const response = await api.get('/riders/nearby-orders?radius=10');
       setNearbyOrders(response.data.orders || []);
-    } catch (error) {
+    } catch (error: any) {
+      // Silently fail if unauthorized
+      if (error?.response?.status === 401) return;
       console.error('Error fetching nearby orders:', error);
     }
   };
