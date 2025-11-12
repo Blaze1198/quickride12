@@ -214,92 +214,53 @@ export default function OrderConfirmationScreen() {
         {/* Order Details Section */}
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Order Details</Text>
-          {/* Order Number */}
-          <View style={styles.orderNumberSection}>
-            <Text style={styles.orderNumberLabel}>Order Number</Text>
-            <Text style={styles.orderNumber}>#{order.id.slice(0, 8).toUpperCase()}</Text>
+          {/* Order Number Row */}
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>Order number</Text>
+            <Text style={styles.detailValue}>#{order.id.slice(0, 8).toUpperCase()}</Text>
           </View>
 
-          <View style={styles.divider} />
-
-          {/* Restaurant Info */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Ionicons name="restaurant" size={20} color="#FF6B6B" />
-              <Text style={styles.sectionTitle}>Restaurant</Text>
-            </View>
-            <Text style={styles.restaurantName}>{order.restaurant_name}</Text>
+          {/* Restaurant Row */}
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>Order from</Text>
+            <Text style={styles.detailValue}>{order.restaurant_name}</Text>
           </View>
 
-          <View style={styles.divider} />
-
-          {/* Delivery Info */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Ionicons name="location" size={20} color="#FF6B6B" />
-              <Text style={styles.sectionTitle}>Delivery Address</Text>
-            </View>
-            <Text style={styles.infoText}>
+          {/* Delivery Address Row */}
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>Delivery address</Text>
+            <Text style={styles.detailValue}>
               {typeof order.delivery_address === 'string' 
                 ? order.delivery_address 
-                : order.delivery_address?.address || 'Delivery address not available'}
+                : order.delivery_address?.address || 'N/A'}
             </Text>
-            <View style={styles.phoneRow}>
-              <Ionicons name="call" size={16} color="#666" />
-              <Text style={styles.phoneText}>{order.phone || 'N/A'}</Text>
-            </View>
           </View>
-
-          <View style={styles.divider} />
 
           {/* Order Items */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Ionicons name="receipt" size={20} color="#FF6B6B" />
-              <Text style={styles.sectionTitle}>Order Details</Text>
-            </View>
-            {order.items.map((item: any, index: number) => (
-              <View key={index} style={styles.itemRow}>
-                <View style={styles.itemLeft}>
-                  <Text style={styles.itemQuantity}>{item.quantity}x</Text>
-                  <Text style={styles.itemName}>{item.name}</Text>
-                </View>
-                <Text style={styles.itemPrice}>₱{item.price.toFixed(2)}</Text>
+          {order.items.map((item: any, index: number) => (
+            <View key={index} style={styles.itemRow}>
+              <View style={styles.itemQuantityBox}>
+                <Text style={styles.itemQuantityText}>{item.quantity}x</Text>
               </View>
-            ))}
-          </View>
-
-          <View style={styles.divider} />
-
-          {/* Total Section */}
-          <View style={styles.totalSection}>
-            <View style={styles.totalRow}>
-              <Text style={styles.totalLabel}>Subtotal</Text>
-              <Text style={styles.totalValue}>₱{order.total_amount.toFixed(2)}</Text>
+              <Text style={styles.itemName}>{item.name}</Text>
+              <Text style={styles.itemPrice}>₱{(item.price * item.quantity).toFixed(2)}</Text>
             </View>
-            <View style={styles.totalRow}>
-              <Text style={styles.totalLabel}>Delivery Fee</Text>
-              <Text style={styles.totalValue}>₱{(order.delivery_fee || 50).toFixed(2)}</Text>
-            </View>
-            <View style={[styles.totalRow, styles.grandTotalRow]}>
-              <Text style={styles.grandTotalLabel}>Total</Text>
-              <Text style={styles.grandTotalValue}>
-                ₱{((order.total_amount || 0) + (order.delivery_fee || 50)).toFixed(2)}
-              </Text>
-            </View>
-          </View>
+          ))}
 
-          <View style={styles.divider} />
+          <View style={styles.dividerLine} />
 
           {/* Payment Info */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Ionicons name="card" size={20} color="#FF6B6B" />
-              <Text style={styles.sectionTitle}>Payment Method</Text>
-            </View>
-            <Text style={styles.infoText}>
-              {order.payment_method === 'gcash' ? 'GCash' : 'Cash on Delivery'}
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>Payment</Text>
+            <Text style={styles.detailValue}>
+              {order.payment_method === 'gcash' ? 'GCash' : 'Cash'}
             </Text>
+          </View>
+
+          {/* Total */}
+          <View style={styles.totalRow}>
+            <Text style={styles.totalLabel}>Total (Incl. VAT)</Text>
+            <Text style={styles.totalValue}>₱{(order.total_amount || 0).toFixed(2)}</Text>
           </View>
         </View>
 
