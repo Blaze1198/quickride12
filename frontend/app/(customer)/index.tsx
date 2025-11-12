@@ -708,7 +708,19 @@ export default function HomeScreen() {
     setSelectedLocation(address);
     setShowLocationPicker(false);
     
-    // Save to localStorage for checkout page to access
+    // Save to backend first
+    try {
+      await api.put('/users/me/delivery-location', {
+        address: address,
+        latitude: tempLocation.lat,
+        longitude: tempLocation.lng
+      });
+      console.log('✅ Location saved to backend:', { address, coordinates: tempLocation });
+    } catch (error) {
+      console.error('Error saving to backend:', error);
+    }
+    
+    // Also save to localStorage for checkout page to access
     try {
       localStorage.setItem('deliveryLocation', JSON.stringify({
         address: address,
@@ -716,7 +728,7 @@ export default function HomeScreen() {
         longitude: tempLocation.lng,
         timestamp: new Date().toISOString()
       }));
-      console.log('✅ Location saved to localStorage for checkout:', { address, coordinates: tempLocation });
+      console.log('✅ Location also saved to localStorage for checkout');
     } catch (error) {
       console.error('Error saving to localStorage:', error);
     }
