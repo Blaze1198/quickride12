@@ -771,6 +771,33 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000',
   },
+  timeCard: {
+    position: 'absolute',
+    top: 70,
+    left: 16,
+    right: 16,
+    backgroundColor: '#FFF',
+    padding: 16,
+    borderRadius: 12,
+    zIndex: 10,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+  },
+  timeCardText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FF6B6B',
+    textAlign: 'center',
+  },
   fullScreenMap: {
     position: 'absolute',
     top: 0,
