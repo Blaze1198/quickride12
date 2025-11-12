@@ -549,12 +549,23 @@ function RiderNavigationContent() {
 // Fetch route using Google Routes API (new)
 const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: any) => {
   try {
-    console.log('📡 Using Google Maps Directions API for route display...');
+    console.log('📡 Starting Directions API call...');
+    console.log('📍 Origin:', JSON.stringify(origin));
+    console.log('📍 Destination:', JSON.stringify(destination));
     
     const google = (window as any).google;
     if (!google || !google.maps) {
       console.error('❌ Google Maps not loaded');
       return;
+    }
+
+    console.log('✅ Google Maps API is available');
+
+    // Clean up old renderer if it exists
+    if (directionsRendererRef.current) {
+      console.log('🧹 Cleaning up old directions renderer');
+      directionsRendererRef.current.setMap(null);
+      directionsRendererRef.current = null;
     }
 
     const directionsService = new google.maps.DirectionsService();
@@ -568,6 +579,8 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
       },
       preserveViewport: true, // Don't auto-zoom, we handle that manually
     });
+
+    console.log('✅ DirectionsService and DirectionsRenderer created');
 
     // Store renderer for cleanup
     directionsRendererRef.current = directionsRenderer;
@@ -583,14 +596,18 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
       },
     };
 
-    console.log('🗺️ Requesting directions from', origin, 'to', destination);
+    console.log('🗺️ Requesting directions with request:', JSON.stringify(request));
 
     directionsService.route(request, (result: any, status: any) => {
+      console.log('📨 Directions API callback triggered. Status:', status);
+      
       if (status === 'OK' && result) {
-        console.log('✅ Directions API response received');
+        console.log('✅ Directions API response received successfully!');
+        console.log('📦 Result:', result);
         
         // Display the route on the map
         directionsRenderer.setDirections(result);
+        console.log('✅ Directions set on renderer');
         
         const route = result.routes[0];
         const leg = route.legs[0];
@@ -610,13 +627,15 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
           setCurrentStep(leg.steps[0]);
         }
       } else {
-        console.error('❌ Directions request failed:', status);
+        console.error('❌ Directions request failed with status:', status);
+        console.error('❌ Result:', result);
         setDistanceToDestination('N/A');
         setEtaToDestination('N/A');
       }
     });
   } catch (error) {
     console.error('❌ Error fetching directions:', error);
+    console.error('❌ Error stack:', error.stack);
     setDistanceToDestination('N/A');
     setEtaToDestination('N/A');
   }
