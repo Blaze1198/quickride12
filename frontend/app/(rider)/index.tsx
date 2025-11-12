@@ -364,8 +364,19 @@ function RiderAvailableContent() {
     }
   };
 
-  const toggleService = async () => {
-    const newService = serviceType === 'food_delivery' ? 'ride_service' : 'food_delivery';
+  const toggleService = async (toRideService?: boolean) => {
+    let newService: 'food_delivery' | 'ride_service';
+    
+    if (typeof toRideService === 'boolean') {
+      // Called from TouchableOpacity with explicit service type
+      newService = toRideService ? 'ride_service' : 'food_delivery';
+    } else {
+      // Called from Switch (legacy) - toggle between services
+      newService = serviceType === 'food_delivery' ? 'ride_service' : 'food_delivery';
+    }
+    
+    // Don't switch if already on the target service
+    if (newService === serviceType) return;
     
     setToggling(true);
     try {
