@@ -638,7 +638,10 @@ async def get_my_restaurant(request: Request):
     """Get restaurant owned by current user"""
     user = await require_auth(request)
     
+    logger.info(f"🏪 Restaurant fetch attempt by: {user.email}, role: {user.role}, type: {type(user.role)}")
+    
     if user.role != UserRole.RESTAURANT:
+        logger.error(f"❌ Restaurant fetch blocked - user role '{user.role}' != '{UserRole.RESTAURANT}'")
         raise HTTPException(status_code=403, detail="Not a restaurant owner")
     
     restaurant = await db.restaurants.find_one({"owner_id": user.id})
