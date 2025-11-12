@@ -446,24 +446,38 @@ export default function CheckoutScreen() {
     console.log('📱 Phone Number:', phoneNumber);
     console.log('🏪 Restaurant ID:', restaurantId);
     
+    // Reset error states
+    setAddressError(false);
+    setPhoneError(false);
+    
+    // Validate fields
+    let hasError = false;
+    
     if (!deliveryAddress.trim()) {
-      const msg = 'Please enter your delivery address';
-      console.log('❌ Validation error:', msg);
-      if (Platform.OS === 'web') {
-        window.alert(msg);
-      } else {
-        Alert.alert('Required', msg);
+      setAddressError(true);
+      hasError = true;
+      console.log('❌ Validation error: Missing delivery address');
+    }
+
+    if (!phoneNumber.trim()) {
+      setPhoneError(true);
+      hasError = true;
+      console.log('❌ Validation error: Missing phone number');
+      
+      // Scroll to phone number field
+      if (phoneInputRef.current) {
+        phoneInputRef.current.focus();
+      }
+      if (scrollViewRef.current) {
+        scrollViewRef.current.scrollTo({ y: 300, animated: true });
       }
       return;
     }
 
-    if (!phoneNumber.trim()) {
-      const msg = 'Please enter your phone number';
-      console.log('❌ Validation error:', msg);
-      if (Platform.OS === 'web') {
-        window.alert(msg);
-      } else {
-        Alert.alert('Required', msg);
+    if (hasError) {
+      // Scroll to first error
+      if (scrollViewRef.current) {
+        scrollViewRef.current.scrollTo({ y: 0, animated: true });
       }
       return;
     }
