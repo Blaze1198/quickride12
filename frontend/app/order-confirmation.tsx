@@ -393,6 +393,21 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 24,
   },
+  confettiContainer: {
+    position: 'absolute',
+    top: 60,
+    left: 0,
+    right: 0,
+    height: 100,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    zIndex: 10,
+  },
+  confetti: {
+    fontSize: 40,
+    position: 'absolute',
+    top: 0,
+  },
   successHeader: {
     alignItems: 'center',
     marginBottom: 24,
@@ -426,6 +441,17 @@ const styles = StyleSheet.create({
   successSubtitle: {
     fontSize: 16,
     color: '#666',
+    marginBottom: 16,
+  },
+  deliveryIconContainer: {
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  deliveryIconText: {
+    fontSize: 14,
+    color: '#FF6B6B',
+    fontWeight: '600',
+    marginTop: 4,
   },
   receiptCard: {
     backgroundColor: '#FFF',
