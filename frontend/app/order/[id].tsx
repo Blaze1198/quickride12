@@ -60,12 +60,35 @@ export default function OrderDetailScreen() {
     try {
       const response = await api.get(`/orders/${id}`);
       setOrder(response.data);
+      calculateEstimatedTime(response.data);
     } catch (error) {
       console.error('Error fetching order:', error);
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
+  };
+
+  const calculateEstimatedTime = (orderData: Order) => {
+    if (!orderData) return;
+    
+    const prepTime = 15 + Math.floor(Math.random() * 6);
+    const itemsTime = Math.ceil(orderData.items.length / 2);
+    const deliveryTime = 10 + Math.floor(Math.random() * 6);
+    
+    let statusReduction = 0;
+    if (orderData.status === 'confirmed' || orderData.status === 'ready_for_pickup') {
+      statusReduction = 5;
+    } else if (orderData.status === 'rider_assigned' || orderData.status === 'picked_up') {
+      statusReduction = 15;
+    } else if (orderData.status === 'out_for_delivery') {
+      statusReduction = 20;
+    } else if (orderData.status === 'delivered') {
+      statusReduction = 100; // Already delivered
+    }
+    
+    const total = Math.max(0, prepTime + itemsTime + deliveryTime - statusReduction);
+    setEstimatedMinutes(total);
   };
 
   const onRefresh = () => {
