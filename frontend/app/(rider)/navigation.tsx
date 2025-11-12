@@ -1244,6 +1244,33 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
             </View>
           ) : null}
 
+          {/* Rider Location Card - Floating at Top */}
+          <View style={styles.locationCard}>
+            <View style={styles.locationCardHeader}>
+              <Ionicons name="navigate" size={20} color="#FF6B6B" />
+              <View style={styles.locationCardTextContainer}>
+                <Text style={styles.locationCardTitle}>Your Location</Text>
+                <Text style={styles.locationCardAddress} numberOfLines={1}>
+                  {userLocation 
+                    ? `${userLocation.latitude.toFixed(4)}, ${userLocation.longitude.toFixed(4)}`
+                    : 'Fetching location...'}
+                </Text>
+              </View>
+            </View>
+            <TouchableOpacity
+              style={styles.editLocationButton}
+              onPress={() => {
+                if (Platform.OS === 'web') {
+                  window.alert('Location update: Use GPS or search for a new location. This feature updates your real-time position for better order matching.');
+                } else {
+                  Alert.alert('Update Location', 'Use GPS or search for a new location');
+                }
+              }}
+            >
+              <Ionicons name="create-outline" size={18} color="#FF6B6B" />
+            </TouchableOpacity>
+          </View>
+
           {/* Draggable Bottom Sheet for idle state */}
           <BottomSheet
             ref={bottomSheetRef}
