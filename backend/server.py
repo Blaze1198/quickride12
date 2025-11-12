@@ -551,7 +551,7 @@ async def update_delivery_location(request: Request):
     user = await require_auth(request)
     
     # Only customers can set delivery location
-    if user.get("role") != UserRole.CUSTOMER:
+    if user.role != UserRole.CUSTOMER:
         raise HTTPException(status_code=403, detail="Only customers can set delivery location")
     
     body = await request.json()
