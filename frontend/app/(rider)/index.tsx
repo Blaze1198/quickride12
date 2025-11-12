@@ -45,7 +45,8 @@ interface Ride {
   created_at: string;
 }
 
-export default function RiderAvailableScreen() {
+// Inner component with all hooks
+function RiderAvailableContent() {
   const router = useRouter();
   const { user, isLoading: authLoading } = useAuthStore();
   const [serviceType, setServiceType] = useState<'food_delivery' | 'ride_service'>('food_delivery');
