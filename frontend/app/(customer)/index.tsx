@@ -689,7 +689,7 @@ export default function HomeScreen() {
   };
 
   // Confirm selected location
-  const confirmLocation = () => {
+  const confirmLocation = async () => {
     const address = userAddress || selectedLocation;
     
     // If editing a saved location (home, work, school), save it
