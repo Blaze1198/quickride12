@@ -54,6 +54,8 @@ function RiderNavigationContent() {
   const directionConeRef = useRef<any>(null);
   const [showLocationEditor, setShowLocationEditor] = useState(false);
   const [riderLocationAddress, setRiderLocationAddress] = useState('Fetching location...');
+  const [showLocationSearchModal, setShowLocationSearchModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     // Wait for auth to load and verify user is a rider before fetching
