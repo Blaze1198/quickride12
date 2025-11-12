@@ -54,6 +54,7 @@ export default function LiveOrderTrackingScreen() {
   const [eta, setEta] = useState<string>('');
   const [mapError, setMapError] = useState<string>('');
   const [scriptLoaded, setScriptLoaded] = useState(false);
+  const [estimatedMinutes, setEstimatedMinutes] = useState(35);
 
   useEffect(() => {
     if (orderId) {
