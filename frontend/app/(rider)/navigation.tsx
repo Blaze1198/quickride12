@@ -1977,22 +1977,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     gap: 8,
   },
-  actionButton: {
-    backgroundColor: '#FF6B6B',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    borderRadius: 12,
-    marginTop: 12,
-    gap: 8,
-  },
-  actionButtonText: {
-    color: '#FFF',
-    fontSize: 16,
-    fontWeight: '600',
-    marginLeft: 8,
-  },
   mapPlaceholder: {
     justifyContent: 'center',
     alignItems: 'center',
