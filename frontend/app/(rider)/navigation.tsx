@@ -1218,7 +1218,8 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
   // MUST compute nextAction before any conditional returns to avoid hooks violation
   const nextAction = getNextAction();
 
-  // Early return if user is not a rider - MOVED AFTER ALL HOOKS
+  // CONDITIONAL RENDERING - NO EARLY RETURNS TO AVOID HOOKS VIOLATION
+  // Render access restricted screen
   if (user && user.role !== 'rider') {
     return (
       <SafeAreaView style={styles.container}>
@@ -1237,6 +1238,7 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
     );
   }
 
+  // Render loading screen
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -1247,7 +1249,7 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
     );
   }
 
-  // Show rider's current location on map even without active job
+  // Render idle screen (no active job)
   if (!currentJob) {
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
@@ -1296,6 +1298,8 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
       </GestureHandlerRootView>
     );
   }
+
+  // Render active navigation screen (has active job)
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
