@@ -575,7 +575,7 @@ async def get_delivery_location(request: Request):
     """Get customer's default delivery location"""
     user = await require_auth(request)
     
-    user_data = await db.users.find_one({"id": user["id"]})
+    user_data = await db.users.find_one({"id": user.id})
     if user_data and user_data.get("default_delivery_location"):
         return user_data["default_delivery_location"]
     
