@@ -96,7 +96,8 @@ function RiderAvailableContent() {
       const response = await api.get('/riders/me/earnings');
       setTotalEarnings(response.data.total_earnings || 0);
     } catch (error: any) {
-      if (error?.response?.status === 401) return;
+      // Silently ignore auth errors (401/403) - user is not a rider
+      if (error?.response?.status === 401 || error?.response?.status === 403) return;
       console.error('Error fetching earnings:', error);
     }
   };
