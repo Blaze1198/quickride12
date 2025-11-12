@@ -1145,6 +1145,31 @@ async def get_my_rider_profile(request: Request):
     
     return Rider(**rider)
 
+@api_router.get("/riders/me/earnings")
+async def get_rider_earnings(request: Request):
+    """Get rider's total earnings"""
+    user = await require_auth(request)
+    
+    if user.role != UserRole.RIDER:
+        raise HTTPException(status_code=403, detail="Only riders can access this")
+    
+    # Calculate total earnings from completed orders
+    completed_orders = await db.orders.find({
+        "rider_id": user.id,
+        "status": "delivered"
+    }).to_list(length=1000)
+    
+    total_earnings = 0
+    for order in completed_orders:
+        # Rider gets 10% of order total as earnings
+        rider_fee = order.get("total_amount", 0) * 0.10
+        total_earnings += rider_fee
+    
+    return {
+        "total_earnings": total_earnings,
+        "completed_deliveries": len(completed_orders)
+    }
+
 @api_router.put("/riders/me/status")
 async def update_my_rider_status(status_update: Dict[str, str], request: Request):
     """Update current rider's status"""
