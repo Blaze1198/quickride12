@@ -240,6 +240,15 @@ export default function OrderDetailScreen() {
           <Text style={styles.orderId}>Order #{order.id.substring(0, 8)}</Text>
         </View>
 
+        {/* Animated Estimated Time Card - Below Status Card */}
+        {estimatedMinutes > 0 && order.status !== 'delivered' && order.status !== 'cancelled' && (
+          <Animated.View style={[styles.timeCard, { transform: [{ scale: pulseAnim }] }]}>
+            <Text style={styles.timeCardText}>
+              {estimatedMinutes - 5} — {estimatedMinutes + 5} mins
+            </Text>
+          </Animated.View>
+        )}
+
         {/* Rider Info for rider_assigned status */}
         {order.status === 'rider_assigned' && order.rider_name && (
           <View style={styles.riderInfoCard}>
