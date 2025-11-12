@@ -51,6 +51,7 @@ export default function OrderDetailScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [estimatedMinutes, setEstimatedMinutes] = useState(35);
+  const pulseAnim = useState(new Animated.Value(1))[0];
 
   useEffect(() => {
     if (id) {
