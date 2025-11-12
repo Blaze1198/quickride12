@@ -65,20 +65,7 @@ function RiderAvailableContent() {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searching, setSearching] = useState(false);
 
-  // Early return if user is not a rider
-  if (user && user.role !== 'rider') {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.emptyContainer}>
-          <Ionicons name="lock-closed" size={80} color="#FF6B6B" />
-          <Text style={styles.emptyText}>Access Restricted</Text>
-          <Text style={styles.emptySubtext}>This screen is only accessible to riders</Text>
-          <TouchableOpacity 
-            style={styles.actionButton}
-            onPress={() => router.replace('/(auth)/login')}
-          >
-            <Text style={styles.actionButtonText}>Go to Login</Text>
-          </TouchableOpacity>
+  // Auth and role checked in wrapper - this will only render for riders
         </View>
       </SafeAreaView>
     );
