@@ -1278,6 +1278,52 @@ const styles = StyleSheet.create({
     color: '#666',
     lineHeight: 18,
   },
+  // Earnings Card Styles
+  earningsCard: {
+    backgroundColor: '#4CAF50',
+    marginHorizontal: 16,
+    marginTop: 16,
+    marginBottom: 8,
+    padding: 20,
+    borderRadius: 16,
+    shadowColor: '#4CAF50',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  earningsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  earningsLabel: {
+    fontSize: 14,
+    color: 'rgba(255, 255, 255, 0.9)',
+    marginLeft: 8,
+    fontWeight: '500',
+  },
+  earningsAmount: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: '#FFF',
+    marginBottom: 12,
+  },
+  viewDetailsButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  viewDetailsText: {
+    fontSize: 13,
+    color: '#FFF',
+    fontWeight: '600',
+    marginRight: 4,
+  },
   // Compact Header Styles
   compactHeader: {
     backgroundColor: '#FFF',
