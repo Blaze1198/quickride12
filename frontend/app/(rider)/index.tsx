@@ -606,19 +606,21 @@ function RiderAvailableContent() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Total Earnings Card */}
+      {/* Total Earnings Card - Compact */}
       <View style={styles.earningsCard}>
         <View style={styles.earningsHeader}>
-          <Ionicons name="wallet" size={24} color="#4CAF50" />
-          <Text style={styles.earningsLabel}>Total Earnings</Text>
+          <Ionicons name="wallet" size={20} color="#FFF" style={{ marginRight: 8 }} />
+          <View>
+            <Text style={styles.earningsLabel}>Total Earnings</Text>
+            <Text style={styles.earningsAmount}>₱{totalEarnings.toFixed(2)}</Text>
+          </View>
         </View>
-        <Text style={styles.earningsAmount}>₱{totalEarnings.toFixed(2)}</Text>
         <TouchableOpacity 
           style={styles.viewDetailsButton}
           onPress={() => router.push('/(rider)/earnings' as any)}
         >
-          <Text style={styles.viewDetailsText}>View Details</Text>
-          <Ionicons name="chevron-forward" size={16} color="#FF6B6B" />
+          <Text style={styles.viewDetailsText}>Details</Text>
+          <Ionicons name="chevron-forward" size={14} color="#FFF" />
         </TouchableOpacity>
       </View>
 
