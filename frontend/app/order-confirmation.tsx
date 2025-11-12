@@ -599,9 +599,14 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   estimatedTimeValue: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 20,
+    fontWeight: 'bold',
     color: '#4CAF50',
+  },
+  estimatedTimeSubtext: {
+    fontSize: 12,
+    color: '#666',
+    marginTop: 4,
   },
   trackButton: {
     flexDirection: 'row',
