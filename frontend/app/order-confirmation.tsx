@@ -233,21 +233,14 @@ export default function OrderConfirmationScreen() {
           </Animated.View>
         </View>
 
-        {/* Animated Estimated Time - MOVED TO TOP */}
+        {/* Animated Estimated Time - Simple Version */}
         <Animated.View 
           style={[
-            styles.estimatedTimeBox,
+            styles.simpleEstimatedTime,
             { transform: [{ scale: pulseAnim }] }
           ]}
         >
-          <Ionicons name="time" size={24} color="#4CAF50" />
-          <View style={styles.estimatedTimeContent}>
-            <Text style={styles.estimatedTimeLabel}>Estimated Delivery Time</Text>
-            <Text style={styles.estimatedTimeValue}>{estimatedMinutes} minutes</Text>
-            <Text style={styles.estimatedTimeSubtext}>
-              We'll notify you when it's on the way
-            </Text>
-          </View>
+          <Text style={styles.simpleEstimatedTimeText}>{estimatedMinutes} minutes</Text>
         </Animated.View>
 
         {/* Receipt Card */}
