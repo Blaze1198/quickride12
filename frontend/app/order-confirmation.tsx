@@ -462,36 +462,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
   },
-  successHeader: {
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  checkmarkCircle: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: '#FF6B6B',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#FF6B6B',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 8,
-      },
-    }),
-  },
-  successTitle: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
-  },
   successSubtitle: {
     fontSize: 16,
     color: '#666',
