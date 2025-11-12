@@ -13,7 +13,7 @@ export default function RiderLayout() {
     if (!isLoading && (!user || user.role !== 'rider')) {
       router.replace('/login');
     }
-  }, [user, isLoading]);
+  }, [user, isLoading, router]);
 
   // Show loading while checking auth
   if (isLoading) {
@@ -24,9 +24,14 @@ export default function RiderLayout() {
     );
   }
 
-  // Don't render tabs if not a rider
+  // Don't render tabs if not a rider - this prevents child components from mounting
   if (!user || user.role !== 'rider') {
-    return null;
+    // Return loading screen instead of null to prevent tab flashing
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#FF6B6B" />
+      </View>
+    );
   }
 
   return (
