@@ -576,15 +576,20 @@ const styles = StyleSheet.create({
   totalRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 6,
+    paddingVertical: 12,
+    borderTopWidth: 2,
+    borderTopColor: '#F0F0F0',
+    marginTop: 8,
   },
   totalLabel: {
-    fontSize: 15,
-    color: '#666',
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
   },
   totalValue: {
-    fontSize: 15,
-    color: '#666',
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
   },
   grandTotalRow: {
     marginTop: 8,
