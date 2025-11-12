@@ -200,6 +200,15 @@ export default function OrderDetailScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#FF6B6B']} />
         }
       >
+        {/* Estimated Time Card */}
+        {estimatedMinutes > 0 && order.status !== 'delivered' && order.status !== 'cancelled' && (
+          <View style={styles.timeCard}>
+            <Text style={styles.timeCardText}>
+              {estimatedMinutes - 5} — {estimatedMinutes + 5} mins
+            </Text>
+          </View>
+        )}
+
         {/* Status Badge */}
         <View style={styles.statusCard}>
           <View
