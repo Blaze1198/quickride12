@@ -1215,7 +1215,10 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
     return null;
   };
 
-  // Early return if user is not a rider
+  // MUST compute nextAction before any conditional returns to avoid hooks violation
+  const nextAction = getNextAction();
+
+  // Early return if user is not a rider - MOVED AFTER ALL HOOKS
   if (user && user.role !== 'rider') {
     return (
       <SafeAreaView style={styles.container}>
@@ -1293,8 +1296,6 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
       </GestureHandlerRootView>
     );
   }
-
-  const nextAction = getNextAction();
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
