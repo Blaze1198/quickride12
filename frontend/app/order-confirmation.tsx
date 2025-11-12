@@ -356,13 +356,13 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#FF6B6B',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
     ...Platform.select({
       ios: {
-        shadowColor: '#4CAF50',
+        shadowColor: '#FF6B6B',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8,
@@ -470,13 +470,13 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#FF6B6B',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
     ...Platform.select({
       ios: {
-        shadowColor: '#4CAF50',
+        shadowColor: '#FF6B6B',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8,
