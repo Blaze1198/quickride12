@@ -339,6 +339,36 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 24,
   },
+  successHeader: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  checkmarkCircle: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: '#4CAF50',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#4CAF50',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 8,
+      },
+    }),
+  },
+  successTitle: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
+  },
   topCard: {
     backgroundColor: '#FFF',
     borderRadius: 12,
