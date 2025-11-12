@@ -79,13 +79,27 @@ function RiderAvailableContent() {
     fetchRiderAvailability();
     fetchRiderLocation();
     fetchNearbyOrders();
+    fetchTotalEarnings();
     // Poll for new orders/rides and nearby orders
     const interval = setInterval(() => {
       fetchData();
       fetchNearbyOrders();
+      fetchTotalEarnings();
     }, 10000);
     return () => clearInterval(interval);
   }, [serviceType, user, authLoading]);
+
+  const fetchTotalEarnings = async () => {
+    if (!user || user.role !== 'rider') return;
+
+    try {
+      const response = await api.get('/riders/me/earnings');
+      setTotalEarnings(response.data.total_earnings || 0);
+    } catch (error: any) {
+      if (error?.response?.status === 401) return;
+      console.error('Error fetching earnings:', error);
+    }
+  };
 
   const fetchRiderAvailability = async () => {
     // Guard: Only fetch if user is a rider
