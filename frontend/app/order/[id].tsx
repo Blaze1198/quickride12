@@ -48,6 +48,7 @@ export default function OrderDetailScreen() {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [estimatedMinutes, setEstimatedMinutes] = useState(35);
 
   useEffect(() => {
     if (id) {
