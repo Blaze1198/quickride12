@@ -61,6 +61,39 @@ export default function CheckoutScreen() {
   const mapRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
 
+  // Handle quantity changes
+  const handleIncreaseQuantity = (menuItemId: string) => {
+    const item = items.find(i => i.menu_item_id === menuItemId);
+    if (item) {
+      updateQuantity(menuItemId, item.quantity + 1);
+    }
+  };
+
+  const handleDecreaseQuantity = (menuItemId: string) => {
+    const item = items.find(i => i.menu_item_id === menuItemId);
+    if (item) {
+      if (item.quantity === 1) {
+        // Remove item if quantity would become 0
+        if (Platform.OS === 'web') {
+          if (window.confirm('Remove this item from cart?')) {
+            removeItem(menuItemId);
+          }
+        } else {
+          Alert.alert(
+            'Remove Item',
+            'Remove this item from cart?',
+            [
+              { text: 'Cancel', style: 'cancel' },
+              { text: 'Remove', onPress: () => removeItem(menuItemId), style: 'destructive' },
+            ]
+          );
+        }
+      } else {
+        updateQuantity(menuItemId, item.quantity - 1);
+      }
+    }
+  };
+
   // Calculate fees
   const subtotal = getTotalAmount();
   const riderFee = subtotal * 0.10; // 10% for rider
