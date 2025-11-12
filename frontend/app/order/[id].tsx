@@ -59,6 +59,32 @@ export default function OrderDetailScreen() {
     }
   }, [id]);
 
+  useEffect(() => {
+    // Start pulse animation when order is loaded
+    if (order) {
+      startPulseAnimation();
+    }
+  }, [order]);
+
+  const startPulseAnimation = () => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1.08,
+          duration: 1000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 1000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  };
+
   const fetchOrder = async () => {
     try {
       const response = await api.get(`/orders/${id}`);
