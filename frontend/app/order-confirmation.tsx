@@ -20,10 +20,27 @@ export default function OrderConfirmationScreen() {
   const { orderId } = useLocalSearchParams();
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [estimatedMinutes, setEstimatedMinutes] = useState(35);
+  
+  // Animation values
+  const checkmarkScale = useState(new Animated.Value(0))[0];
+  const checkmarkRotate = useState(new Animated.Value(0))[0];
+  const confettiOpacity = useState(new Animated.Value(0))[0];
+  const deliveryIconY = useState(new Animated.Value(0))[0];
+  const deliveryIconOpacity = useState(new Animated.Value(0))[0];
+  const pulseAnim = useState(new Animated.Value(1))[0];
 
   useEffect(() => {
     fetchOrderDetails();
   }, [orderId]);
+
+  useEffect(() => {
+    // Start animations when order is loaded
+    if (order) {
+      startAnimations();
+      calculateEstimatedTime();
+    }
+  }, [order]);
 
   const fetchOrderDetails = async () => {
     try {
