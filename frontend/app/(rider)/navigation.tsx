@@ -1552,6 +1552,85 @@ const fetchRouteFromRoutesAPI = async (origin: any, destination: any, map: any) 
             </View>
           </BottomSheetScrollView>
         </BottomSheet>
+
+        {/* Location Search Modal */}
+        <Modal
+          visible={showLocationSearchModal}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setShowLocationSearchModal(false)}
+        >
+          <KeyboardAvoidingView 
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.modalContainer}
+          >
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Search Location</Text>
+                <TouchableOpacity
+                  onPress={() => setShowLocationSearchModal(false)}
+                  style={styles.closeButton}
+                >
+                  <Ionicons name="close" size={24} color="#333" />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.searchInputContainer}>
+                <Ionicons name="search" size={20} color="#999" />
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="Search for a location..."
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  autoFocus
+                />
+                {searchQuery.length > 0 && (
+                  <TouchableOpacity onPress={() => setSearchQuery('')}>
+                    <Ionicons name="close-circle" size={20} color="#999" />
+                  </TouchableOpacity>
+                )}
+              </View>
+
+              <ScrollView style={styles.searchResults}>
+                {searchQuery.length > 2 ? (
+                  <View style={styles.searchResultItem}>
+                    <Ionicons name="location" size={20} color="#FF6B6B" />
+                    <View style={styles.searchResultText}>
+                      <Text style={styles.searchResultTitle}>
+                        Searching "{searchQuery}"...
+                      </Text>
+                      <Text style={styles.searchResultDescription}>
+                        Google Places integration will be added here
+                      </Text>
+                    </View>
+                  </View>
+                ) : (
+                  <View style={styles.emptySearchContainer}>
+                    <Ionicons name="search-outline" size={48} color="#CCC" />
+                    <Text style={styles.emptySearchText}>
+                      Type to search for locations
+                    </Text>
+                  </View>
+                )}
+              </ScrollView>
+
+              <View style={styles.modalFooter}>
+                <TouchableOpacity
+                  style={styles.useCurrentLocationButton}
+                  onPress={() => {
+                    if (userLocation) {
+                      Alert.alert('Success', 'Using current location');
+                      setShowLocationSearchModal(false);
+                    }
+                  }}
+                >
+                  <Ionicons name="navigate" size={20} color="#FFF" />
+                  <Text style={styles.useCurrentLocationText}>Use Current Location</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </KeyboardAvoidingView>
+        </Modal>
       </View>
     </GestureHandlerRootView>
   );
