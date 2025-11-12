@@ -102,10 +102,14 @@ export default function OrderConfirmationScreen() {
               <Ionicons name="location" size={20} color="#FF6B6B" />
               <Text style={styles.sectionTitle}>Delivery Address</Text>
             </View>
-            <Text style={styles.infoText}>{order.delivery_address}</Text>
+            <Text style={styles.infoText}>
+              {typeof order.delivery_address === 'string' 
+                ? order.delivery_address 
+                : order.delivery_address?.address || 'Delivery address not available'}
+            </Text>
             <View style={styles.phoneRow}>
               <Ionicons name="call" size={16} color="#666" />
-              <Text style={styles.phoneText}>{order.phone}</Text>
+              <Text style={styles.phoneText}>{order.phone || 'N/A'}</Text>
             </View>
           </View>
 
