@@ -64,6 +64,7 @@ function RiderAvailableContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searching, setSearching] = useState(false);
+  const [totalEarnings, setTotalEarnings] = useState(0);
 
   // Auth and role checked in wrapper - this will only render for riders
 
