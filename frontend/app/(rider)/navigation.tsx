@@ -105,20 +105,22 @@ function RiderNavigationContent() {
   useEffect(() => {
     const jobId = currentJob?.data?.id;
     
-    // Only load map if:
-    // 1. We have a current job
-    // 2. Platform is web
-    // 3. Job ID has changed OR map hasn't been initialized yet
-    if (currentJob && Platform.OS === 'web') {
-      if (!mapInstanceRef.current || currentJobIdRef.current !== jobId) {
-        console.log('🗺️ Job changed or first load, initializing map for job:', jobId);
-        currentJobIdRef.current = jobId;
-        loadMap();
-      } else {
-        console.log('⏭️ Skipping map re-initialization, same job ID:', jobId);
-      }
+    // Skip if no job or not web platform
+    if (!currentJob || Platform.OS !== 'web') {
+      return;
     }
-  }, [currentJob]); // Removed userLocation from dependencies to prevent map refresh
+    
+    // Skip if map is already initialized for the same job
+    if (mapInstanceRef.current && currentJobIdRef.current === jobId) {
+      console.log('⏭️ Map already initialized for job:', jobId);
+      return;
+    }
+    
+    // Only initialize if job ID has changed or map hasn't been initialized
+    console.log('🗺️ Job changed or first load, initializing map for job:', jobId);
+    currentJobIdRef.current = jobId;
+    loadMap();
+  }, [currentJob?.data?.id]); // Only trigger when job ID changes, not entire currentJob object
 
   const getUserLocation = () => {
     if (typeof navigator !== 'undefined' && navigator.geolocation) {
