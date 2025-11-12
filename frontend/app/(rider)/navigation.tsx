@@ -8,6 +8,10 @@ import {
   Platform,
   Alert,
   Dimensions,
+  Modal,
+  TextInput,
+  ScrollView,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
