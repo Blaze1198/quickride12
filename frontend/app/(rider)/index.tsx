@@ -334,6 +334,13 @@ function RiderAvailableContent() {
   };
 
   const fetchData = async () => {
+    // Guard: Only fetch if user is a rider
+    if (!user || user.role !== 'rider') {
+      setLoading(false);
+      setRefreshing(false);
+      return;
+    }
+
     try {
       if (serviceType === 'food_delivery') {
         const response = await api.get('/orders');
@@ -342,7 +349,13 @@ function RiderAvailableContent() {
         const response = await api.get('/rider/rides/available');
         setRides(response.data);
       }
-    } catch (error) {
+    } catch (error: any) {
+      // Silently fail if unauthorized
+      if (error?.response?.status === 401) {
+        setLoading(false);
+        setRefreshing(false);
+        return;
+      }
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
