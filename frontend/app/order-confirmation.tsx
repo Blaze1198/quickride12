@@ -184,15 +184,53 @@ export default function OrderConfirmationScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Success Header */}
+        {/* Confetti overlay */}
+        <Animated.View style={[styles.confettiContainer, { opacity: confettiOpacity }]}>
+          <Text style={styles.confetti}>🎉</Text>
+          <Text style={[styles.confetti, { left: '20%' }]}>🎊</Text>
+          <Text style={[styles.confetti, { left: '40%' }]}>✨</Text>
+          <Text style={[styles.confetti, { left: '60%' }]}>🎉</Text>
+          <Text style={[styles.confetti, { left: '80%' }]}>🎊</Text>
+        </Animated.View>
+
+        {/* Success Header with Animations */}
         <View style={styles.successHeader}>
-          <View style={styles.checkmarkCircle}>
+          <Animated.View 
+            style={[
+              styles.checkmarkCircle,
+              {
+                transform: [
+                  { scale: checkmarkScale },
+                  { 
+                    rotate: checkmarkRotate.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ['0deg', '360deg']
+                    })
+                  }
+                ]
+              }
+            ]}
+          >
             <Ionicons name="checkmark" size={60} color="#FFF" />
-          </View>
+          </Animated.View>
           <Text style={styles.successTitle}>Order Placed!</Text>
           <Text style={styles.successSubtitle}>
             Thank you for your order
           </Text>
+          
+          {/* Animated delivery scooter icon */}
+          <Animated.View 
+            style={[
+              styles.deliveryIconContainer,
+              {
+                opacity: deliveryIconOpacity,
+                transform: [{ translateY: deliveryIconY }]
+              }
+            ]}
+          >
+            <Ionicons name="bicycle" size={40} color="#FF6B6B" />
+            <Text style={styles.deliveryIconText}>On its way!</Text>
+          </Animated.View>
         </View>
 
         {/* Receipt Card */}
