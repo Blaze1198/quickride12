@@ -146,9 +146,9 @@ export default function OrdersScreen() {
           
           <View style={styles.orderBody}>
             <Text style={styles.itemsText}>
-              {item.items.length} item{item.items.length !== 1 ? 's' : ''}
+              {item.items?.length || 0} item{(item.items?.length || 0) !== 1 ? 's' : ''}
             </Text>
-            <Text style={styles.totalAmount}>₱{item.total_amount.toFixed(2)}</Text>
+            <Text style={styles.totalAmount}>₱{(item.total_amount || 0).toFixed(2)}</Text>
           </View>
         </TouchableOpacity>
         
