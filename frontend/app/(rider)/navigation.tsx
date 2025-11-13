@@ -238,7 +238,15 @@ function RiderNavigationContent() {
   };
 
   const updateRiderLocation = async () => {
-    if (!userLocation) return;
+    if (!userLocation) {
+      console.log('⚠️ Cannot update location - userLocation is null');
+      return;
+    }
+    
+    console.log('📍 Sending location update to backend:', {
+      lat: userLocation.latitude,
+      lng: userLocation.longitude,
+    });
     
     try {
       await api.put('/riders/location', {
@@ -246,9 +254,9 @@ function RiderNavigationContent() {
         longitude: userLocation.longitude,
         address: 'Current location',
       });
-      console.log('Location updated:', userLocation);
+      console.log('✅ Location updated successfully:', userLocation);
     } catch (error) {
-      console.error('Error updating location:', error);
+      console.error('❌ Error updating location:', error);
     }
   };
 
