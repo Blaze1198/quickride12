@@ -341,24 +341,25 @@ export default function LiveOrderTrackingScreen() {
       }, 2000);
     }
 
-    // Create arrow icon for rider (matching rider's navigation)
+    // Create custom arrow icon for rider marker (matching rider's navigation screen exactly)
     const createRiderArrowIcon = () => {
       const svg = `
         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
           <defs>
-            <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <filter id="shadow-rider" x="-50%" y="-50%" width="200%" height="200%">
               <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.3"/>
             </filter>
           </defs>
-          <circle cx="20" cy="20" r="18" fill="#4285F4" filter="url(#shadow)"/>
+          <circle cx="20" cy="20" r="18" fill="#4285F4" filter="url(#shadow-rider)"/>
           <path d="M 20 8 L 27 25 L 20 22 L 13 25 Z" fill="white"/>
         </svg>
       `;
       return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
     };
 
-    // Rider marker (Real-time location - Blue arrow)
+    // Rider marker (Real-time location - Blue arrow icon, not red pin!)
     if (riderLocation) {
+      console.log('🎯 Creating rider marker with BLUE ARROW icon');
       riderMarkerRef.current = new google.maps.Marker({
         position: {
           lat: riderLocation.latitude,
