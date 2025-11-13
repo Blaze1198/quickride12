@@ -175,6 +175,7 @@ class Order(BaseModel):
     customer_phone: str
     restaurant_id: str
     restaurant_name: str
+    restaurant_location: Optional[Location] = None
     items: List[OrderItem]
     total_amount: float
     subtotal: Optional[float] = None
