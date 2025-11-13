@@ -22,6 +22,10 @@ const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 interface Order {
   id: string;
   restaurant_name: string;
+  restaurant_location?: {
+    latitude: number;
+    longitude: number;
+  };
   status: string;
   total_amount: number;
   delivery_address: any;
