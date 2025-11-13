@@ -679,11 +679,13 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
       return;
     }
 
-    // Clean up old renderer if it exists
-    if (directionsRendererRef.current) {
-      console.log('🧹 Cleaning up old directions renderer');
-      directionsRendererRef.current.setMap(null);
-      directionsRendererRef.current = null;
+    // Clean up old renderers if they exist
+    if (directionsRenderersRef.current.length > 0) {
+      console.log('🧹 Cleaning up old directions renderers');
+      directionsRenderersRef.current.forEach(renderer => {
+        renderer.setMap(null);
+      });
+      directionsRenderersRef.current = [];
     }
 
     const directionsService = new google.maps.DirectionsService();
