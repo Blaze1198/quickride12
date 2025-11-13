@@ -1328,8 +1328,12 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
   // MUST compute nextAction before any conditional returns to avoid hooks violation
   const nextAction = getNextAction();
 
+  // DEBUG: Log render state
+  console.log('🎨 RENDER CHECK - loading:', loading, '| currentJob:', currentJob ? 'EXISTS (id: ' + currentJob.data?.id + ')' : 'NULL');
+
   // Render loading screen (auth and role already checked in wrapper)
   if (loading) {
+    console.log('➡️ Rendering LOADING screen');
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
@@ -1341,6 +1345,7 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
 
   // Render idle screen (no active job)
   if (!currentJob) {
+    console.log('➡️ Rendering IDLE screen (no job)');
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
         <View style={styles.container}>
