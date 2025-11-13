@@ -517,18 +517,24 @@ function RiderNavigationContent() {
         if (lat !== null && lng !== null) {
           pickupLocation = { lat, lng };
           
-          // Customer pickup marker - Person icon
-          new google.maps.Marker({
+          // Customer pickup marker - Location pin with person icon
+          const pickupMarker = new google.maps.Marker({
             position: pickupLocation,
             map,
             icon: {
-              url: createIconUrl('👤', '#4CAF50'),
-              scaledSize: new google.maps.Size(48, 48),
-              anchor: new google.maps.Point(24, 24),
+              url: createLocationPinIcon('👤', '#FBBC04'),
+              scaledSize: new google.maps.Size(50, 60),
+              anchor: new google.maps.Point(25, 55),
             },
             title: 'Pickup: ' + currentJob.data.customer_name,
             zIndex: 900,
+            animation: google.maps.Animation.BOUNCE,
           });
+          
+          // Stop bouncing after 2 seconds
+          setTimeout(() => {
+            pickupMarker.setAnimation(null);
+          }, 2000);
         }
       }
 
