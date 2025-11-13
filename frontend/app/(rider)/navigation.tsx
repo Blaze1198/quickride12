@@ -453,18 +453,24 @@ function RiderNavigationContent() {
         if (lat !== null && lng !== null) {
           pickupLocation = { lat, lng };
           
-          // Restaurant marker (pickup) - Restaurant/Store icon
-          new google.maps.Marker({
+          // Restaurant marker (pickup) - Location pin with restaurant icon
+          const restaurantMarker = new google.maps.Marker({
             position: pickupLocation,
             map,
             icon: {
-              url: createIconUrl('🏪', '#FF6B6B'),
-              scaledSize: new google.maps.Size(48, 48),
-              anchor: new google.maps.Point(24, 24),
+              url: createLocationPinIcon('🏪', '#EA4335'),
+              scaledSize: new google.maps.Size(50, 60),
+              anchor: new google.maps.Point(25, 55),
             },
             title: 'Pickup: ' + currentJob.data.restaurant_name,
             zIndex: 900,
+            animation: google.maps.Animation.BOUNCE,
           });
+          
+          // Stop bouncing after 2 seconds
+          setTimeout(() => {
+            restaurantMarker.setAnimation(null);
+          }, 2000);
         } else {
           console.warn('Invalid restaurant coordinates:', restaurantLocation);
         }
