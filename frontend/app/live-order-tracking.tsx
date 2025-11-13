@@ -317,13 +317,43 @@ export default function LiveOrderTrackingScreen() {
       return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
     };
 
-    // Delivery location marker (Customer - Green location pin)
-    if (order.delivery_address) {
-      const customerMarker = new google.maps.Marker({
-        position: {
-          lat: order.delivery_address.latitude,
-          lng: order.delivery_address.longitude,
+    // Restaurant location marker (Red location pin) - if order has restaurant
+    let restaurantLocation = null;
+    if (order.restaurant_location) {
+      restaurantLocation = {
+        lat: order.restaurant_location.latitude,
+        lng: order.restaurant_location.longitude,
+      };
+      
+      const restaurantMarker = new google.maps.Marker({
+        position: restaurantLocation,
+        map,
+        icon: {
+          url: createLocationPinIcon('🏪', '#EA4335'),
+          scaledSize: new google.maps.Size(50, 60),
+          anchor: new google.maps.Point(25, 55),
         },
+        title: `Restaurant: ${order.restaurant_name}`,
+        zIndex: 900,
+        animation: google.maps.Animation.BOUNCE,
+      });
+      
+      // Stop bouncing after 2 seconds
+      setTimeout(() => {
+        restaurantMarker.setAnimation(null);
+      }, 2000);
+    }
+
+    // Delivery location marker (Customer - Green location pin)
+    let customerLocation = null;
+    if (order.delivery_address) {
+      customerLocation = {
+        lat: order.delivery_address.latitude,
+        lng: order.delivery_address.longitude,
+      };
+      
+      const customerMarker = new google.maps.Marker({
+        position: customerLocation,
         map,
         icon: {
           url: createLocationPinIcon('🏠', '#34A853'),
@@ -341,7 +371,7 @@ export default function LiveOrderTrackingScreen() {
       }, 2000);
     }
 
-    // Create custom arrow icon for rider marker (matching rider's navigation screen exactly)
+    // Create arrow icon for rider marker (matching rider's navigation screen exactly)
     const createRiderArrowIcon = () => {
       const svg = `
         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
@@ -375,94 +405,217 @@ export default function LiveOrderTrackingScreen() {
         zIndex: 1000,
       });
 
-      // Draw route from rider to customer using Routes API
-      const drawRoute = async () => {
+      // Draw DUAL ROUTES like rider's navigation screen
+      const drawDualRoutes = async () => {
         try {
           const apiKey = 'AIzaSyA0m1oRlXLQWjxacqjEJ6zJW3WvmOWvQkQ';
-          const origin = `${riderLocation.latitude},${riderLocation.longitude}`;
-          const destination = `${order.delivery_address.latitude},${order.delivery_address.longitude}`;
           
-          console.log('🗺️ Fetching route from rider to customer...');
-          
-          // Use Google Maps Routes API (REST)
-          const response = await fetch(
-            `https://routes.googleapis.com/directions/v2:computeRoutes`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-Goog-Api-Key': apiKey,
-                'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline'
-              },
-              body: JSON.stringify({
-                origin: {
-                  location: {
-                    latLng: {
-                      latitude: riderLocation.latitude,
-                      longitude: riderLocation.longitude
-                    }
-                  }
+          // If we have restaurant location, draw BOTH routes
+          if (restaurantLocation && customerLocation) {
+            console.log('🗺️ Drawing dual routes: Rider→Restaurant (BLUE) and Restaurant→Customer (GREEN)');
+            
+            // ROUTE 1: Rider → Restaurant (BLUE)
+            const route1Response = await fetch(
+              `https://routes.googleapis.com/directions/v2:computeRoutes`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-Goog-Api-Key': apiKey,
+                  'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline'
                 },
-                destination: {
-                  location: {
-                    latLng: {
-                      latitude: order.delivery_address.latitude,
-                      longitude: order.delivery_address.longitude
+                body: JSON.stringify({
+                  origin: {
+                    location: {
+                      latLng: {
+                        latitude: riderLocation.latitude,
+                        longitude: riderLocation.longitude
+                      }
                     }
-                  }
-                },
-                travelMode: 'DRIVE',
-                routingPreference: 'TRAFFIC_AWARE',
-                computeAlternativeRoutes: false,
-                languageCode: 'en-US',
-                units: 'METRIC'
-              })
+                  },
+                  destination: {
+                    location: {
+                      latLng: {
+                        latitude: restaurantLocation.lat,
+                        longitude: restaurantLocation.lng
+                      }
+                    }
+                  },
+                  travelMode: 'DRIVE',
+                  routingPreference: 'TRAFFIC_AWARE',
+                  computeAlternativeRoutes: false,
+                  languageCode: 'en-US',
+                  units: 'METRIC'
+                })
+              }
+            );
+
+            if (route1Response.ok) {
+              const data1 = await route1Response.json();
+              if (data1.routes && data1.routes.length > 0) {
+                const route1 = data1.routes[0];
+                const path1 = google.maps.geometry.encoding.decodePath(route1.polyline.encodedPolyline);
+                
+                const polyline1 = new google.maps.Polyline({
+                  path: path1,
+                  geodesic: true,
+                  strokeColor: '#4285F4', // Blue for rider → restaurant
+                  strokeOpacity: 0.8,
+                  strokeWeight: 6,
+                  map: map,
+                  zIndex: 100,
+                });
+                
+                directionsRenderersRef.current.push(polyline1);
+                console.log('✅ Route 1 (Rider→Restaurant) drawn in BLUE');
+                
+                // Update ETA based on first route
+                const distanceKm = (route1.distanceMeters / 1000).toFixed(1);
+                const durationMin = Math.ceil(parseInt(route1.duration.replace('s', '')) / 60);
+                setDistance(`${distanceKm} km`);
+                setEta(`${durationMin} min`);
+              }
             }
-          );
 
-          if (!response.ok) {
-            console.error('❌ Routes API error:', response.status);
-            return;
-          }
+            // ROUTE 2: Restaurant → Customer (GREEN)
+            const route2Response = await fetch(
+              `https://routes.googleapis.com/directions/v2:computeRoutes`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-Goog-Api-Key': apiKey,
+                  'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline'
+                },
+                body: JSON.stringify({
+                  origin: {
+                    location: {
+                      latLng: {
+                        latitude: restaurantLocation.lat,
+                        longitude: restaurantLocation.lng
+                      }
+                    }
+                  },
+                  destination: {
+                    location: {
+                      latLng: {
+                        latitude: customerLocation.lat,
+                        longitude: customerLocation.lng
+                      }
+                    }
+                  },
+                  travelMode: 'DRIVE',
+                  routingPreference: 'TRAFFIC_AWARE',
+                  computeAlternativeRoutes: false,
+                  languageCode: 'en-US',
+                  units: 'METRIC'
+                })
+              }
+            );
 
-          const data = await response.json();
-          
-          if (data.routes && data.routes.length > 0) {
-            const route = data.routes[0];
-            console.log('✅ Route fetched successfully');
+            if (route2Response.ok) {
+              const data2 = await route2Response.json();
+              if (data2.routes && data2.routes.length > 0) {
+                const route2 = data2.routes[0];
+                const path2 = google.maps.geometry.encoding.decodePath(route2.polyline.encodedPolyline);
+                
+                const polyline2 = new google.maps.Polyline({
+                  path: path2,
+                  geodesic: true,
+                  strokeColor: '#34A853', // Green for restaurant → customer
+                  strokeOpacity: 0.8,
+                  strokeWeight: 6,
+                  map: map,
+                  zIndex: 99,
+                });
+                
+                directionsRenderersRef.current.push(polyline2);
+                console.log('✅ Route 2 (Restaurant→Customer) drawn in GREEN');
+              }
+            }
             
-            // Decode polyline and draw route
-            const path = google.maps.geometry.encoding.decodePath(route.polyline.encodedPolyline);
+            // Fit bounds to show all three points
+            const bounds = new google.maps.LatLngBounds();
+            bounds.extend({ lat: riderLocation.latitude, lng: riderLocation.longitude });
+            bounds.extend(restaurantLocation);
+            bounds.extend(customerLocation);
+            map.fitBounds(bounds);
             
-            routePolylineRef.current = new google.maps.Polyline({
-              path: path,
-              geodesic: true,
-              strokeColor: '#2196F3',
-              strokeOpacity: 0.8,
-              strokeWeight: 4,
-              map: map
-            });
+          } else if (customerLocation) {
+            // Fallback: Single route from rider to customer
+            console.log('🗺️ Drawing single route: Rider→Customer (BLUE)');
+            
+            const response = await fetch(
+              `https://routes.googleapis.com/directions/v2:computeRoutes`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-Goog-Api-Key': apiKey,
+                  'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline'
+                },
+                body: JSON.stringify({
+                  origin: {
+                    location: {
+                      latLng: {
+                        latitude: riderLocation.latitude,
+                        longitude: riderLocation.longitude
+                      }
+                    }
+                  },
+                  destination: {
+                    location: {
+                      latLng: {
+                        latitude: customerLocation.lat,
+                        longitude: customerLocation.lng
+                      }
+                    }
+                  },
+                  travelMode: 'DRIVE',
+                  routingPreference: 'TRAFFIC_AWARE',
+                  computeAlternativeRoutes: false,
+                  languageCode: 'en-US',
+                  units: 'METRIC'
+                })
+              }
+            );
 
-            // Update distance and ETA
-            const distanceKm = (route.distanceMeters / 1000).toFixed(1);
-            const durationMin = Math.ceil(parseInt(route.duration.replace('s', '')) / 60);
-            setDistance(`${distanceKm} km`);
-            setEta(`${durationMin} min`);
-            
-            console.log(`📍 Route: ${distanceKm}km, ETA: ${durationMin}min`);
+            if (response.ok) {
+              const data = await response.json();
+              if (data.routes && data.routes.length > 0) {
+                const route = data.routes[0];
+                const path = google.maps.geometry.encoding.decodePath(route.polyline.encodedPolyline);
+                
+                routePolylineRef.current = new google.maps.Polyline({
+                  path: path,
+                  geodesic: true,
+                  strokeColor: '#2196F3',
+                  strokeOpacity: 0.8,
+                  strokeWeight: 4,
+                  map: map
+                });
+
+                const distanceKm = (route.distanceMeters / 1000).toFixed(1);
+                const durationMin = Math.ceil(parseInt(route.duration.replace('s', '')) / 60);
+                setDistance(`${distanceKm} km`);
+                setEta(`${durationMin} min`);
+                
+                console.log(`📍 Single route: ${distanceKm}km, ETA: ${durationMin}min`);
+              }
+            }
+
+            // Fit bounds to show both markers
+            const bounds = new google.maps.LatLngBounds();
+            bounds.extend(customerLocation);
+            bounds.extend({ lat: riderLocation.latitude, lng: riderLocation.longitude });
+            map.fitBounds(bounds);
           }
         } catch (error) {
-          console.error('❌ Error drawing route:', error);
+          console.error('❌ Error drawing routes:', error);
         }
       };
 
-      drawRoute();
-
-      // Fit bounds to show both markers
-      const bounds = new google.maps.LatLngBounds();
-      bounds.extend({ lat: order.delivery_address.latitude, lng: order.delivery_address.longitude });
-      bounds.extend({ lat: riderLocation.latitude, lng: riderLocation.longitude });
-      map.fitBounds(bounds);
+      drawDualRoutes();
     }
   };
 
