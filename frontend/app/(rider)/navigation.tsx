@@ -896,8 +896,8 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
         return;
       }
 
-      // Only create new renderer if we don't have one
-      if (!directionsRendererRef.current) {
+      // Only create new renderer if we don't have any
+      if (directionsRenderersRef.current.length === 0) {
         const directionsRenderer = new google.maps.DirectionsRenderer({
           map: mapInstanceRef.current,
           suppressMarkers: true,
@@ -908,7 +908,7 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
           },
           preserveViewport: false,
         });
-        directionsRendererRef.current = directionsRenderer;
+        directionsRenderersRef.current.push(directionsRenderer);
       }
 
       const directionsService = new google.maps.DirectionsService();
