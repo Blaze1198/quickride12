@@ -1625,34 +1625,138 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
   // Step 3: Render active navigation screen (has job AND navigation started)
   console.log('➡️ Rendering ACTIVE NAVIGATION screen with map and route for job:', currentJob.data?.id);
 
+  const deliveryFee = currentJob.data.total_amount ? (currentJob.data.total_amount * 0.10).toFixed(0) : '0';
+  const orderStatus = currentJob.data.status;
+
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Full-screen Map */}
-      {Platform.OS === 'web' ? (
-        <View style={styles.fullScreenMap}>
-          <div ref={mapRef} style={{ width: '100%', height: '100%' }} />
-          
-          {/* Simple Job Info Overlay */}
-          <View style={styles.simpleJobInfo}>
-            <Text style={styles.simpleJobTitle}>
-              {currentJob.type === 'order' ? '🍔 Food Delivery' : '🏍️ Ride'}
-            </Text>
-            <Text style={styles.simpleJobStatus}>
-              Status: {currentJob.data.status}
-            </Text>
-            {distanceToDestination && etaToDestination && (
-              <Text style={styles.simpleJobDistance}>
-                {distanceToDestination} • {etaToDestination}
-              </Text>
-            )}
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView style={styles.container}>
+        {/* Full-screen Map */}
+        {Platform.OS === 'web' ? (
+          <View style={styles.fullScreenMap}>
+            <div ref={mapRef} style={{ width: '100%', height: '100%' }} />
           </View>
-        </View>
-      ) : (
-        <View style={styles.fullScreenMap}>
-          <Text>Map available on web only</Text>
-        </View>
-      )}
-    </SafeAreaView>
+        ) : (
+          <View style={styles.fullScreenMap}>
+            <Text>Map available on web only</Text>
+          </View>
+        )}
+
+        {/* Draggable Bottom Sheet for Active Navigation */}
+        <BottomSheet
+          ref={bottomSheetRef}
+          index={0}
+          snapPoints={['15%', '40%', '70%']}
+          enablePanDownToClose={false}
+          handleIndicatorStyle={{ backgroundColor: '#DDD' }}
+          backgroundStyle={{ backgroundColor: '#FFF' }}
+        >
+          <BottomSheetScrollView style={styles.bottomSheetContent}>
+            <View style={styles.activeNavHeader}>
+              <Ionicons name="navigate-circle" size={32} color="#FF6B6B" />
+              <View style={{ flex: 1, marginLeft: 12 }}>
+                <Text style={styles.activeNavTitle}>
+                  {currentJob.type === 'order' ? 'Food Delivery' : 'Ride Service'}
+                </Text>
+                <Text style={styles.activeNavSubtitle}>
+                  {currentJob.data.restaurant_name || currentJob.data.customer_name}
+                </Text>
+              </View>
+              <View style={styles.deliveryFeeBadge}>
+                <Text style={styles.deliveryFeeBadgeText}>₱{deliveryFee}</Text>
+              </View>
+            </View>
+
+            <View style={styles.activeNavDivider} />
+
+            {/* Show different content based on status */}
+            {(orderStatus === 'accepted' || orderStatus === 'rider_assigned') ? (
+              // Status: Ready for pickup
+              <>
+                <View style={styles.activeNavInfoRow}>
+                  <Ionicons name="restaurant" size={20} color="#666" />
+                  <Text style={styles.activeNavInfoText}>Pick up from restaurant</Text>
+                </View>
+                <View style={styles.activeNavInfoRow}>
+                  <Ionicons name="location" size={20} color="#666" />
+                  <Text style={styles.activeNavInfoText}>
+                    {currentJob.data.restaurant_location?.address || 'Restaurant location'}
+                  </Text>
+                </View>
+                <View style={styles.activeNavInfoRow}>
+                  <Ionicons name="time" size={20} color="#666" />
+                  <Text style={styles.activeNavInfoText}>
+                    ETA: {etaToDestination || 'Calculating...'}
+                  </Text>
+                </View>
+
+                <TouchableOpacity 
+                  style={styles.markPickedUpButton}
+                  onPress={async () => {
+                    try {
+                      // Update order status to picked_up
+                      await api.put(`/orders/${currentJob.data.id}/status`, { status: 'picked_up' });
+                      
+                      // Refresh the job
+                      await fetchCurrentJob();
+                      
+                      // Re-center map on rider's location
+                      if (mapInstanceRef.current && userLocation) {
+                        const google = (window as any).google;
+                        if (google && google.maps) {
+                          mapInstanceRef.current.panTo({
+                            lat: userLocation.latitude,
+                            lng: userLocation.longitude
+                          });
+                          mapInstanceRef.current.setZoom(15);
+                        }
+                      }
+                    } catch (error) {
+                      Alert.alert('Error', 'Failed to update order status');
+                    }
+                  }}
+                >
+                  <Ionicons name="checkmark-done" size={22} color="#FFF" />
+                  <Text style={styles.markPickedUpText}>Mark Picked Up</Text>
+                </TouchableOpacity>
+              </>
+            ) : (
+              // Status: Picked up / Out for delivery
+              <>
+                <View style={styles.activeNavInfoRow}>
+                  <Ionicons name="bicycle" size={20} color="#4CAF50" />
+                  <Text style={[styles.activeNavInfoText, { color: '#4CAF50', fontWeight: '600' }]}>
+                    Order picked up - Delivering now
+                  </Text>
+                </View>
+                <View style={styles.activeNavInfoRow}>
+                  <Ionicons name="home" size={20} color="#666" />
+                  <Text style={styles.activeNavInfoText}>
+                    {currentJob.data.delivery_address?.address || 'Delivery address'}
+                  </Text>
+                </View>
+                <View style={styles.activeNavStats}>
+                  <View style={styles.activeNavStatItem}>
+                    <Text style={styles.activeNavStatLabel}>Distance</Text>
+                    <Text style={styles.activeNavStatValue}>{distanceToDestination || '--'}</Text>
+                  </View>
+                  <View style={styles.activeNavStatDivider} />
+                  <View style={styles.activeNavStatItem}>
+                    <Text style={styles.activeNavStatLabel}>ETA</Text>
+                    <Text style={styles.activeNavStatValue}>{etaToDestination || '--'}</Text>
+                  </View>
+                  <View style={styles.activeNavStatDivider} />
+                  <View style={styles.activeNavStatItem}>
+                    <Text style={styles.activeNavStatLabel}>Fee</Text>
+                    <Text style={styles.activeNavStatValue}>₱{deliveryFee}</Text>
+                  </View>
+                </View>
+              </>
+            )}
+          </BottomSheetScrollView>
+        </BottomSheet>
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 }
 // Wrapper component to prevent hooks violation when non-riders access this screen
