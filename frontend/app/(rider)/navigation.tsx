@@ -2453,4 +2453,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  editLocationButton: {
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: '#F5F5F5',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 60,
+    left: 16,
+    zIndex: 100,
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    padding: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  backButtonText: {
+    color: '#333',
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });
