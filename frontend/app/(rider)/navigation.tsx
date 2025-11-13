@@ -2604,4 +2604,87 @@ const styles = StyleSheet.create({
     color: '#CCC',
     marginTop: 4,
   },
+  activeNavHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: 16,
+  },
+  activeNavTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  activeNavSubtitle: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 2,
+  },
+  deliveryFeeBadge: {
+    backgroundColor: '#4CAF50',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  deliveryFeeBadgeText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  activeNavDivider: {
+    height: 1,
+    backgroundColor: '#EEE',
+    marginBottom: 16,
+  },
+  activeNavInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    gap: 12,
+  },
+  activeNavInfoText: {
+    fontSize: 15,
+    color: '#333',
+    flex: 1,
+  },
+  markPickedUpButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#4CAF50',
+    padding: 16,
+    borderRadius: 12,
+    marginTop: 16,
+    gap: 8,
+  },
+  markPickedUpText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  activeNavStats: {
+    flexDirection: 'row',
+    backgroundColor: '#F5F5F5',
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 16,
+  },
+  activeNavStatItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  activeNavStatLabel: {
+    fontSize: 12,
+    color: '#999',
+    marginBottom: 4,
+  },
+  activeNavStatValue: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  activeNavStatDivider: {
+    width: 1,
+    backgroundColor: '#DDD',
+    marginHorizontal: 12,
+  },
 });
