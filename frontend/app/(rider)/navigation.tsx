@@ -756,8 +756,21 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
       return;
     }
 
+    // Check if we already have navigation steps from the initial route fetch
+    if (navigationSteps.length > 0) {
+      console.log('🧭 Starting navigation with existing route data...');
+      setIsNavigating(true);
+      setCurrentStep(navigationSteps[0]);
+      
+      // The DirectionsRenderer is already showing the route
+      // We just need to enable navigation mode
+      console.log('✅ Navigation mode activated with', navigationSteps.length, 'steps');
+      return;
+    }
+
+    // If no existing route data, fetch it now
     try {
-      console.log('🧭 Starting turn-by-turn navigation...');
+      console.log('🧭 Fetching route for navigation...');
       setIsNavigating(true);
 
       // Get destination based on job status
@@ -805,19 +818,22 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
         return;
       }
 
+      // Only create new renderer if we don't have one
+      if (!directionsRendererRef.current) {
+        const directionsRenderer = new google.maps.DirectionsRenderer({
+          map: mapInstanceRef.current,
+          suppressMarkers: true,
+          polylineOptions: {
+            strokeColor: '#4285F4', // Google Maps blue
+            strokeWeight: 6,
+            strokeOpacity: 0.8,
+          },
+          preserveViewport: false,
+        });
+        directionsRendererRef.current = directionsRenderer;
+      }
+
       const directionsService = new google.maps.DirectionsService();
-      const directionsRenderer = new google.maps.DirectionsRenderer({
-        map: mapInstanceRef.current,
-        suppressMarkers: true,
-        polylineOptions: {
-          strokeColor: '#4285F4', // Google Maps blue
-          strokeWeight: 8, // Thicker line like Google Maps
-          strokeOpacity: 1,
-        },
-      });
-
-      directionsRendererRef.current = directionsRenderer;
-
       const request = {
         origin: { lat: userLocation.latitude, lng: userLocation.longitude },
         destination: destination,
@@ -826,7 +842,7 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
 
       directionsService.route(request, (result: any, status: any) => {
         if (status === 'OK' && result) {
-          directionsRenderer.setDirections(result);
+          directionsRendererRef.current.setDirections(result);
           
           const route = result.routes[0];
           const leg = route.legs[0];
