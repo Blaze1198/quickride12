@@ -1404,272 +1404,49 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
     );
   }
 
-  // Render idle screen (shows available orders OR accepted job waiting to start navigation)
+  // Render idle screen (clean map view)
   if (!currentJob) {
-    console.log('➡️ Rendering IDLE screen (no job)');
+    console.log('➡️ Rendering IDLE screen (no job) - Clean map view');
+    
+    console.log('🗺️ Initializing idle map...');
+    
     return (
-      <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView style={styles.container}>
         <View style={styles.container}>
-          {/* Full-screen Map showing rider's current location */}
+          {/* Initialize idle map with rider's location */}
           {Platform.OS === 'web' ? (
             <View style={styles.fullScreenMap}>
               <div ref={mapRef} style={{ width: '100%', height: '100%' }} />
             </View>
-          ) : null}
+          ) : (
+            <View style={styles.fullScreenMap}>
+              <Text>Map available on web only</Text>
+            </View>
+          )}
 
-          {/* Rider Location Card - At Very Top */}
+          {/* Location Card - At Top */}
           <View style={styles.locationCard}>
             <View style={styles.locationCardHeader}>
-              <Ionicons name="navigate" size={20} color="#FF6B6B" />
               <View style={styles.locationCardTextContainer}>
-                <Text style={styles.locationCardTitle}>Your Location</Text>
+                <Text style={styles.locationCardTitle}>Current Location</Text>
                 <Text style={styles.locationCardAddress} numberOfLines={1}>
                   {userLocation 
-                    ? `${userLocation.latitude.toFixed(4)}, ${userLocation.longitude.toFixed(4)}`
-                    : 'Fetching location...'}
+                    ? `${userLocation.latitude.toFixed(4)}, ${userLocation.longitude.toFixed(4)}` 
+                    : 'Loading location...'}
                 </Text>
               </View>
+              <TouchableOpacity
+                style={styles.searchLocationButton}
+                onPress={() => {
+                  Alert.alert('Change Location', 'Use GPS or search for a new location');
+                }}
+              >
+                <Ionicons name="search" size={20} color="#FFF" />
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              style={styles.searchLocationButton}
-              onPress={() => setShowLocationSearchModal(true)}
-            >
-              <Ionicons name="search" size={18} color="#FFF" />
-            </TouchableOpacity>
           </View>
-
-          {/* Draggable Bottom Sheet for idle state */}
-          <BottomSheet
-            ref={bottomSheetRef}
-            index={0}
-            snapPoints={['12%', '30%', '60%']}
-            enablePanDownToClose={false}
-            handleIndicatorStyle={{ backgroundColor: '#DDD' }}
-            backgroundStyle={{ backgroundColor: '#FFF' }}
-          >
-            <BottomSheetScrollView style={styles.bottomSheetContent}>
-              {/* Show accepted job if exists and not navigating yet */}
-              {currentJob && !isNavigating ? (
-                <>
-                  <View style={styles.acceptedJobHeader}>
-                    <Ionicons name="checkmark-circle" size={28} color="#4CAF50" />
-                    <Text style={styles.acceptedJobTitle}>Job Accepted!</Text>
-                  </View>
-                  
-                  <View style={styles.acceptedJobCard}>
-                    <View style={styles.acceptedJobRow}>
-                      <Text style={styles.acceptedJobLabel}>Restaurant:</Text>
-                      <Text style={styles.acceptedJobValue}>{currentJob.data.restaurant_name}</Text>
-                    </View>
-                    <View style={styles.acceptedJobRow}>
-                      <Text style={styles.acceptedJobLabel}>Customer:</Text>
-                      <Text style={styles.acceptedJobValue}>{currentJob.data.customer_name}</Text>
-                    </View>
-                    <View style={styles.acceptedJobRow}>
-                      <Text style={styles.acceptedJobLabel}>Delivery Fee:</Text>
-                      <Text style={styles.acceptedJobFee}>₱{(currentJob.data.total_amount * 0.10).toFixed(0)}</Text>
-                    </View>
-                  </View>
-                  
-                  <TouchableOpacity 
-                    style={styles.startNavigationButtonBottom}
-                    onPress={() => {
-                      console.log('🚀 Start Navigation clicked from bottom sheet');
-                      setIsNavigating(true);
-                    }}
-                  >
-                    <Ionicons name="navigate" size={22} color="#FFF" />
-                    <Text style={styles.startNavigationTextBottom}>Start Navigation</Text>
-                  </TouchableOpacity>
-                </>
-              ) : (
-                <>
-                  <View style={styles.availableOrdersHeader}>
-                    <Ionicons name="fast-food" size={24} color="#FF6B6B" />
-                    <Text style={styles.availableOrdersTitle}>Available Orders Nearby</Text>
-                  </View>
-                  
-                  {nearbyOrders && nearbyOrders.length > 0 ? (
-                nearbyOrders.map((order: any, index: number) => (
-                  <View key={order.id} style={styles.orderCard}>
-                    {index === 0 && nearbyOrders.length > 0 && (
-                      <View style={styles.newOrderBadge}>
-                        <Text style={styles.newOrderBadgeText}>NEW</Text>
-                      </View>
-                    )}
-                    <View style={styles.orderCardHeader}>
-                      <View style={styles.orderRestaurantInfo}>
-                        <Ionicons name="restaurant" size={20} color="#FF6B6B" />
-                        <Text style={styles.orderRestaurantName}>{order.restaurant_name}</Text>
-                      </View>
-                      <View style={styles.deliveryFeeTag}>
-                        <Text style={styles.deliveryFeeText}>₱{(order.total_amount * 0.10).toFixed(0)}</Text>
-                      </View>
-                    </View>
-                    
-                    <View style={styles.orderDetails}>
-                      <View style={styles.orderDetailRow}>
-                        <Ionicons name="location-outline" size={16} color="#666" />
-                        <Text style={styles.orderDetailText}>{order.distance_km} km away</Text>
-                      </View>
-                      <View style={styles.orderDetailRow}>
-                        <Ionicons name="time-outline" size={16} color="#666" />
-                        <Text style={styles.orderDetailText}>~{Math.ceil(order.distance_km * 3)} mins</Text>
-                      </View>
-                    </View>
-                    
-                    <View style={styles.orderDestination}>
-                      <Ionicons name="navigate" size={16} color="#999" />
-                      <Text style={styles.orderDestinationText} numberOfLines={1}>
-                        {order.delivery_address?.address || 'Delivery address'}
-                      </Text>
-                    </View>
-                    
-                    <TouchableOpacity 
-                      style={styles.markPickupButton}
-                      onPress={async () => {
-                        try {
-                          await api.put(`/orders/${order.id}/status`, { status: 'accepted' });
-                          // Refresh current job
-                          fetchCurrentJob();
-                          // Start navigation immediately
-                          setIsNavigating(true);
-                        } catch (error) {
-                          Alert.alert('Error', 'Failed to accept order');
-                        }
-                      }}
-                    >
-                      <Ionicons name="checkmark-circle" size={20} color="#FFF" />
-                      <Text style={styles.markPickupText}>Mark Pick Up</Text>
-                    </TouchableOpacity>
-                  </View>
-                ))
-              ) : (
-                <View style={styles.noOrdersContainer}>
-                  <Ionicons name="sad-outline" size={48} color="#CCC" />
-                  <Text style={styles.noOrdersText}>No orders nearby</Text>
-                  <Text style={styles.noOrdersSubtext}>New orders will appear here</Text>
-                </View>
-              )}
-                </>
-              )}
-            </BottomSheetScrollView>
-          </BottomSheet>
-
-          {/* Congratulations Modal */}
-          <Modal
-            visible={showCongrats}
-            animationType="fade"
-            transparent={true}
-            onRequestClose={() => setShowCongrats(false)}
-          >
-            <View style={styles.congratsOverlay}>
-              <View style={styles.congratsCard}>
-                <View style={styles.congratsIconContainer}>
-                  <Ionicons name="checkmark-circle" size={80} color="#4CAF50" />
-                </View>
-                
-                <Text style={styles.congratsTitle}>🎉 Congratulations!</Text>
-                <Text style={styles.congratsMessage}>
-                  Delivery completed successfully!
-                </Text>
-                
-                <View style={styles.congratsEarnings}>
-                  <Text style={styles.congratsEarningsLabel}>You Earned</Text>
-                  <Text style={styles.congratsEarningsAmount}>₱{completedDeliveryFee}</Text>
-                </View>
-                
-                <TouchableOpacity 
-                  style={styles.congratsButton}
-                  onPress={() => setShowCongrats(false)}
-                >
-                  <Text style={styles.congratsButtonText}>View Next Orders</Text>
-                  <Ionicons name="arrow-forward" size={20} color="#FFF" />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
-
-          {/* Location Search Modal */}
-          <Modal
-            visible={showLocationSearchModal}
-            animationType="slide"
-            transparent={true}
-            onRequestClose={() => setShowLocationSearchModal(false)}
-          >
-            <KeyboardAvoidingView 
-              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-              style={styles.modalContainer}
-            >
-              <View style={styles.modalContent}>
-                <View style={styles.modalHeader}>
-                  <Text style={styles.modalTitle}>Search Location</Text>
-                  <TouchableOpacity
-                    onPress={() => setShowLocationSearchModal(false)}
-                    style={styles.closeButton}
-                  >
-                    <Ionicons name="close" size={24} color="#333" />
-                  </TouchableOpacity>
-                </View>
-
-                <View style={styles.searchInputContainer}>
-                  <Ionicons name="search" size={20} color="#999" />
-                  <TextInput
-                    style={styles.searchInput}
-                    placeholder="Search for a location..."
-                    value={searchQuery}
-                    onChangeText={setSearchQuery}
-                    autoFocus
-                  />
-                  {searchQuery.length > 0 && (
-                    <TouchableOpacity onPress={() => setSearchQuery('')}>
-                      <Ionicons name="close-circle" size={20} color="#999" />
-                    </TouchableOpacity>
-                  )}
-                </View>
-
-                <ScrollView style={styles.searchResults}>
-                  {searchQuery.length > 2 ? (
-                    <View style={styles.searchResultItem}>
-                      <Ionicons name="location" size={20} color="#FF6B6B" />
-                      <View style={styles.searchResultText}>
-                        <Text style={styles.searchResultTitle}>
-                          Searching "{searchQuery}"...
-                        </Text>
-                        <Text style={styles.searchResultDescription}>
-                          Google Places integration will be added here
-                        </Text>
-                      </View>
-                    </View>
-                  ) : (
-                    <View style={styles.emptySearchContainer}>
-                      <Ionicons name="search-outline" size={48} color="#CCC" />
-                      <Text style={styles.emptySearchText}>
-                        Type to search for locations
-                      </Text>
-                    </View>
-                  )}
-                </ScrollView>
-
-                <View style={styles.modalFooter}>
-                  <TouchableOpacity
-                    style={styles.useCurrentLocationButton}
-                    onPress={() => {
-                      if (userLocation) {
-                        Alert.alert('Success', 'Using current location');
-                        setShowLocationSearchModal(false);
-                      }
-                    }}
-                  >
-                    <Ionicons name="navigate" size={20} color="#FFF" />
-                    <Text style={styles.useCurrentLocationText}>Use Current Location</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </KeyboardAvoidingView>
-          </Modal>
         </View>
-      </GestureHandlerRootView>
+      </SafeAreaView>
     );
   }
 
