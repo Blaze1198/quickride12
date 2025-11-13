@@ -497,33 +497,30 @@ export default function LiveOrderTrackingScreen() {
       return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
     };
 
-    // Update rider marker position
+    // FORCE RECREATE marker to ensure it has the correct BLUE ARROW icon
     if (riderMarkerRef.current) {
-      const newPosition = {
+      console.log('🔄 Removing old rider marker and recreating with BLUE ARROW');
+      riderMarkerRef.current.setMap(null); // Remove old marker
+      riderMarkerRef.current = null;
+    }
+    
+    // Create rider marker with BLUE ARROW icon (matching rider's navigation)
+    console.log('🎯 Creating rider marker in updateMapMarkers with BLUE ARROW icon');
+    riderMarkerRef.current = new google.maps.Marker({
+      position: {
         lat: riderLocation.latitude,
         lng: riderLocation.longitude,
-      };
-      riderMarkerRef.current.setPosition(newPosition);
-      console.log('✅ Rider marker position updated');
-    } else {
-      // Create rider marker if it doesn't exist (using same BLUE ARROW SVG as rider screen)
-      console.log('🎯 Creating rider marker in updateMapMarkers with BLUE ARROW icon');
-      riderMarkerRef.current = new google.maps.Marker({
-        position: {
-          lat: riderLocation.latitude,
-          lng: riderLocation.longitude,
-        },
-        map: mapInstanceRef.current,
-        icon: {
-          url: createRiderArrowIcon(),
-          scaledSize: new google.maps.Size(40, 40),
-          anchor: new google.maps.Point(20, 20),
-        },
-        title: `Rider: ${order.rider_name || 'On the way'}`,
-        zIndex: 1000,
-      });
-      console.log('✅ Rider marker created with blue arrow');
-    }
+      },
+      map: mapInstanceRef.current,
+      icon: {
+        url: createRiderArrowIcon(),
+        scaledSize: new google.maps.Size(40, 40),
+        anchor: new google.maps.Point(20, 20),
+      },
+      title: `Rider: ${order.rider_name || 'On the way'}`,
+      zIndex: 1000,
+    });
+    console.log('✅ Rider marker created with blue arrow icon');
 
     try {
       const apiKey = 'AIzaSyA0m1oRlXLQWjxacqjEJ6zJW3WvmOWvQkQ';
