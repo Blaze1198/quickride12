@@ -1730,17 +1730,24 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
                   style={styles.completeDeliveryButton}
                   onPress={async () => {
                     try {
+                      console.log('🎯 Complete Delivery button clicked');
+                      console.log('Current delivery fee:', deliveryFee);
+                      
                       // Save delivery fee before completing
                       setCompletedDeliveryFee(deliveryFee);
                       
                       // Update order status to delivered
+                      console.log('📤 Updating order status to delivered...');
                       await api.put(`/orders/${currentJob.data.id}/status`, { status: 'delivered' });
+                      console.log('✅ Order status updated successfully');
                       
                       // Clear pending notification
                       setPendingJobNotification(null);
                       
                       // Show congratulations card
+                      console.log('🎉 Setting showCongrats to TRUE');
                       setShowCongrats(true);
+                      console.log('State updated - showCongrats should now be true');
                       
                       // Reset navigation state
                       setIsNavigating(false);
@@ -1750,9 +1757,11 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
                       
                       // Auto-hide congrats after 5 seconds
                       setTimeout(() => {
+                        console.log('⏰ Auto-hiding congrats card');
                         setShowCongrats(false);
                       }, 5000);
                     } catch (error) {
+                      console.error('❌ Error completing delivery:', error);
                       Alert.alert('Error', 'Failed to complete delivery');
                     }
                   }}
