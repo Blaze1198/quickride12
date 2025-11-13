@@ -1700,15 +1700,27 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
                       // Refresh the job
                       await fetchCurrentJob();
                       
-                      // Re-center map on rider's location
-                      if (mapInstanceRef.current && userLocation) {
+                      // Draw new route from rider to customer
+                      if (mapInstanceRef.current && userLocation && currentJob.data.delivery_address) {
+                        const origin = {
+                          lat: userLocation.latitude,
+                          lng: userLocation.longitude
+                        };
+                        const destination = {
+                          lat: currentJob.data.delivery_address.latitude,
+                          lng: currentJob.data.delivery_address.longitude
+                        };
+                        
+                        // Draw the new route to customer
+                        fetchRouteFromDirectionsAPI(origin, destination, mapInstanceRef.current);
+                        
+                        // Re-center map to show both rider and customer
                         const google = (window as any).google;
                         if (google && google.maps) {
-                          mapInstanceRef.current.panTo({
-                            lat: userLocation.latitude,
-                            lng: userLocation.longitude
-                          });
-                          mapInstanceRef.current.setZoom(15);
+                          const bounds = new google.maps.LatLngBounds();
+                          bounds.extend(origin);
+                          bounds.extend(destination);
+                          mapInstanceRef.current.fitBounds(bounds);
                         }
                       }
                     } catch (error) {
