@@ -481,16 +481,16 @@ export default function LiveOrderTrackingScreen() {
       return;
     }
 
-    // Create arrow icon for rider (matching rider's navigation)
+    // Create custom arrow icon for rider marker (same as initializeMap)
     const createRiderArrowIcon = () => {
       const svg = `
         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
           <defs>
-            <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <filter id="shadow-rider-update" x="-50%" y="-50%" width="200%" height="200%">
               <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.3"/>
             </filter>
           </defs>
-          <circle cx="20" cy="20" r="18" fill="#4285F4" filter="url(#shadow)"/>
+          <circle cx="20" cy="20" r="18" fill="#4285F4" filter="url(#shadow-rider-update)"/>
           <path d="M 20 8 L 27 25 L 20 22 L 13 25 Z" fill="white"/>
         </svg>
       `;
@@ -506,7 +506,8 @@ export default function LiveOrderTrackingScreen() {
       riderMarkerRef.current.setPosition(newPosition);
       console.log('✅ Rider marker position updated');
     } else {
-      // Create rider marker if it doesn't exist (using same SVG arrow as rider screen)
+      // Create rider marker if it doesn't exist (using same BLUE ARROW SVG as rider screen)
+      console.log('🎯 Creating rider marker in updateMapMarkers with BLUE ARROW icon');
       riderMarkerRef.current = new google.maps.Marker({
         position: {
           lat: riderLocation.latitude,
@@ -521,7 +522,7 @@ export default function LiveOrderTrackingScreen() {
         title: `Rider: ${order.rider_name || 'On the way'}`,
         zIndex: 1000,
       });
-      console.log('✅ Rider marker created');
+      console.log('✅ Rider marker created with blue arrow');
     }
 
     try {
