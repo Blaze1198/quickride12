@@ -1497,23 +1497,35 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
   // Render active navigation screen (has active job)
   console.log('➡️ Rendering ACTIVE NAVIGATION screen with job:', currentJob.data?.id);
 
-  // TEMP FIX: Render simple placeholder to test
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>🎉 ACTIVE NAVIGATION</Text>
-        <Text style={{ fontSize: 16, marginBottom: 10 }}>Job ID: {currentJob.data?.id}</Text>
-        <Text style={{ fontSize: 16, marginBottom: 10 }}>Status: {currentJob.data?.status}</Text>
-        <Text style={{ fontSize: 14, color: '#666', textAlign: 'center' }}>
-          The active navigation screen is now rendering! The complex UI has been temporarily replaced with this placeholder to isolate the JSX error.
-        </Text>
-      </View>
+      {/* Full-screen Map */}
+      {Platform.OS === 'web' ? (
+        <View style={styles.fullScreenMap}>
+          <div ref={mapRef} style={{ width: '100%', height: '100%' }} />
+          
+          {/* Simple Job Info Overlay */}
+          <View style={styles.simpleJobInfo}>
+            <Text style={styles.simpleJobTitle}>
+              {currentJob.type === 'order' ? '🍔 Food Delivery' : '🏍️ Ride'}
+            </Text>
+            <Text style={styles.simpleJobStatus}>
+              Status: {currentJob.data.status}
+            </Text>
+            {distanceToDestination && etaToDestination && (
+              <Text style={styles.simpleJobDistance}>
+                {distanceToDestination} • {etaToDestination}
+              </Text>
+            )}
+          </View>
+        </View>
+      ) : (
+        <View style={styles.fullScreenMap}>
+          <Text>Map available on web only</Text>
+        </View>
+      )}
     </SafeAreaView>
   );
-
-  // TODO: Original complex UI with map, markers, and bottom sheet has been temporarily removed
-  // The original UI had React JSX errors that prevented rendering
-  // Need to rebuild the UI component by component to identify the issue
 }
 // Wrapper component to prevent hooks violation when non-riders access this screen
 export default function RiderNavigationScreen() {
