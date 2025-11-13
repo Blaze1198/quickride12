@@ -1448,12 +1448,48 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
             backgroundStyle={{ backgroundColor: '#FFF' }}
           >
             <BottomSheetScrollView style={styles.bottomSheetContent}>
-              <View style={styles.availableOrdersHeader}>
-                <Ionicons name="fast-food" size={24} color="#FF6B6B" />
-                <Text style={styles.availableOrdersTitle}>Available Orders Nearby</Text>
-              </View>
-              
-              {nearbyOrders && nearbyOrders.length > 0 ? (
+              {/* Show accepted job if exists and not navigating yet */}
+              {currentJob && !isNavigating ? (
+                <>
+                  <View style={styles.acceptedJobHeader}>
+                    <Ionicons name="checkmark-circle" size={28} color="#4CAF50" />
+                    <Text style={styles.acceptedJobTitle}>Job Accepted!</Text>
+                  </View>
+                  
+                  <View style={styles.acceptedJobCard}>
+                    <View style={styles.acceptedJobRow}>
+                      <Text style={styles.acceptedJobLabel}>Restaurant:</Text>
+                      <Text style={styles.acceptedJobValue}>{currentJob.data.restaurant_name}</Text>
+                    </View>
+                    <View style={styles.acceptedJobRow}>
+                      <Text style={styles.acceptedJobLabel}>Customer:</Text>
+                      <Text style={styles.acceptedJobValue}>{currentJob.data.customer_name}</Text>
+                    </View>
+                    <View style={styles.acceptedJobRow}>
+                      <Text style={styles.acceptedJobLabel}>Delivery Fee:</Text>
+                      <Text style={styles.acceptedJobFee}>₱{(currentJob.data.total_amount * 0.10).toFixed(0)}</Text>
+                    </View>
+                  </View>
+                  
+                  <TouchableOpacity 
+                    style={styles.startNavigationButtonBottom}
+                    onPress={() => {
+                      console.log('🚀 Start Navigation clicked from bottom sheet');
+                      setIsNavigating(true);
+                    }}
+                  >
+                    <Ionicons name="navigate" size={22} color="#FFF" />
+                    <Text style={styles.startNavigationTextBottom}>Start Navigation</Text>
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <>
+                  <View style={styles.availableOrdersHeader}>
+                    <Ionicons name="fast-food" size={24} color="#FF6B6B" />
+                    <Text style={styles.availableOrdersTitle}>Available Orders Nearby</Text>
+                  </View>
+                  
+                  {nearbyOrders && nearbyOrders.length > 0 ? (
                 nearbyOrders.map((order: any, index: number) => (
                   <View key={order.id} style={styles.orderCard}>
                     {index === 0 && nearbyOrders.length > 0 && (
