@@ -1495,6 +1495,7 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
   }
 
   // Render active navigation screen (has active job)
+  console.log('➡️ Rendering ACTIVE NAVIGATION screen with job:', currentJob.data?.id);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
