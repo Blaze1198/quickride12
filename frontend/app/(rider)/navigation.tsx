@@ -1441,6 +1441,7 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
     console.log('🗺️ Initializing idle map...');
     
     return (
+      <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
       <SafeAreaView style={styles.container}>
         <View style={styles.container}>
           {/* Initialize idle map with rider's location */}
