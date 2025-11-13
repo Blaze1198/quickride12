@@ -43,6 +43,9 @@ function RiderNavigationContent() {
   const [showCongrats, setShowCongrats] = useState(false);
   const [completedDeliveryFee, setCompletedDeliveryFee] = useState('0');
   
+  // Animation for smooth transitions
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+  
   // Debug: Log every time currentJob changes
   useEffect(() => {
     console.log('🔄 currentJob STATE CHANGED:', currentJob ? `EXISTS (id: ${currentJob.data?.id})` : 'NULL');
