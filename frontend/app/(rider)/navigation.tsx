@@ -624,18 +624,24 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
     }
 
     const directionsService = new google.maps.DirectionsService();
+    
+    // Create renderer with explicit configuration
     const directionsRenderer = new google.maps.DirectionsRenderer({
-      map: map,
       suppressMarkers: true, // We'll keep our custom markers
       polylineOptions: {
         strokeColor: '#4285F4', // Google Maps blue
-        strokeWeight: 6,
-        strokeOpacity: 0.8,
+        strokeWeight: 8,
+        strokeOpacity: 1.0,
+        zIndex: 1000, // High z-index to ensure visibility
       },
-      preserveViewport: false, // Let DirectionsRenderer handle the viewport
+      preserveViewport: true, // Keep current viewport
     });
 
     console.log('✅ DirectionsService and DirectionsRenderer created');
+    
+    // Set the map AFTER creating the renderer
+    directionsRenderer.setMap(map);
+    console.log('✅ DirectionsRenderer map set');
 
     // Store renderer for cleanup
     directionsRendererRef.current = directionsRenderer;
