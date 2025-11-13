@@ -1764,6 +1764,30 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
             )}
           </BottomSheetScrollView>
         </BottomSheet>
+
+        {showCongrats && (
+          <View style={styles.congratsOverlay}>
+            <View style={styles.congratsCard}>
+              <View style={styles.congratsIconContainer}>
+                <Ionicons name="checkmark-circle" size={80} color="#4CAF50" />
+              </View>
+              <Text style={styles.congratsTitle}>Delivery Completed! 🎉</Text>
+              <Text style={styles.congratsMessage}>
+                Great job! You've successfully completed the delivery.
+              </Text>
+              <View style={styles.congratsEarnings}>
+                <Text style={styles.congratsEarningsLabel}>You earned</Text>
+                <Text style={styles.congratsEarningsAmount}>₱{completedDeliveryFee}</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.congratsButton}
+                onPress={() => setShowCongrats(false)}
+              >
+                <Text style={styles.congratsButtonText}>Continue</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
       </SafeAreaView>
     </GestureHandlerRootView>
     </Animated.View>
