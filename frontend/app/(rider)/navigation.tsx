@@ -1471,7 +1471,7 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
   }
 
   // Render idle screen (clean map view OR job pending acceptance)
-  if (!currentJob || !isNavigating) {
+  const renderIdleScreen = () => {
     console.log('➡️ Rendering IDLE screen', currentJob ? '(job pending acceptance)' : '(no job)');
     
     console.log('🗺️ Initializing idle map...');
