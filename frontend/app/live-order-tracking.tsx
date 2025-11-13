@@ -614,12 +614,12 @@ export default function LiveOrderTrackingScreen() {
     }
   };
 
-  // Update map with new rider location and redraw dual routes
+  // Update map with new rider location (only update position, don't redraw routes constantly)
   const updateMapMarkers = async () => {
-    console.log('🔄 Updating map with new rider location');
+    console.log('🔄 Updating rider marker position');
     
     if (!riderLocation || !order || !mapInstanceRef.current) {
-      console.log('⚠️ Cannot update route - missing data');
+      console.log('⚠️ Cannot update - missing data');
       return;
     }
 
@@ -629,36 +629,18 @@ export default function LiveOrderTrackingScreen() {
       return;
     }
 
-    // Create arrow icon for rider marker (NO TEXT NODES to prevent errors)
-    const createRiderArrowIcon = () => {
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><defs><filter id="shadow-rider-update" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.3"/></filter></defs><circle cx="20" cy="20" r="18" fill="#4285F4" filter="url(#shadow-rider-update)"/><path d="M 20 8 L 27 25 L 20 22 L 13 25 Z" fill="white"/></svg>`;
-      return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
-    };
-
-    // FORCE RECREATE marker to ensure it has the correct BLUE ARROW icon
+    // Just update the marker position - don't recreate it constantly
     if (riderMarkerRef.current) {
-      console.log('🔄 Removing old rider marker and recreating with BLUE ARROW');
-      riderMarkerRef.current.setMap(null); // Remove old marker
-      riderMarkerRef.current = null;
-    }
-    
-    // Create rider marker with BLUE ARROW icon (matching rider's navigation)
-    console.log('🎯 Creating rider marker in updateMapMarkers with BLUE ARROW icon');
-    riderMarkerRef.current = new google.maps.Marker({
-      position: {
+      const newPosition = {
         lat: riderLocation.latitude,
         lng: riderLocation.longitude,
-      },
-      map: mapInstanceRef.current,
-      icon: {
-        url: createRiderArrowIcon(),
-        scaledSize: new google.maps.Size(40, 40),
-        anchor: new google.maps.Point(20, 20),
-      },
-      title: `Rider: ${order.rider_name || 'On the way'}`,
-      zIndex: 1000,
-    });
-    console.log('✅ Rider marker created with blue arrow icon');
+      };
+      riderMarkerRef.current.setPosition(newPosition);
+      console.log('✅ Rider position updated to:', newPosition);
+    }
+    
+    // Don't redraw routes every update - they're already drawn in initializeMap
+    // Only update if we need to (e.g., when restaurant or customer location changes)
 
     // Clear old routes before drawing new ones
     if (routePolylineRef.current) {
