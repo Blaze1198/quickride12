@@ -262,8 +262,18 @@ function RiderNavigationContent() {
         console.log('✅ Setting current job as ORDER:', orderResponse.data.id);
         const jobData = { type: 'order', data: orderResponse.data };
         
-        // Show notification if this is a new job assignment
-        if (!currentJob || currentJob.data.id !== orderResponse.data.id) {
+        // Show notification when:
+        // 1. New job assignment (different ID)
+        // 2. Order becomes ready for pickup (status change to 'accepted' or 'rider_assigned')
+        const isNewJob = !currentJob || currentJob.data.id !== orderResponse.data.id;
+        const isReadyForPickup = currentJob && 
+                                 currentJob.data.id === orderResponse.data.id &&
+                                 (orderResponse.data.status === 'accepted' || orderResponse.data.status === 'rider_assigned') &&
+                                 currentJob.data.status !== 'accepted' && 
+                                 currentJob.data.status !== 'rider_assigned';
+        
+        if (isNewJob || isReadyForPickup) {
+          console.log('🔔 Showing job notification:', isNewJob ? 'New job' : 'Ready for pickup');
           setPendingJobNotification(jobData);
         }
         
