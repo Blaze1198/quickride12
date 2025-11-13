@@ -692,9 +692,9 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
     const directionsRenderer = new google.maps.DirectionsRenderer({
       suppressMarkers: true, // We'll keep our custom markers
       polylineOptions: {
-        strokeColor: '#4285F4', // Google Maps blue
-        strokeWeight: 8,
-        strokeOpacity: 1.0,
+        strokeColor: routeColor, // Use provided color (blue for route 1, green for route 2)
+        strokeWeight: 6,
+        strokeOpacity: 0.9,
         zIndex: 1000, // High z-index to ensure visibility
       },
       preserveViewport: true, // Keep current viewport
