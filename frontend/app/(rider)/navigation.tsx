@@ -1810,6 +1810,14 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
     </GestureHandlerRootView>
     </Animated.View>
   );
+  };
+
+  // Main component logic - decide which screen to render
+  if (!currentJob || !isNavigating) {
+    return renderIdleScreen();
+  }
+
+  return renderActiveScreen();
 }
 // Wrapper component to prevent hooks violation when non-riders access this screen
 export default function RiderNavigationScreen() {
