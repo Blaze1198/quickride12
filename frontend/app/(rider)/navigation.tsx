@@ -118,7 +118,6 @@ function RiderNavigationContent() {
   const [scriptLoaded, setScriptLoaded] = useState(false);
   
   // Turn-by-turn navigation states
-  const [isNavigating, setIsNavigating] = useState(false);
   const [currentStep, setCurrentStep] = useState<any>(null);
   const [navigationSteps, setNavigationSteps] = useState<any[]>([]);
   const [remainingDistance, setRemainingDistance] = useState<string>('');
