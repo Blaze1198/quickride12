@@ -618,6 +618,7 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
     console.log('📡 Starting Directions API call...');
     console.log('📍 Origin:', JSON.stringify(origin));
     console.log('📍 Destination:', JSON.stringify(destination));
+    console.log('🗺️ Map instance ref:', mapInstanceRef.current ? 'EXISTS' : 'NULL');
     
     const google = (window as any).google;
     if (!google || !google.maps) {
@@ -626,6 +627,13 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
     }
 
     console.log('✅ Google Maps API is available');
+
+    // Use mapInstanceRef.current instead of the passed map parameter
+    const mapInstance = mapInstanceRef.current;
+    if (!mapInstance) {
+      console.error('❌ Map instance not available');
+      return;
+    }
 
     // Clean up old renderer if it exists
     if (directionsRendererRef.current) {
@@ -650,9 +658,9 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
 
     console.log('✅ DirectionsService and DirectionsRenderer created');
     
-    // Set the map AFTER creating the renderer
-    directionsRenderer.setMap(map);
-    console.log('✅ DirectionsRenderer map set');
+    // Set the map using mapInstanceRef.current
+    directionsRenderer.setMap(mapInstance);
+    console.log('✅ DirectionsRenderer map set to mapInstanceRef.current');
 
     // Store renderer for cleanup
     directionsRendererRef.current = directionsRenderer;
