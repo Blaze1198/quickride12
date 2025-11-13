@@ -831,11 +831,23 @@ async def get_orders(request: Request):
     elif user.role == UserRole.RESTAURANT:
         restaurant = await db.restaurants.find_one({"owner_id": user.id})
         if not restaurant:
-            logger.warning(f"Restaurant owner {user.id} has no restaurant")
+            logger.warning(f"❌ Restaurant owner {user.id} ({user.email}) has no restaurant")
             return []
-        logger.info(f"Restaurant owner {user.id} managing restaurant {restaurant['id']} - {restaurant.get('name')}")
+        logger.info(f"🏪 Restaurant owner {user.id} ({user.email}) managing restaurant {restaurant['id']} - {restaurant.get('name')}")
         orders = await db.orders.find({"restaurant_id": restaurant["id"]}).sort("created_at", -1).to_list(100)
-        logger.info(f"Found {len(orders)} orders for restaurant {restaurant['id']}")
+        logger.info(f"📋 Found {len(orders)} orders for restaurant {restaurant['id']}")
+        if len(orders) > 0:
+            logger.info(f"   Latest order: {orders[0]['id']} - Status: {orders[0]['status']}")
+        else:
+            # Debug: Check if there are ANY orders in the database
+            total_orders = await db.orders.count_documents({})
+            logger.warning(f"⚠️ No orders found for restaurant {restaurant['id']}, but database has {total_orders} total orders")
+            # Sample one order to see what restaurant_id looks like
+            sample_order = await db.orders.find_one({})
+            if sample_order:
+                logger.info(f"   Sample order restaurant_id: '{sample_order.get('restaurant_id')}'")
+                logger.info(f"   Looking for restaurant_id: '{restaurant['id']}'")
+                logger.info(f"   IDs match: {sample_order.get('restaurant_id') == restaurant['id']}")
     elif user.role == UserRole.RIDER:
         rider = await db.riders.find_one({"user_id": user.id})
         if not rider:
