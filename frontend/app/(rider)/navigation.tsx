@@ -920,7 +920,7 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
 
       directionsService.route(request, (result: any, status: any) => {
         if (status === 'OK' && result) {
-          directionsRendererRef.current.setDirections(result);
+          directionsRenderersRef.current[0].setDirections(result);
           
           const route = result.routes[0];
           const leg = route.legs[0];
