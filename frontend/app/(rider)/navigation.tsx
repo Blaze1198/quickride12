@@ -1357,7 +1357,60 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
     );
   }
 
-  // Render idle screen (no active job)
+  // Step 1: Show job card with "Start Navigation" button (has job but not navigating yet)
+  if (currentJob && !isNavigating) {
+    console.log('➡️ Rendering JOB CARD screen (waiting for Start Navigation)');
+    
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.jobCardContainer}>
+          <View style={styles.jobCard}>
+            <View style={styles.jobCardHeader}>
+              <Ionicons 
+                name={currentJob.type === 'order' ? 'restaurant' : 'car'} 
+                size={40} 
+                color="#FF6B6B" 
+              />
+              <Text style={styles.jobCardTitle}>
+                {currentJob.type === 'order' ? '🍔 Food Delivery' : '🏍️ Ride Service'}
+              </Text>
+            </View>
+            
+            <View style={styles.jobCardDetails}>
+              <Text style={styles.jobCardLabel}>Order ID:</Text>
+              <Text style={styles.jobCardValue}>{currentJob.data.id?.slice(0, 8)}...</Text>
+              
+              <Text style={styles.jobCardLabel}>Status:</Text>
+              <Text style={styles.jobCardValue}>{currentJob.data.status}</Text>
+              
+              {currentJob.type === 'order' && (
+                <>
+                  <Text style={styles.jobCardLabel}>Restaurant:</Text>
+                  <Text style={styles.jobCardValue}>{currentJob.data.restaurant_name}</Text>
+                  
+                  <Text style={styles.jobCardLabel}>Customer:</Text>
+                  <Text style={styles.jobCardValue}>{currentJob.data.customer_name}</Text>
+                </>
+              )}
+            </View>
+            
+            <TouchableOpacity 
+              style={styles.startNavigationButton}
+              onPress={() => {
+                console.log('🚀 Start Navigation clicked');
+                setIsNavigating(true);
+              }}
+            >
+              <Ionicons name="navigate" size={24} color="#FFF" />
+              <Text style={styles.startNavigationText}>Start Navigation</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </SafeAreaView>
+    );
+  }
+  
+  // Step 2: Render idle screen (no active job)
   if (!currentJob) {
     console.log('➡️ Rendering IDLE screen (no job)');
     return (
