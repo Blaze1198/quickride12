@@ -69,6 +69,15 @@ function RiderNavigationContent() {
           useNativeDriver: true,
         }),
       ]).start();
+      
+      // Reinitialize map for active navigation screen after transition
+      setTimeout(() => {
+        if (currentJob) {
+          console.log('🗺️ Reinitializing map for active navigation');
+          mapInstanceRef.current = null; // Clear old instance
+          loadMap(); // Reinitialize with new mapRef
+        }
+      }, 350); // Wait for fade out to complete
     } else {
       // Simple fade in when returning to idle
       Animated.timing(fadeAnim, {
