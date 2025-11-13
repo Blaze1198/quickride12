@@ -1770,17 +1770,25 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
                   style={styles.completeDeliveryButton}
                   onPress={async () => {
                     try {
+                      // Save delivery fee before completing
+                      setCompletedDeliveryFee(deliveryFee);
+                      
                       // Update order status to delivered
                       await api.put(`/orders/${currentJob.data.id}/status`, { status: 'delivered' });
                       
-                      // Show success message
-                      Alert.alert('Success', 'Order delivered successfully!');
+                      // Show congratulations card
+                      setShowCongrats(true);
                       
                       // Reset navigation state
                       setIsNavigating(false);
                       
                       // Refresh job (should be null now)
                       await fetchCurrentJob();
+                      
+                      // Auto-hide congrats after 5 seconds
+                      setTimeout(() => {
+                        setShowCongrats(false);
+                      }, 5000);
                     } catch (error) {
                       Alert.alert('Error', 'Failed to complete delivery');
                     }
