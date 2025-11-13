@@ -763,6 +763,7 @@ async def create_order(order_data: Dict[str, Any], request: Request):
         customer_phone=order_data.get("customer_phone", user.phone or ""),
         restaurant_id=order_data["restaurant_id"],
         restaurant_name=restaurant["name"],
+        restaurant_location=restaurant.get("location"),  # Add restaurant location for dual-route mapping
         items=order_data["items"],
         total_amount=order_data["total_amount"],
         subtotal=order_data.get("subtotal"),
