@@ -53,7 +53,18 @@ function RiderNavigationContent() {
       if (!currentJob && user?.role === 'rider') {
         try {
           const response = await api.get('/riders/nearby-orders?radius=10');
-          setNearbyOrders(response.data.orders || []);
+          const newOrders = response.data.orders || [];
+          
+          // Check if there are new orders compared to previous state
+          if (nearbyOrders.length > 0 && newOrders.length > nearbyOrders.length) {
+            console.log('🆕 New order available!');
+            // Optionally expand bottom sheet to show new order
+            if (bottomSheetRef.current) {
+              bottomSheetRef.current.snapToIndex(1); // Snap to middle position
+            }
+          }
+          
+          setNearbyOrders(newOrders);
         } catch (error: any) {
           if (error?.response?.status === 401 || error?.response?.status === 403) return;
           console.error('Error fetching nearby orders:', error);
@@ -62,10 +73,10 @@ function RiderNavigationContent() {
     };
 
     fetchNearbyOrders();
-    // Poll for new orders every 10 seconds
-    const interval = setInterval(fetchNearbyOrders, 10000);
+    // Poll for new orders every 5 seconds for real-time updates
+    const interval = setInterval(fetchNearbyOrders, 5000);
     return () => clearInterval(interval);
-  }, [currentJob, user]);
+  }, [currentJob, user, nearbyOrders.length]);
   const [loading, setLoading] = useState(true);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [userLocation, setUserLocation] = useState<any>(null);
