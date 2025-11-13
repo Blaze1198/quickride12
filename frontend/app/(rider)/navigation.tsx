@@ -709,7 +709,7 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
     console.log('✅ DirectionsRenderer map set to mapInstanceRef.current');
 
     // Store renderer for cleanup
-    directionsRendererRef.current = directionsRenderer;
+    directionsRenderersRef.current.push(directionsRenderer);
 
     const request = {
       origin: origin,
