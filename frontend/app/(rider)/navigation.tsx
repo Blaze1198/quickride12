@@ -2723,4 +2723,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#DDD',
     marginHorizontal: 12,
   },
+  completeDeliveryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#2196F3',
+    padding: 16,
+    borderRadius: 12,
+    marginTop: 16,
+    gap: 8,
+  },
+  completeDeliveryText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
