@@ -2385,18 +2385,15 @@ async def get_order_rider_location(order_id: str, request: Request):
     if not order.get('rider_id'):
         return {"rider_assigned": False, "location": None}
     
-    # First get the rider by ID to get user_id, then get current location
+    # Query rider by ID - this will give us the most up-to-date location
+    # (location is updated via user_id, but both id and user_id are on same document)
     rider = await db.riders.find_one({"id": order['rider_id']})
     if not rider:
         return {"rider_assigned": True, "location": None}
     
-    # Get the most up-to-date rider data including current_location
-    # The rider updates their location via user_id, so we need to query by user_id to get latest location
-    rider_with_location = await db.riders.find_one({"user_id": rider['user_id']})
-    
     return {
         "rider_assigned": True,
-        "location": rider_with_location.get('current_location') if rider_with_location else None,
+        "location": rider.get('current_location'),
         "rider_name": rider.get('name'),
         "rider_phone": rider.get('phone')
     }
