@@ -168,8 +168,9 @@ function RiderNavigationContent() {
 
   // Separate effect for sending location updates to backend
   useEffect(() => {
-    if (!userLocation || !currentJob) return;
+    if (!userLocation) return; // Only need userLocation, not currentJob
     
+    // Send initial location update
     updateRiderLocation();
     
     // Send location updates every 5 seconds
@@ -178,7 +179,7 @@ function RiderNavigationContent() {
     }, 5000);
     
     return () => clearInterval(updateInterval);
-  }, [currentJob?.id]); // Only re-run when job changes
+  }, [userLocation?.latitude, userLocation?.longitude]); // Update when location changes
 
   // Initialize map only once when job ID changes
   useEffect(() => {
