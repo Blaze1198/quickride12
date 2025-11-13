@@ -623,7 +623,7 @@ export default function LiveOrderTrackingScreen() {
     }
   };
 
-  // Update map with new rider location and redraw route
+  // Update map with new rider location and redraw dual routes
   const updateMapMarkers = async () => {
     console.log('🔄 Updating map with new rider location');
     
@@ -679,85 +679,230 @@ export default function LiveOrderTrackingScreen() {
     });
     console.log('✅ Rider marker created with blue arrow icon');
 
+    // Clear old routes before drawing new ones
+    if (routePolylineRef.current) {
+      routePolylineRef.current.setMap(null);
+      routePolylineRef.current = null;
+    }
+    
+    // Clear old dual routes
+    directionsRenderersRef.current.forEach(renderer => {
+      if (renderer && renderer.setMap) {
+        renderer.setMap(null);
+      }
+    });
+    directionsRenderersRef.current = [];
+
     try {
       const apiKey = 'AIzaSyA0m1oRlXLQWjxacqjEJ6zJW3WvmOWvQkQ';
       
-      console.log('🗺️ Fetching updated route from rider to customer...');
+      // Get restaurant and customer locations
+      let restaurantLocation = null;
+      let customerLocation = null;
       
-      // Use Google Maps Routes API (REST)
-      const response = await fetch(
-        `https://routes.googleapis.com/directions/v2:computeRoutes`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Goog-Api-Key': apiKey,
-            'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline'
-          },
-          body: JSON.stringify({
-            origin: {
-              location: {
-                latLng: {
-                  latitude: riderLocation.latitude,
-                  longitude: riderLocation.longitude
-                }
-              }
-            },
-            destination: {
-              location: {
-                latLng: {
-                  latitude: order.delivery_address.latitude,
-                  longitude: order.delivery_address.longitude
-                }
-              }
-            },
-            travelMode: 'DRIVE',
-            routingPreference: 'TRAFFIC_AWARE',
-            computeAlternativeRoutes: false,
-            languageCode: 'en-US',
-            units: 'METRIC'
-          })
-        }
-      );
-
-      if (!response.ok) {
-        console.error('❌ Routes API error:', response.status);
-        return;
+      if (order.restaurant_location) {
+        restaurantLocation = {
+          lat: order.restaurant_location.latitude,
+          lng: order.restaurant_location.longitude,
+        };
       }
-
-      const data = await response.json();
       
-      if (data.routes && data.routes.length > 0) {
-        const route = data.routes[0];
-        console.log('✅ Route updated successfully');
+      if (order.delivery_address) {
+        customerLocation = {
+          lat: order.delivery_address.latitude,
+          lng: order.delivery_address.longitude,
+        };
+      }
+      
+      // If we have restaurant location, draw BOTH routes (same as initializeMap)
+      if (restaurantLocation && customerLocation) {
+        console.log('🗺️ Updating dual routes: Rider→Restaurant (BLUE) and Restaurant→Customer (GREEN)');
         
-        // Remove old polyline if it exists
-        if (routePolylineRef.current) {
-          routePolylineRef.current.setMap(null);
+        // ROUTE 1: Rider → Restaurant (BLUE)
+        const route1Response = await fetch(
+          `https://routes.googleapis.com/directions/v2:computeRoutes`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Goog-Api-Key': apiKey,
+              'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline'
+            },
+            body: JSON.stringify({
+              origin: {
+                location: {
+                  latLng: {
+                    latitude: riderLocation.latitude,
+                    longitude: riderLocation.longitude
+                  }
+                }
+              },
+              destination: {
+                location: {
+                  latLng: {
+                    latitude: restaurantLocation.lat,
+                    longitude: restaurantLocation.lng
+                  }
+                }
+              },
+              travelMode: 'DRIVE',
+              routingPreference: 'TRAFFIC_AWARE',
+              computeAlternativeRoutes: false,
+              languageCode: 'en-US',
+              units: 'METRIC'
+            })
+          }
+        );
+
+        if (route1Response.ok) {
+          const data1 = await route1Response.json();
+          if (data1.routes && data1.routes.length > 0) {
+            const route1 = data1.routes[0];
+            const path1 = google.maps.geometry.encoding.decodePath(route1.polyline.encodedPolyline);
+            
+            const polyline1 = new google.maps.Polyline({
+              path: path1,
+              geodesic: true,
+              strokeColor: '#4285F4', // Blue for rider → restaurant
+              strokeOpacity: 0.8,
+              strokeWeight: 6,
+              map: mapInstanceRef.current,
+              zIndex: 100,
+            });
+            
+            directionsRenderersRef.current.push(polyline1);
+            console.log('✅ Updated Route 1 (Rider→Restaurant) drawn in BLUE');
+            
+            // Update ETA based on first route
+            const distanceKm = (route1.distanceMeters / 1000).toFixed(1);
+            const durationMin = Math.ceil(parseInt(route1.duration.replace('s', '')) / 60);
+            setDistance(`${distanceKm} km`);
+            setEta(`${durationMin} min`);
+          }
+        }
+
+        // ROUTE 2: Restaurant → Customer (GREEN)
+        const route2Response = await fetch(
+          `https://routes.googleapis.com/directions/v2:computeRoutes`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Goog-Api-Key': apiKey,
+              'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline'
+            },
+            body: JSON.stringify({
+              origin: {
+                location: {
+                  latLng: {
+                    latitude: restaurantLocation.lat,
+                    longitude: restaurantLocation.lng
+                  }
+                }
+              },
+              destination: {
+                location: {
+                  latLng: {
+                    latitude: customerLocation.lat,
+                    longitude: customerLocation.lng
+                  }
+                }
+              },
+              travelMode: 'DRIVE',
+              routingPreference: 'TRAFFIC_AWARE',
+              computeAlternativeRoutes: false,
+              languageCode: 'en-US',
+              units: 'METRIC'
+            })
+          }
+        );
+
+        if (route2Response.ok) {
+          const data2 = await route2Response.json();
+          if (data2.routes && data2.routes.length > 0) {
+            const route2 = data2.routes[0];
+            const path2 = google.maps.geometry.encoding.decodePath(route2.polyline.encodedPolyline);
+            
+            const polyline2 = new google.maps.Polyline({
+              path: path2,
+              geodesic: true,
+              strokeColor: '#34A853', // Green for restaurant → customer
+              strokeOpacity: 0.8,
+              strokeWeight: 6,
+              map: mapInstanceRef.current,
+              zIndex: 99,
+            });
+            
+            directionsRenderersRef.current.push(polyline2);
+            console.log('✅ Updated Route 2 (Restaurant→Customer) drawn in GREEN');
+          }
         }
         
-        // Decode polyline and draw new route
-        const path = google.maps.geometry.encoding.decodePath(route.polyline.encodedPolyline);
+      } else if (customerLocation) {
+        // Fallback: Single route from rider to customer
+        console.log('🗺️ Updating single route: Rider→Customer (BLUE)');
         
-        routePolylineRef.current = new google.maps.Polyline({
-          path: path,
-          geodesic: true,
-          strokeColor: '#2196F3',
-          strokeOpacity: 0.8,
-          strokeWeight: 4,
-          map: mapInstanceRef.current
-        });
+        const response = await fetch(
+          `https://routes.googleapis.com/directions/v2:computeRoutes`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Goog-Api-Key': apiKey,
+              'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline'
+            },
+            body: JSON.stringify({
+              origin: {
+                location: {
+                  latLng: {
+                    latitude: riderLocation.latitude,
+                    longitude: riderLocation.longitude
+                  }
+                }
+              },
+              destination: {
+                location: {
+                  latLng: {
+                    latitude: customerLocation.lat,
+                    longitude: customerLocation.lng
+                  }
+                }
+              },
+              travelMode: 'DRIVE',
+              routingPreference: 'TRAFFIC_AWARE',
+              computeAlternativeRoutes: false,
+              languageCode: 'en-US',
+              units: 'METRIC'
+            })
+          }
+        );
 
-        // Update distance and ETA
-        const distanceKm = (route.distanceMeters / 1000).toFixed(1);
-        const durationMin = Math.ceil(parseInt(route.duration.replace('s', '')) / 60);
-        setDistance(`${distanceKm} km`);
-        setEta(`${durationMin} min`);
-        
-        console.log(`📍 Updated route: ${distanceKm}km, ETA: ${durationMin}min`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.routes && data.routes.length > 0) {
+            const route = data.routes[0];
+            const path = google.maps.geometry.encoding.decodePath(route.polyline.encodedPolyline);
+            
+            routePolylineRef.current = new google.maps.Polyline({
+              path: path,
+              geodesic: true,
+              strokeColor: '#2196F3',
+              strokeOpacity: 0.8,
+              strokeWeight: 4,
+              map: mapInstanceRef.current
+            });
+
+            const distanceKm = (route.distanceMeters / 1000).toFixed(1);
+            const durationMin = Math.ceil(parseInt(route.duration.replace('s', '')) / 60);
+            setDistance(`${distanceKm} km`);
+            setEta(`${durationMin} min`);
+            
+            console.log(`📍 Updated single route: ${distanceKm}km, ETA: ${durationMin}min`);
+          }
+        }
       }
     } catch (error) {
-      console.error('❌ Error updating route:', error);
+      console.error('❌ Error updating routes:', error);
     }
   };
 
