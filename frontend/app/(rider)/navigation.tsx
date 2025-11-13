@@ -1541,6 +1541,40 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
             </BottomSheetScrollView>
           </BottomSheet>
 
+          {/* Congratulations Modal */}
+          <Modal
+            visible={showCongrats}
+            animationType="fade"
+            transparent={true}
+            onRequestClose={() => setShowCongrats(false)}
+          >
+            <View style={styles.congratsOverlay}>
+              <View style={styles.congratsCard}>
+                <View style={styles.congratsIconContainer}>
+                  <Ionicons name="checkmark-circle" size={80} color="#4CAF50" />
+                </View>
+                
+                <Text style={styles.congratsTitle}>🎉 Congratulations!</Text>
+                <Text style={styles.congratsMessage}>
+                  Delivery completed successfully!
+                </Text>
+                
+                <View style={styles.congratsEarnings}>
+                  <Text style={styles.congratsEarningsLabel}>You Earned</Text>
+                  <Text style={styles.congratsEarningsAmount}>₱{completedDeliveryFee}</Text>
+                </View>
+                
+                <TouchableOpacity 
+                  style={styles.congratsButton}
+                  onPress={() => setShowCongrats(false)}
+                >
+                  <Text style={styles.congratsButtonText}>View Next Orders</Text>
+                  <Ionicons name="arrow-forward" size={20} color="#FFF" />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+
           {/* Location Search Modal */}
           <Modal
             visible={showLocationSearchModal}
