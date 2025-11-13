@@ -182,9 +182,14 @@ function RiderNavigationContent() {
     }
 
     try {
+      console.log('📡 Fetching current job for rider...');
+      
       // Try to get current order (food delivery)
       const orderResponse = await api.get('/rider/current-order');
+      console.log('📦 Order response:', orderResponse.data);
+      
       if (orderResponse.data) {
+        console.log('✅ Setting current job as ORDER:', orderResponse.data.id);
         setCurrentJob({ type: 'order', data: orderResponse.data });
         setLoading(false);
         return;
@@ -192,15 +197,21 @@ function RiderNavigationContent() {
 
       // Try to get current ride
       const rideResponse = await api.get('/rider/current-ride');
+      console.log('🚗 Ride response:', rideResponse.data);
+      
       if (rideResponse.data) {
+        console.log('✅ Setting current job as RIDE:', rideResponse.data.id);
         setCurrentJob({ type: 'ride', data: rideResponse.data });
         setLoading(false);
         return;
       }
 
+      console.log('⚠️ No active job found - setting currentJob to null');
       setCurrentJob(null);
       setLoading(false);
     } catch (error: any) {
+      console.log('❌ Error fetching current job:', error.response?.status, error.message);
+      
       // Silently ignore auth errors (401/403) - user is not a rider
       if (error.response?.status === 403 || error.response?.status === 401) {
         setCurrentJob(null);
