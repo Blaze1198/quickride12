@@ -606,20 +606,36 @@ function RiderNavigationContent() {
       }
     }
 
-    // Draw route using Directions API
-    if (pickupLocation || dropoffLocation) {
-      const origin = userPosition; // Use userPosition with proper lat/lng
-      const destination = currentJob.data.status === 'picked_up' || currentJob.data.status === 'out_for_delivery'
-        ? dropoffLocation
-        : pickupLocation;
-
-      if (destination) {
-        console.log('🗺️ Getting route from', origin, 'to', destination);
-        // Pass a callback to handle bounds after directions are loaded
-        fetchRouteFromDirectionsAPI(origin, destination, map, () => {
-          console.log('✅ Route displayed, DirectionsRenderer handled viewport');
-        });
-      }
+    // Draw BOTH routes simultaneously - Rider to Restaurant AND Restaurant to Customer
+    if (pickupLocation && dropoffLocation) {
+      console.log('🗺️ Drawing two routes:');
+      console.log('   Route 1: Rider → Restaurant');
+      console.log('   Route 2: Restaurant → Customer');
+      
+      // Route 1: Rider to Restaurant (pickup location)
+      fetchRouteFromDirectionsAPI(userPosition, pickupLocation, map, () => {
+        console.log('✅ Route 1 displayed: Rider → Restaurant');
+      }, '#4285F4'); // Blue color for first route
+      
+      // Route 2: Restaurant to Customer (dropoff location)
+      // Use a different color to distinguish the two routes
+      fetchRouteFromDirectionsAPI(pickupLocation, dropoffLocation, map, () => {
+        console.log('✅ Route 2 displayed: Restaurant → Customer');
+      }, '#34A853'); // Green color for second route
+      
+      // Fit bounds to show all three points
+      const bounds = new google.maps.LatLngBounds();
+      bounds.extend(userPosition);
+      bounds.extend(pickupLocation);
+      bounds.extend(dropoffLocation);
+      map.fitBounds(bounds);
+    } else if (pickupLocation || dropoffLocation) {
+      // Fallback: Only one location available
+      const destination = dropoffLocation || pickupLocation;
+      console.log('🗺️ Getting single route from rider to', destination);
+      fetchRouteFromDirectionsAPI(userPosition, destination, map, () => {
+        console.log('✅ Single route displayed');
+      });
     } else {
       // Only fit bounds manually if we're NOT using DirectionsRenderer
       try {
