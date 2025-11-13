@@ -480,6 +480,22 @@ export default function LiveOrderTrackingScreen() {
       return;
     }
 
+    // Create arrow icon for rider (matching rider's navigation)
+    const createRiderArrowIcon = () => {
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+          <defs>
+            <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.3"/>
+            </filter>
+          </defs>
+          <circle cx="20" cy="20" r="18" fill="#4285F4" filter="url(#shadow)"/>
+          <path d="M 20 8 L 27 25 L 20 22 L 13 25 Z" fill="white"/>
+        </svg>
+      `;
+      return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+    };
+
     // Update rider marker position
     if (riderMarkerRef.current) {
       const newPosition = {
@@ -489,7 +505,7 @@ export default function LiveOrderTrackingScreen() {
       riderMarkerRef.current.setPosition(newPosition);
       console.log('✅ Rider marker position updated');
     } else {
-      // Create rider marker if it doesn't exist
+      // Create rider marker if it doesn't exist (using same SVG arrow as rider screen)
       riderMarkerRef.current = new google.maps.Marker({
         position: {
           lat: riderLocation.latitude,
@@ -497,15 +513,12 @@ export default function LiveOrderTrackingScreen() {
         },
         map: mapInstanceRef.current,
         icon: {
-          path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-          scale: 7,
-          fillColor: '#2196F3',
-          fillOpacity: 1,
-          strokeColor: '#FFF',
-          strokeWeight: 2,
-          rotation: riderLocation.heading || 0,
+          url: createRiderArrowIcon(),
+          scaledSize: new google.maps.Size(40, 40),
+          anchor: new google.maps.Point(20, 20),
         },
         title: `Rider: ${order.rider_name || 'On the way'}`,
+        zIndex: 1000,
       });
       console.log('✅ Rider marker created');
     }
