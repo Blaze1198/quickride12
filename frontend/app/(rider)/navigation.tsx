@@ -38,6 +38,7 @@ function RiderNavigationContent() {
   const snapPoints = useMemo(() => ['12%', '50%', '90%'], []); // More minimal first snap point
   
   const [currentJob, setCurrentJob] = useState<any>(null);
+  const [nearbyOrders, setNearbyOrders] = useState<any[]>([]);
   
   // Debug: Log every time currentJob changes
   useEffect(() => {
