@@ -483,18 +483,24 @@ function RiderNavigationContent() {
         if (lat !== null && lng !== null) {
           dropoffLocation = { lat, lng };
           
-          // Customer marker (dropoff) - Home/Person icon
-          new google.maps.Marker({
+          // Customer marker (dropoff) - Location pin with home icon
+          const customerMarker = new google.maps.Marker({
             position: dropoffLocation,
             map,
             icon: {
-              url: createIconUrl('🏠', '#4CAF50'),
-              scaledSize: new google.maps.Size(48, 48),
-              anchor: new google.maps.Point(24, 24),
+              url: createLocationPinIcon('🏠', '#34A853'),
+              scaledSize: new google.maps.Size(50, 60),
+              anchor: new google.maps.Point(25, 55),
             },
             title: 'Dropoff: ' + currentJob.data.customer_name,
             zIndex: 800,
+            animation: google.maps.Animation.BOUNCE,
           });
+          
+          // Stop bouncing after 2 seconds
+          setTimeout(() => {
+            customerMarker.setAnimation(null);
+          }, 2000);
         } else {
           console.warn('Invalid delivery coordinates:', deliveryLocation);
         }
