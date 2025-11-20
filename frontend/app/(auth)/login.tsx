@@ -88,7 +88,7 @@ export default function LoginScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#FF6B6B" />
+          <ActivityIndicator size="large" color="#210059" />
           <Text style={styles.loadingText}>Signing you in...</Text>
         </View>
       </SafeAreaView>
