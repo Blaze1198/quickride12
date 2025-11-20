@@ -100,7 +100,7 @@ export default function LoginScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.content}>
           <View style={styles.header}>
-            <Ionicons name="fast-food" size={80} color="#FF6B6B" />
+            <Ionicons name="fast-food" size={80} color="#210059" />
             <Text style={styles.title}>QuickRide</Text>
             <Text style={styles.subtitle}>Food & Ride Services at Your Fingertips</Text>
           </View>
