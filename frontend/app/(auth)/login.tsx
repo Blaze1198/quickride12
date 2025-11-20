@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     marginTop: 32,
   },
   signInButton: {
-    backgroundColor: '#FF6B6B',
+    backgroundColor: '#210059',
     padding: 18,
     borderRadius: 12,
     alignItems: 'center',
