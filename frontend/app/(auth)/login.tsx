@@ -200,11 +200,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#FF6B6B',
+    borderColor: '#210059',
     marginBottom: 24,
   },
   registerButtonText: {
-    color: '#FF6B6B',
+    color: '#210059',
     fontSize: 18,
     fontWeight: 'bold',
   },
