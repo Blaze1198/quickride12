@@ -880,102 +880,22 @@ export default function HomeScreen() {
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Header - Always Visible */}
         <View style={styles.header}>
+          <View style={styles.deliverToContainer}>
+            <Ionicons name="location-sharp" size={18} color="#000" />
+            <View style={styles.deliverToTextContainer}>
+              <Text style={styles.deliverToLabel}>Deliver to</Text>
+              <Text style={styles.deliverToValue}>HOME</Text>
+            </View>
+          </View>
           <TouchableOpacity 
-            style={styles.locationBadge}
-            onPress={handleLocationPress}
+            style={styles.profileButton}
+            onPress={() => router.push('/(customer)/profile')}
             activeOpacity={0.7}
           >
-            <Ionicons name="location" size={14} color="#210059" />
-            <Text style={styles.locationBadgeText}>{selectedLocation.split(',')[0]}</Text>
-            <Ionicons name="chevron-down" size={12} color="#666" />
-          </TouchableOpacity>
-          <View style={styles.headerRightButtons}>
-            <TouchableOpacity 
-              style={styles.serviceToggleButton}
-              onPress={() => router.push('/service-selection')}
-              activeOpacity={0.7}
-            >
-              <Ionicons name="swap-horizontal" size={20} color="#2196F3" />
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.notificationButton}
-              onPress={handleNotificationPress}
-              activeOpacity={0.7}
-            >
-              <Ionicons name="notifications-outline" size={24} color="#333" />
-              <View style={styles.notificationBadge} />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Service Type Selector (Delivery / Pick Up) */}
-        <View style={styles.serviceTypeContainer}>
-          <TouchableOpacity 
-            style={styles.serviceSelectorButton}
-            onPress={() => setShowServicePicker(!showServicePicker)}
-            activeOpacity={0.8}
-          >
-            <Ionicons 
-              name={serviceType === 'delivery' ? 'bicycle' : 'bag-handle'} 
-              size={20} 
-              color="#210059" 
-            />
-            <Text style={styles.serviceTypeText}>
-              {serviceType === 'delivery' ? 'Delivery' : 'Pick Up'}
-            </Text>
-            <Ionicons name="chevron-down" size={16} color="#666" />
-          </TouchableOpacity>
-
-          {/* Service Picker Dropdown */}
-          {showServicePicker && (
-            <View style={styles.servicePickerDropdown}>
-              <TouchableOpacity 
-                style={[
-                  styles.serviceOption,
-                  serviceType === 'delivery' && styles.serviceOptionActive
-                ]}
-                onPress={() => {
-                  setServiceType('delivery');
-                  setShowServicePicker(false);
-                }}
-              >
-                <Ionicons name="bicycle" size={24} color={serviceType === 'delivery' ? '#210059' : '#666'} />
-                <View style={styles.serviceOptionText}>
-                  <Text style={[styles.serviceOptionTitle, serviceType === 'delivery' && styles.serviceOptionTitleActive]}>
-                    Delivery
-                  </Text>
-                  <Text style={styles.serviceOptionSubtitle}>Food delivered to your door</Text>
-                </View>
-                {serviceType === 'delivery' && (
-                  <Ionicons name="checkmark-circle" size={24} color="#210059" />
-                )}
-              </TouchableOpacity>
-
-              <View style={styles.serviceDivider} />
-
-              <TouchableOpacity 
-                style={[
-                  styles.serviceOption,
-                  serviceType === 'pickup' && styles.serviceOptionActive
-                ]}
-                onPress={() => {
-                  setServiceType('pickup');
-                  setShowServicePicker(false);
-                }}
-              >
-                <Ionicons name="bag-handle" size={24} color={serviceType === 'pickup' ? '#210059' : '#666'} />
-                <View style={styles.serviceOptionText}>
-                  <Text style={[styles.serviceOptionTitle, serviceType === 'pickup' && styles.serviceOptionTitleActive]}>
-                    Pick Up
-                  </Text>
-                  <Text style={styles.serviceOptionSubtitle}>Collect your order yourself</Text>
-                </View>
-                {serviceType === 'pickup' && (
-                  <Ionicons name="checkmark-circle" size={24} color="#210059" />
-                )}
-              </TouchableOpacity>
+            <View style={styles.profileCircle}>
+              <Ionicons name="person" size={20} color="#210059" />
             </View>
-          )}
+          </TouchableOpacity>
         </View>
 
         {/* Search Bar - Always Visible */}
@@ -984,7 +904,7 @@ export default function HomeScreen() {
             <Ionicons name="search" size={20} color="#999" />
             <TextInput
               style={styles.searchInput}
-              placeholder="Search delivery..."
+              placeholder="What are you craving?"
               value={searchQuery}
               onChangeText={handleSearchChange}
               onFocus={handleSearchFocus}
@@ -996,15 +916,6 @@ export default function HomeScreen() {
               </TouchableOpacity>
             )}
           </View>
-          {!isSearchActive && (
-            <TouchableOpacity 
-              style={styles.filterButton}
-              onPress={handleFilterPress}
-              activeOpacity={0.7}
-            >
-              <Ionicons name="options-outline" size={24} color="#210059" />
-            </TouchableOpacity>
-          )}
         </View>
 
         {/* Main Content - Hidden when searching */}
