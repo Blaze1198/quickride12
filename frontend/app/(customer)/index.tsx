@@ -1536,7 +1536,7 @@ const styles = StyleSheet.create({
   },
   heroBanner: {
     borderRadius: 16,
-    padding: 20,
+    padding: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
