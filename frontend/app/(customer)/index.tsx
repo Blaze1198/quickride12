@@ -1416,12 +1416,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  // Service Type Selector
-  serviceTypeContainer: {
-    paddingHorizontal: 20,
-    marginTop: 16,
-    marginBottom: 8,
-  },
+  // Service Type Selector (removed for new design)
+  // serviceTypeContainer: {
+  //   paddingHorizontal: 20,
+  //   marginTop: 16,
+  //   marginBottom: 8,
+  // },
   serviceSelectorButton: {
     flexDirection: 'row',
     alignItems: 'center',
