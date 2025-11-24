@@ -1406,19 +1406,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    flex: 1,
   },
   deliverToTextContainer: {
     flexDirection: 'column',
+    flex: 1,
   },
   deliverToLabel: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#666',
-    fontWeight: '400',
+    fontWeight: '500',
   },
   deliverToValue: {
     fontSize: 16,
     color: '#000',
     fontWeight: '700',
+  },
+  deliverToAddress: {
+    fontSize: 13,
+    color: '#210059',
+    fontWeight: '600',
+    marginTop: 2,
   },
   profileButton: {
     padding: 4,
