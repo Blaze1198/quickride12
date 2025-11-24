@@ -814,48 +814,23 @@ export default function HomeScreen() {
               <Text style={styles.closedText}>Closed</Text>
             </View>
           )}
-          <TouchableOpacity 
-            style={styles.favoriteButton}
-            onPress={(e) => {
-              e.stopPropagation();
-              toggleFavorite(item.id);
-            }}
-            activeOpacity={0.7}
-          >
-            <Ionicons 
-              name={isFavorite ? "heart" : "heart-outline"} 
-              size={20} 
-              color={isFavorite ? "#210059" : "#FFF"} 
-            />
-          </TouchableOpacity>
+          
+          {/* Start New Order Button Overlay */}
+          <View style={styles.startOrderOverlay}>
+            <TouchableOpacity 
+              style={styles.startOrderButton}
+              onPress={() => router.push(`/restaurant/${item.id}` as any)}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.startOrderButtonText}>Start New Order</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View style={styles.cardContent}>
           <Text style={styles.cardTitle} numberOfLines={1}>
             {item.name}
           </Text>
-          <Text style={styles.cardSubtitle} numberOfLines={1}>
-            {item.description || 'Delicious food'}
-          </Text>
-
-          <View style={styles.cardFooter}>
-            <View style={styles.cardRating}>
-              <Ionicons name="star" size={14} color="#FFB800" />
-              <Text style={styles.ratingText}>{item.rating.toFixed(1)}</Text>
-              <Text style={styles.reviewCount}>(120+)</Text>
-            </View>
-          </View>
-
-          <View style={styles.cardDeliveryInfo}>
-            <View style={styles.deliveryItem}>
-              <Ionicons name="bicycle" size={14} color="#210059" />
-              <Text style={styles.deliveryText}>₱0 Delivery fee</Text>
-            </View>
-            <View style={styles.deliveryItem}>
-              <Ionicons name="time-outline" size={14} color="#666" />
-              <Text style={styles.deliveryText}>20-30 min</Text>
-            </View>
-          </View>
         </View>
       </TouchableOpacity>
     );
