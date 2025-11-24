@@ -1540,8 +1540,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    minHeight: 130,
-    marginRight: 0,
+    height: 140,
+    marginRight: 16,
   },
   bannerContent: {
     flex: 1,
