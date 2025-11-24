@@ -848,6 +848,11 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Dark Violet Top Navigation Bar */}
+      <View style={styles.topNavBar}>
+        <Text style={styles.topNavText}>Home</Text>
+      </View>
+
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Header - Always Visible */}
         <View style={styles.header}>
