@@ -922,7 +922,7 @@ export default function HomeScreen() {
         {!isSearchActive && (
           <View>
             {/* Hero Banner Carousel */}
-            <View style={styles.bannerContainer}>
+            <View style={styles.newBannerContainer}>
               <View style={styles.bannerCarouselContainer} {...panResponder.panHandlers}>
                 <Animated.View
                   style={[
