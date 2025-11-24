@@ -89,7 +89,7 @@ export default function HomeScreen() {
   const searchTimeoutRef = useRef<any>(null);
   
   const slideAnim = useRef(new Animated.Value(0)).current;
-  const [bannerWidth, setBannerWidth] = useState(width - 40); // width minus padding
+  const [bannerWidth, setBannerWidth] = useState((width - 40) * 0.85); // Show 85% so 15% of next banner peeks
 
   const banners = [
     {
