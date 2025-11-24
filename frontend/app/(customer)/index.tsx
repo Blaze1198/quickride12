@@ -1385,55 +1385,35 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: '#FFF',
-    borderBottomWidth: 2,
-    borderBottomColor: '#FFE8E8',
   },
-  locationBadge: {
+  deliverToContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFE8E8',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 20,
-    gap: 4,
+    gap: 8,
   },
-  locationBadgeText: {
+  deliverToTextContainer: {
+    flexDirection: 'column',
+  },
+  deliverToLabel: {
     fontSize: 12,
-    fontWeight: '600',
-    color: '#210059',
+    color: '#666',
+    fontWeight: '400',
   },
-  locationContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
+  deliverToValue: {
+    fontSize: 16,
+    color: '#000',
+    fontWeight: '700',
   },
-  locationText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#FFF',
+  profileButton: {
+    padding: 4,
   },
-  headerRightButtons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  serviceToggleButton: {
-    padding: 8,
+  profileCircle: {
+    width: 40,
+    height: 40,
     borderRadius: 20,
-    backgroundColor: '#E3F2FD',
-  },
-  notificationButton: {
-    position: 'relative',
-  },
-  notificationBadge: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#210059',
+    backgroundColor: '#F0E6FF',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   // Service Type Selector
