@@ -344,34 +344,36 @@ export default function HomeScreen() {
         );
       }
     } else {
-      // Use saved location (home, work, school)
+      // Always allow editing saved location (home, work, school)
       const saved = savedLocations[type];
+      
+      // If location exists, pre-fill the map with it
       if (saved.address) {
-        setSelectedLocation(saved.address);
         setTempLocation(saved.coordinates);
-        setSelectedLocationType(type); // Update the location type
-        setShowQuickLocations(false);
-        console.log(`✅ ${type} location selected:`, saved);
+        setSelectedLocation(saved.address);
+        console.log(`📍 Editing existing ${type} location:`, saved);
       } else {
-        // No saved location - open map to set it
-        setEditingLocation(type);
-        setShowQuickLocations(false);
-        setMapLoaded(false);
-        setShowLocationPicker(true);
-        
-        // Get current location for map center
-        if (typeof navigator !== 'undefined' && navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              setTempLocation({
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
-              });
-            },
-            (error) => console.error('Error:', error),
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-          );
-        }
+        console.log(`📍 Setting new ${type} location`);
+      }
+      
+      // Always open map picker to allow editing
+      setEditingLocation(type);
+      setShowQuickLocations(false);
+      setMapLoaded(false);
+      setShowLocationPicker(true);
+      
+      // Get current location for map center if no saved location
+      if (!saved.address && typeof navigator !== 'undefined' && navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setTempLocation({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            });
+          },
+          (error) => console.error('Error:', error),
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
       }
     }
   };
