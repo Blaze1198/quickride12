@@ -1597,39 +1597,33 @@ const styles = StyleSheet.create({
     backgroundColor: '#210059',
   },
 
-  // Categories
+  // Categories (New Pill Design)
   categoriesSection: {
-    marginTop: 24,
+    marginTop: 20,
   },
   categoriesContainer: {
     paddingHorizontal: 20,
-    gap: 16,
+    gap: 10,
   },
-  categoryItem: {
-    alignItems: 'center',
-    gap: 8,
+  categoryPill: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    backgroundColor: '#F5F5F5',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
-  categoryIcon: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  categoryIconSelected: {
-    borderWidth: 3,
+  categoryPillSelected: {
+    backgroundColor: '#210059',
     borderColor: '#210059',
   },
-  categoryEmoji: {
-    fontSize: 32,
-  },
-  categoryName: {
-    fontSize: 12,
+  categoryPillText: {
+    fontSize: 14,
     fontWeight: '600',
-    color: '#333',
+    color: '#666',
   },
-  categoryNameSelected: {
-    color: '#210059',
+  categoryPillTextSelected: {
+    color: '#FFF',
   },
 
   // Section Header
@@ -1638,23 +1632,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    marginTop: 32,
+    marginTop: 24,
     marginBottom: 16,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#000',
   },
-  activeFilter: {
-    fontSize: 12,
-    color: '#210059',
-    marginTop: 4,
-    fontWeight: '600',
-  },
-  seeAllText: {
+  seeAllLink: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '400',
     color: '#210059',
   },
 
