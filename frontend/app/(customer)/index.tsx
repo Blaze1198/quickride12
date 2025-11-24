@@ -1667,20 +1667,22 @@ const styles = StyleSheet.create({
     color: '#210059',
   },
 
-  // Restaurant Cards
-  restaurantsGrid: {
+  // Restaurant Cards (Carousel Layout)
+  restaurantCarousel: {
     paddingHorizontal: 20,
+    gap: 16,
   },
   restaurantCard: {
     backgroundColor: '#FFF',
     borderRadius: 16,
-    marginBottom: 20,
+    overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 3,
-    overflow: 'hidden',
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+    width: 170,
+    marginRight: 16,
   },
   cardImageContainer: {
     position: 'relative',
