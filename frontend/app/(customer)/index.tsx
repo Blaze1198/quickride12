@@ -850,7 +850,7 @@ export default function HomeScreen() {
             <Ionicons name="location-sharp" size={18} color="#210059" />
             <View style={styles.deliverToTextContainer}>
               <Text style={styles.deliverToLabel}>Deliver to</Text>
-              <Text style={styles.deliverToValue}>HOME</Text>
+              <Text style={styles.deliverToValue}>{selectedLocationType.toUpperCase()}</Text>
             </View>
             <Ionicons name="chevron-down" size={16} color="#666" style={{ marginLeft: 4 }} />
           </TouchableOpacity>
