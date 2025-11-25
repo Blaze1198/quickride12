@@ -820,11 +820,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Map Verification Modal in Checkout"
-    - "Periodic Location Updates from Rider"
+    - "Google Maps Native Styling for Rider Navigation"
+    - "Real-time Marker Movement with Spotlight"
   stuck_tasks:
     - "Map Verification Modal in Checkout"
-    - "Customer Live Order Tracking"
   test_all: false
   test_priority: "high_first"
 
