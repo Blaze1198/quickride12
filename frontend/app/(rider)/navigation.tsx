@@ -573,7 +573,8 @@ function RiderNavigationContent() {
     
     const disableAutoRecenter = () => {
       console.log('❌ AUTO-RECENTER DISABLED BY USER INTERACTION');
-      setAutoRecenter(false);
+      console.log('   Setting autoRecenterRef.current = false');
+      autoRecenterRef.current = false;
       
       // Clear any pending re-enable
       if (userInteractionTimer) {
