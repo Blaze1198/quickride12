@@ -604,8 +604,24 @@ async def create_restaurant(restaurant_data: Dict[str, Any], request: Request):
 @api_router.get("/restaurants")
 async def get_restaurants():
     """Get all restaurants"""
-    restaurants = await db.restaurants.find().to_list(100)
-    return [Restaurant(**r) for r in restaurants]
+    try:
+        restaurants = await db.restaurants.find().to_list(100)
+        logger.info(f"📋 Found {len(restaurants)} restaurants in database")
+        
+        # Convert to Restaurant models, skipping any with errors
+        valid_restaurants = []
+        for r in restaurants:
+            try:
+                valid_restaurants.append(Restaurant(**r))
+            except Exception as e:
+                logger.error(f"❌ Error converting restaurant {r.get('id', 'unknown')}: {str(e)}")
+                continue
+        
+        logger.info(f"✅ Returning {len(valid_restaurants)} valid restaurants")
+        return valid_restaurants
+    except Exception as e:
+        logger.error(f"❌ Error fetching restaurants: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error fetching restaurants: {str(e)}")
 
 @api_router.get("/restaurants/{restaurant_id}")
 async def get_restaurant(restaurant_id: str):
