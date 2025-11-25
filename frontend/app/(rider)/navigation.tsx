@@ -874,7 +874,15 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
         console.log('✅ Directions API response received successfully!');
         console.log('📦 Routes count:', result.routes?.length);
         
-        // Display the route on the map
+        // Store alternative routes if available
+        if (result.routes && result.routes.length > 1) {
+          console.log(`🛣️  Found ${result.routes.length} alternative routes`);
+          setAlternativeRoutes(result.routes);
+        } else {
+          setAlternativeRoutes([result.routes[0]]);
+        }
+        
+        // Display the selected route on the map (default to first route)
         directionsRenderer.setDirections(result);
         console.log('✅ Directions set on renderer');
         
@@ -882,8 +890,9 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
         const rendererMap = directionsRenderer.getMap();
         console.log('🗺️ Renderer map:', rendererMap ? 'EXISTS' : 'NULL');
         
-        // Get the route polyline
-        const route = result.routes[0];
+        // Get the selected route polyline
+        const routeIndex = selectedRouteIndex < result.routes.length ? selectedRouteIndex : 0;
+        const route = result.routes[routeIndex];
         const leg = route.legs[0];
         
         console.log('📍 Route overview polyline:', route.overview_polyline ? 'EXISTS' : 'MISSING');
@@ -891,6 +900,9 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
         // Extract distance and duration
         const distanceKm = (leg.distance.value / 1000).toFixed(1);
         const durationMins = Math.ceil(leg.duration.value / 60);
+        
+        // Store total distance for progress calculation
+        setTotalRouteDistance(leg.distance.value);
         
         setDistanceToDestination(`${distanceKm} km`);
         setEtaToDestination(`${durationMins} mins`);
