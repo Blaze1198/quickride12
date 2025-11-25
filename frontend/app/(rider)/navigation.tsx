@@ -602,6 +602,7 @@ function RiderNavigationContent() {
       },
       title: 'Your Location (Rider)',
       zIndex: 1000,
+      optimized: false, // Prevent marker from scaling with zoom
     });
     
     // Store rider marker in ref so it can be updated later
