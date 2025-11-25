@@ -257,7 +257,7 @@ function RiderNavigationContent() {
     // Store current location as previous for next update
     previousLocationRef.current = userLocation;
 
-  }, [userLocation?.latitude, userLocation?.longitude, isNavigating, autoRecenter]); // Update when location changes
+  }, [userLocation?.latitude, userLocation?.longitude, isNavigating]); // Update when location changes
 
   // Initialize map only once when job ID changes
   useEffect(() => {
