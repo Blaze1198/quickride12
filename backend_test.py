@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
 """
-Backend Testing Script for Navigation Screen Crash Investigation
+Backend Testing Script for Real-Time Marker Movement Investigation
 
-CRITICAL ISSUE: Navigation Screen Crash - getZoom Error on Null Map Instance
-ERROR: Uncaught TypeError: Cannot read properties of null (reading 'getZoom')
-Location: navigation.tsx:798:54
+CRITICAL ISSUE: Real-Time Marker Movement Not Working
+USER REPORT:
+- Rider marker is not moving in real-time as rider travels
+- Spotlight cone is not rotating or moving
+- Map is not tilting to 45 degrees during navigation
 
-ROOT CAUSE IDENTIFIED:
-- Line 798: const startZoom = mapInstanceRef.current.getZoom() || 14;
-- Line 1102: mapInstanceRef.current = null; (when currentJob exists)
-- Race condition: map cleared when job exists, but startNavigation expects map
+BACKEND TESTING FOCUS:
+- Location updates every 2 seconds (Line 160)
+- Backend updates every 2 seconds (Line 178)
+- Real-time marker update useEffect at lines 1399-1541
+- All backend APIs supporting real-time navigation functionality
 
-This script tests all backend APIs required for navigation functionality.
+This script tests all backend APIs required for real-time rider navigation.
 """
 
 import requests
