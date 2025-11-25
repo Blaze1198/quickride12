@@ -220,7 +220,8 @@ function RiderNavigationContent() {
       const heading = google.maps.geometry.spherical.computeHeading(prevPos, currPos);
       
       // Only pan to rider if auto-recenter is enabled
-      if (autoRecenter) {
+      console.log('   Checking autoRecenterRef.current:', autoRecenterRef.current);
+      if (autoRecenterRef.current) {
         // Mark as programmatic so it doesn't trigger user interaction listeners
         mapInstanceRef.current.set('programmatic_center', true);
         mapInstanceRef.current.panTo(currentPosition);
@@ -229,6 +230,8 @@ function RiderNavigationContent() {
             mapInstanceRef.current.set('programmatic_center', false);
           }
         }, 100);
+      } else {
+        console.log('   ⏸️ Auto-recenter disabled - skipping pan');
       }
       
       // Set camera heading (rotation) to face direction of travel
@@ -242,11 +245,11 @@ function RiderNavigationContent() {
       }
       
       // Maintain good zoom level for navigation (but only if auto-recenter is on)
-      if (autoRecenter && mapInstanceRef.current.getZoom() < 17) {
+      if (autoRecenterRef.current && mapInstanceRef.current.getZoom() < 17) {
         mapInstanceRef.current.setZoom(17);
       }
 
-      if (autoRecenter) {
+      if (autoRecenterRef.current) {
         console.log(`🧭 Camera updated - Heading: ${heading.toFixed(0)}°, Position: ${currentPosition.lat.toFixed(6)}, ${currentPosition.lng.toFixed(6)}`);
       }
     }
