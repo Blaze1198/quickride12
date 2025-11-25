@@ -268,6 +268,82 @@ frontend:
       - working: false
         agent: "testing"
         comment: |
+          🎯 COMPREHENSIVE REAL-TIME MARKER MOVEMENT TESTING COMPLETED - ROOT CAUSE IDENTIFIED
+          
+          OBJECTIVE: Test if rider marker is moving in real-time with debug logging enabled
+          USER REPORT: Marker not moving, spotlight not rotating, map not tilting to 45 degrees
+          
+          TESTING METHODOLOGY:
+          ✅ Successfully accessed /(rider)/navigation screen with authenticated rider account
+          ✅ Monitored console logs for 20 seconds as requested
+          ✅ Analyzed all debug messages from real-time marker update useEffect (lines 1399-1570)
+          
+          CRITICAL FINDINGS - DEBUG LOG ANALYSIS:
+          
+          1. ✅ LOCATION UPDATE TRIGGERS (WORKING):
+             - 🔄 [MARKER UPDATE] useEffect triggered: FOUND 10 times
+             - Triggering exactly every 2 seconds as expected
+             - Location update interval is working correctly
+          
+          2. ✅ REF STATUS CHECKS (PARTIALLY WORKING):
+             - userLocation: FOUND (10 logs) - coordinates available
+             - mapInstanceRef.current: EXISTS (10/10 times) - map initialized
+             - riderMarkerRef.current: NULL (10/10 times) - CRITICAL ISSUE
+             - Platform.OS: web (10/10 times) - correct platform
+          
+          3. ❌ ANIMATION START (NOT WORKING):
+             - "All checks passed": NOT FOUND (0 times)
+             - "Starting animation from": NOT FOUND (0 times)
+             - "Bearing calculated": NOT FOUND (0 times)
+             - Animation never starts due to failed checks
+          
+          4. ❌ ANIMATION STEPS (NOT WORKING):
+             - "Animation step X/15": NOT FOUND (0 steps)
+             - No animation steps 1-15 appearing
+             - Confirms animation is not running
+          
+          5. ❌ SPOTLIGHT UPDATES (NOT WORKING):
+             - "[SPOTLIGHT]" messages: NOT FOUND (0 updates)
+             - Spotlight cone creation/update not executing
+          
+          ROOT CAUSE IDENTIFIED:
+          🔍 CRITICAL ISSUE: riderMarkerRef.current is consistently NULL
+          
+          TECHNICAL ANALYSIS:
+          - useEffect triggers every 2 seconds ✅
+          - userLocation is available ✅
+          - mapInstanceRef.current EXISTS ✅
+          - riderMarkerRef.current is NULL ❌ (BLOCKER)
+          - Platform.OS is correct ✅
+          
+          The code at line 1407 checks: if (!userLocation || !mapInstanceRef.current || !riderMarkerRef.current)
+          Since riderMarkerRef.current is NULL, the function returns early with "Skipping - missing requirements"
+          This prevents all subsequent animation logic from executing.
+          
+          IMPACT ON USER-REPORTED SYMPTOMS:
+          ❌ Marker not moving: Confirmed - animation never starts due to NULL riderMarkerRef
+          ❌ Spotlight not rotating: Confirmed - spotlight logic never executes
+          ❌ Map not tilting: Confirmed - map tilt logic never reached
+          
+          CONCLUSION:
+          The real-time marker movement debug logging is working perfectly and has identified the exact issue:
+          riderMarkerRef.current is not being properly initialized or is being cleared somewhere in the code.
+          
+          RECOMMENDED FIXES:
+          1. Investigate rider marker creation logic - ensure riderMarkerRef is properly set
+          2. Check if marker is being created but ref not stored correctly
+          3. Add null checks and fallback marker creation if ref is missing
+          4. Debug marker initialization sequence in map loading logic
+          
+          DELIVERABLES COMPLETED:
+          ✅ Console log output showing exactly what's happening
+          ✅ Marker is NOT moving (visual confirmation via debug logs)
+          ✅ Specific check failing: riderMarkerRef.current is NULL
+          ✅ Root cause: Rider marker reference not properly initialized
+          ✅ Recommended fix: Fix rider marker creation and ref assignment
+      - working: false
+        agent: "testing"
+        comment: |
           🎯 COMPREHENSIVE BACKEND TESTING COMPLETED - REAL-TIME MARKER MOVEMENT INVESTIGATION
           
           CRITICAL ISSUE INVESTIGATED: Real-Time Marker Movement Not Working
