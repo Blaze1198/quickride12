@@ -811,14 +811,15 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
 
     const directionsService = new google.maps.DirectionsService();
     
-    // Create renderer with explicit configuration
+    // Create renderer with Google Maps navigation styling (thick blue line)
     const directionsRenderer = new google.maps.DirectionsRenderer({
       suppressMarkers: true, // We'll keep our custom markers
       polylineOptions: {
         strokeColor: routeColor, // Use provided color (blue for route 1, green for route 2)
-        strokeWeight: 6,
-        strokeOpacity: 0.9,
+        strokeWeight: 8, // Thick line like Google Maps navigation
+        strokeOpacity: 1.0, // Full opacity
         zIndex: 1000, // High z-index to ensure visibility
+        geodesic: true, // Follow earth's curvature
       },
       preserveViewport: true, // Keep current viewport
     });
