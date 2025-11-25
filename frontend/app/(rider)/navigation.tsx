@@ -181,6 +181,55 @@ function RiderNavigationContent() {
     return () => clearInterval(updateInterval);
   }, [userLocation?.latitude, userLocation?.longitude]); // Update when location changes
 
+  // Real-time map tracking - Update rider position, rotate camera, and center map
+  useEffect(() => {
+    if (!userLocation || !mapInstanceRef.current || !isNavigating) return;
+
+    const google = (window as any).google;
+    if (!google || !google.maps) return;
+
+    const currentPosition = {
+      lat: userLocation.latitude,
+      lng: userLocation.longitude,
+    };
+
+    // Calculate bearing/heading from previous position if available
+    if (previousLocationRef.current) {
+      const prevPos = new google.maps.LatLng(
+        previousLocationRef.current.latitude,
+        previousLocationRef.current.longitude
+      );
+      const currPos = new google.maps.LatLng(userLocation.latitude, userLocation.longitude);
+      
+      // Calculate heading
+      const heading = google.maps.geometry.spherical.computeHeading(prevPos, currPos);
+      
+      // Smooth camera rotation and zoom to rider
+      mapInstanceRef.current.panTo(currentPosition);
+      
+      // Set camera heading (rotation) to face direction of travel
+      if (mapInstanceRef.current.setHeading) {
+        mapInstanceRef.current.setHeading(heading);
+      }
+      
+      // Set camera tilt for 3D navigation view
+      if (mapInstanceRef.current.setTilt) {
+        mapInstanceRef.current.setTilt(45); // 45 degree tilt
+      }
+      
+      // Maintain good zoom level for navigation
+      if (mapInstanceRef.current.getZoom() < 17) {
+        mapInstanceRef.current.setZoom(17);
+      }
+
+      console.log(`🧭 Camera updated - Heading: ${heading.toFixed(0)}°, Position: ${currentPosition.lat.toFixed(6)}, ${currentPosition.lng.toFixed(6)}`);
+    }
+
+    // Store current location as previous for next update
+    previousLocationRef.current = userLocation;
+
+  }, [userLocation?.latitude, userLocation?.longitude, isNavigating]); // Update when location changes
+
   // Initialize map only once when job ID changes
   useEffect(() => {
     const jobId = currentJob?.data?.id;
