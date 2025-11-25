@@ -1948,7 +1948,7 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
                     console.log('✅ Recentering and enabling auto-follow');
                     mapInstanceRef.current.panTo(position);
                     mapInstanceRef.current.setZoom(17);
-                    setAutoRecenter(true); // Re-enable auto-centering
+                    autoRecenterRef.current = true; // Re-enable auto-centering
                     console.log('✅ Recenter complete, auto-follow enabled');
                   }
                 }
