@@ -858,7 +858,7 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
       origin: origin,
       destination: destination,
       travelMode: google.maps.TravelMode.DRIVING,
-      provideRouteAlternatives: false,
+      provideRouteAlternatives: true, // Enable alternative routes
       drivingOptions: {
         departureTime: new Date(),
         trafficModel: google.maps.TrafficModel.BEST_GUESS,
