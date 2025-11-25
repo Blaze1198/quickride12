@@ -1223,9 +1223,6 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
     }
   };
 
-  // Previous location for calculating bearing
-  const previousLocationRef = useRef<any>(null);
-
   // Update navigation based on current location - Auto-follow like Google Maps
   useEffect(() => {
     if (isNavigating && userLocation && navigationSteps.length > 0 && mapInstanceRef.current) {
