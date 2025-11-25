@@ -1622,10 +1622,9 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
 
   // Initialize idle map (no active job) - MOVED TO TOP TO FIX HOOKS ERROR
   useEffect(() => {
-    // Clear map instance when transitioning states
-    if (currentJob && mapInstanceRef.current) {
-      mapInstanceRef.current = null;
-      return;
+    // Don't clear map instance - let active navigation manage its own map
+    if (currentJob) {
+      return; // Exit early if there's an active job, active nav will handle map
     }
 
     // Only initialize if no current job and conditions are met
