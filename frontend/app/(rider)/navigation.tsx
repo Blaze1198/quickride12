@@ -22,6 +22,14 @@ import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import api from '../../utils/api';
 import { useAuthStore } from '../../store/authStore';
+import {
+  ETADisplay,
+  TurnByTurnInstructions,
+  RecenterButton,
+  AlternativeRoutes,
+  LaneGuidance,
+  ProgressBar,
+} from '../../components/NavigationFeatures';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
