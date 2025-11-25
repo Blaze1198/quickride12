@@ -156,10 +156,10 @@ function RiderNavigationContent() {
       fetchCurrentJob();
     }, 10000);
     
-    // Update location every 5 seconds
+    // Update location every 2 seconds for high sensitivity (like Google Maps)
     const locationInterval = setInterval(() => {
       getUserLocation();
-    }, 5000);
+    }, 2000);
     
     return () => {
       clearInterval(jobInterval);
