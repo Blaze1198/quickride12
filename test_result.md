@@ -935,6 +935,32 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: |
+      FRONTEND TESTING REQUEST: Real-Time Marker Movement Investigation
+      
+      ISSUE: Rider marker not moving, spotlight not rotating, map not tilting
+      
+      IMPLEMENTATION VERIFIED:
+      - Location updates every 2 seconds (confirmed by backend logs)
+      - Real-time marker update useEffect at lines 1399-1541
+      - Spotlight cone updates during animation frames
+      - Map tilt set to 45 degrees during navigation
+      
+      TESTING NEEDED:
+      1. Access rider navigation screen with active delivery
+      2. Monitor browser console for:
+         - Location update logs
+         - Marker position update logs
+         - Spotlight cone update logs
+         - Any JavaScript errors
+      3. Verify refs exist (riderMarkerRef, mapInstanceRef, directionConeRef)
+      4. Check if animation intervals are starting
+      5. Verify map tilt is working
+      6. Test with simulated movement
+      
+      FILE TO TEST: /app/frontend/app/(rider)/navigation.tsx
+      
+  - agent: "main"
+    message: |
       CRITICAL: Navigation Screen Crash - getZoom Error on Null Map Instance
       
       ERROR: Uncaught TypeError: Cannot read properties of null (reading 'getZoom')
