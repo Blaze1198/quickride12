@@ -242,6 +242,29 @@ frontend:
           DOCUMENTATION:
           - Created /app/GOOGLE_MAPS_NATIVE_STYLING_UPDATE.md with styling details
           - Created /app/REALTIME_MARKER_MOVEMENT.md with movement implementation details
+      - working: false
+        agent: "user"
+        comment: |
+          USER REPORTED ISSUE: Marker is not moving in real-time and map is not tilting to 45 degrees
+          
+          EXPECTED BEHAVIOR:
+          - Marker should move smoothly as rider travels
+          - Spotlight cone should rotate and follow marker direction
+          - Map should tilt to 45 degrees during navigation
+          - Updates should happen every 2 seconds
+          
+          CURRENT BEHAVIOR:
+          - Marker appears static, not moving
+          - No visible spotlight cone movement
+          - Map not tilting to 45 degrees
+          
+          TESTING NEEDED:
+          - Verify real-time marker update useEffect is executing
+          - Check if userLocation is actually changing
+          - Verify riderMarkerRef.current exists and is accessible
+          - Check browser console for JavaScript errors
+          - Verify map tilt functionality is working
+          - Test with actual rider movement scenario
 
   - task: "Rider Navigation Screen with Live Directions"
     implemented: true
