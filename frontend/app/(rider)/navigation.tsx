@@ -136,6 +136,13 @@ function RiderNavigationContent() {
   const riderMarkerRef = useRef<any>(null);
   const directionConeRef = useRef<any>(null);
   const previousLocationRef = useRef<any>(null); // Store previous location for bearing calculation
+  
+  // Modern Google Maps features
+  const [alternativeRoutes, setAlternativeRoutes] = useState<any[]>([]);
+  const [selectedRouteIndex, setSelectedRouteIndex] = useState<number>(0);
+  const [routeProgress, setRouteProgress] = useState<number>(0);
+  const [totalRouteDistance, setTotalRouteDistance] = useState<number>(0);
+  const [traveledDistance, setTraveledDistance] = useState<number>(0);
   const [showLocationEditor, setShowLocationEditor] = useState(false);
   const [riderLocationAddress, setRiderLocationAddress] = useState('Fetching location...');
   const [showLocationSearchModal, setShowLocationSearchModal] = useState(false);
