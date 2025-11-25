@@ -265,6 +265,88 @@ frontend:
           - Check browser console for JavaScript errors
           - Verify map tilt functionality is working
           - Test with actual rider movement scenario
+      - working: false
+        agent: "testing"
+        comment: |
+          🎯 COMPREHENSIVE BACKEND TESTING COMPLETED - REAL-TIME MARKER MOVEMENT INVESTIGATION
+          
+          CRITICAL ISSUE INVESTIGATED: Real-Time Marker Movement Not Working
+          USER REPORT: Rider marker not moving, spotlight cone not rotating, map not tilting to 45 degrees
+          
+          BACKEND TESTING RESULTS:
+          ✅ ALL BACKEND APIS WORKING CORRECTLY FOR REAL-TIME NAVIGATION:
+          
+          1. ✅ LOCATION UPDATES (Every 2 seconds):
+             - PUT /riders/location → 200 OK (4/4 successful updates)
+             - Backend receives and stores location updates correctly
+             - Location data available for frontend consumption
+             - Tested with realistic movement simulation (Makati to BGC route)
+          
+          2. ✅ RIDER PROFILE CREATION:
+             - GET /riders/me → 200 OK (auto-creates rider profile)
+             - Rider authentication working correctly
+             - Profile data includes all required navigation fields
+          
+          3. ✅ NAVIGATION DATA ENDPOINTS:
+             - GET /rider/current-order → 200 OK (returns order with navigation data)
+             - GET /rider/current-ride → 200 OK (returns ride data when available)
+             - Both endpoints provide restaurant_location and delivery_address coordinates
+             - Order status supports active navigation (rider_assigned, picked_up, out_for_delivery)
+          
+          4. ✅ CUSTOMER TRACKING SUPPORT:
+             - GET /orders/{order_id}/rider-location → 200 OK
+             - Customer can access real-time rider location data
+             - Backend provides rider_assigned, location, rider_name, rider_phone
+             - Data updates reflect rider location changes immediately
+          
+          BACKEND LOGS EVIDENCE:
+          - "🚴 Rider rider@gmail.com updating location to: lat=14.5547, lng=121.0244"
+          - "✅ Rider location updated in database"
+          - Location updates happening every 2 seconds as expected
+          - No backend errors or failures detected
+          
+          CONCLUSION:
+          ✅ BACKEND IS FULLY FUNCTIONAL FOR REAL-TIME MARKER MOVEMENT
+          ❌ ISSUE IS IN FRONTEND: Real-time marker update useEffect (lines 1399-1541)
+          
+          ROOT CAUSE ANALYSIS - FRONTEND DEBUGGING NEEDED:
+          🔍 The issue is NOT in the backend - all APIs are working correctly
+          🔍 Backend provides location updates every 2 seconds as required
+          🔍 Navigation data (restaurant_location, delivery_address) is available
+          🔍 Customer tracking data is accessible for route line drawing
+          
+          FRONTEND ISSUES TO INVESTIGATE:
+          1. Check if userLocation state is updating every 2 seconds in component
+          2. Verify riderMarkerRef.current exists and is not null
+          3. Check if Google Maps API is loaded (window.google.maps)
+          4. Verify if marker.setPosition() is being called in useEffect
+          5. Check browser console for JavaScript errors in real-time update code
+          6. Verify if map tilt (setTilt(45)) is being called during navigation
+          7. Check if directionConeRef.current exists for spotlight cone updates
+          8. Verify if animation intervals are starting and executing
+          
+          SPECIFIC CODE LOCATIONS TO DEBUG:
+          - Line 160-162: Location update interval (every 2 seconds)
+          - Line 178-180: Backend update interval (every 2 seconds)  
+          - Lines 1399-1541: Real-time marker update useEffect
+          - Lines 1435, 1467, 1527: marker.setPosition() calls
+          - Lines 1447-1497: Spotlight cone update logic
+          - Lines 217, 1134, 1351: Map tilt setTilt(45) calls
+          
+          TESTING EVIDENCE:
+          ✅ Created test rider account and verified all endpoints
+          ✅ Simulated realistic rider movement with 4 location updates
+          ✅ All location updates successful (4/4)
+          ✅ Backend logs show continuous location updates from real riders
+          ✅ Navigation data available for map rendering
+          ✅ Customer tracking data available for route lines
+          
+          RECOMMENDATION:
+          🔧 Focus frontend debugging on the real-time marker update useEffect
+          🔧 Add console.log statements to track execution flow
+          🔧 Verify all required refs are not null before marker operations
+          🔧 Check if Google Maps geometry library is loaded for spotlight cone
+          🔧 Test with browser developer tools to monitor JavaScript execution
 
   - task: "Rider Navigation Screen with Live Directions"
     implemented: true
