@@ -1902,52 +1902,34 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
               distance={distanceToDestination || 'Calculating...'}
             />
 
-            {/* 2. Turn-by-Turn Instructions */}
-            {currentStep && (
-              <TurnByTurnInstructions currentStep={currentStep} />
-            )}
-
             {/* 9. Lane Guidance */}
             {currentStep?.lanes && (
               <LaneGuidance laneInfo={currentStep.lanes} />
             )}
 
-            {/* 8. Alternative Routes */}
-            <AlternativeRoutes
-              routes={alternativeRoutes}
-              selectedIndex={selectedRouteIndex}
-              onSelectRoute={(index) => {
-                setSelectedRouteIndex(index);
-                // Reload route with selected alternative
-                const google = (window as any).google;
-                if (google && mapInstanceRef.current && currentJob) {
-                  const { restaurant_location, customer_location } = currentJob.data;
-                  if (restaurant_location && customer_location) {
-                    fetchRouteFromDirectionsAPI(
-                      { lat: userLocation.latitude, lng: userLocation.longitude },
-                      orderStatus === 'picked_up' 
-                        ? { lat: customer_location.latitude, lng: customer_location.longitude }
-                        : { lat: restaurant_location.latitude, lng: restaurant_location.longitude },
-                      mapInstanceRef.current
-                    );
-                  }
-                }
-              }}
-            />
-
             {/* 6. Recenter Button */}
             <RecenterButton
               onPress={() => {
+                console.log('🎯 Recenter button clicked');
+                console.log('   - mapInstanceRef.current:', mapInstanceRef.current ? 'EXISTS' : 'NULL');
+                console.log('   - userLocation:', userLocation);
+                
                 if (mapInstanceRef.current && userLocation) {
                   const google = (window as any).google;
-                  if (google) {
+                  if (google && google.maps) {
                     const position = new google.maps.LatLng(
                       userLocation.latitude,
                       userLocation.longitude
                     );
+                    console.log('✅ Panning to position:', position.lat(), position.lng());
                     mapInstanceRef.current.panTo(position);
                     mapInstanceRef.current.setZoom(17);
+                    console.log('✅ Recenter complete');
+                  } else {
+                    console.log('❌ Google Maps API not available');
                   }
+                } else {
+                  console.log('❌ Missing mapInstanceRef or userLocation');
                 }
               }}
             />
