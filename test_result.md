@@ -1328,6 +1328,55 @@ agent_communication:
   
   - agent: "testing"
     message: |
+      🎯 REAL-TIME MARKER MOVEMENT BACKEND TESTING COMPLETED - CRITICAL FINDINGS
+      
+      ISSUE INVESTIGATED: Real-Time Marker Movement Not Working
+      USER REPORT: Rider marker not moving, spotlight cone not rotating, map not tilting to 45 degrees
+      
+      COMPREHENSIVE BACKEND TESTING RESULTS:
+      ✅ ALL BACKEND APIS WORKING CORRECTLY FOR REAL-TIME NAVIGATION
+      
+      BACKEND FUNCTIONALITY VERIFIED:
+      1. ✅ Location Updates (Every 2 seconds): PUT /riders/location → 200 OK
+      2. ✅ Rider Profile Creation: GET /riders/me → 200 OK (auto-creates profile)
+      3. ✅ Navigation Data: GET /rider/current-order → 200 OK (with coordinates)
+      4. ✅ Customer Tracking: GET /orders/{id}/rider-location → 200 OK
+      5. ✅ Real-time Updates: Backend logs show continuous location updates
+      
+      TESTING EVIDENCE:
+      - Created test rider account and verified all endpoints working
+      - Simulated realistic rider movement with 4 location updates (all successful)
+      - Backend logs show: "🚴 Rider updating location" every 2 seconds
+      - Navigation data includes restaurant_location and delivery_address coordinates
+      - Customer tracking data available for route line drawing
+      
+      ROOT CAUSE IDENTIFIED:
+      ✅ BACKEND IS FULLY FUNCTIONAL - Issue is in FRONTEND
+      ❌ Problem is in real-time marker update useEffect (lines 1399-1541)
+      
+      FRONTEND DEBUGGING REQUIRED:
+      1. Check if userLocation state updates every 2 seconds in component
+      2. Verify riderMarkerRef.current exists and is not null
+      3. Check if Google Maps API is loaded (window.google.maps)
+      4. Verify marker.setPosition() calls are executing
+      5. Check browser console for JavaScript errors
+      6. Verify map tilt setTilt(45) is being called
+      7. Check directionConeRef.current for spotlight cone updates
+      
+      SPECIFIC CODE LOCATIONS TO DEBUG:
+      - Lines 160-162: Location update interval (every 2 seconds)
+      - Lines 1399-1541: Real-time marker update useEffect
+      - Lines 1435, 1467, 1527: marker.setPosition() calls
+      - Lines 217, 1134, 1351: Map tilt setTilt(45) calls
+      
+      CONCLUSION:
+      🔧 Backend is ready for real-time navigation
+      🔧 Focus frontend debugging on marker update useEffect
+      🔧 Add console.log statements to track execution flow
+      🔧 Verify all refs are not null before operations
+  
+  - agent: "testing"
+    message: |
       CRITICAL ISSUE CONFIRMED: 403 Forbidden Errors on Rider Screens - COMPREHENSIVE TESTING COMPLETED
       
       ISSUE DIAGNOSIS COMPLETE:
