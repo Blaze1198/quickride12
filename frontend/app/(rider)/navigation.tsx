@@ -569,23 +569,26 @@ function RiderNavigationContent() {
     setMapLoaded(true);
     
     // Disable auto-recenter when user manually interacts with the map
-    google.maps.event.addListener(map, 'dragstart', () => {
-      console.log('🖱️ User dragged map - disabling auto-recenter');
+    let userInteractionTimer: any = null;
+    
+    const disableAutoRecenter = () => {
+      console.log('❌ AUTO-RECENTER DISABLED BY USER INTERACTION');
       setAutoRecenter(false);
+      
+      // Clear any pending re-enable
+      if (userInteractionTimer) {
+        clearTimeout(userInteractionTimer);
+      }
+    };
+    
+    google.maps.event.addListener(map, 'dragstart', () => {
+      console.log('🖱️ User dragged map');
+      disableAutoRecenter();
     });
     
     google.maps.event.addListener(map, 'zoom_changed', () => {
-      console.log('🔍 User zoomed map - disabling auto-recenter');
-      setAutoRecenter(false);
-    });
-    
-    google.maps.event.addListener(map, 'center_changed', () => {
-      // Only disable if it's a user interaction, not programmatic
-      // Check if the center change is from user interaction by checking a flag
-      if (!map.get('programmatic_center')) {
-        console.log('📍 Map center changed by user - disabling auto-recenter');
-        setAutoRecenter(false);
-      }
+      console.log('🔍 User zoomed map');
+      disableAutoRecenter();
     });
     console.log('✅ Map initialized successfully');
 
