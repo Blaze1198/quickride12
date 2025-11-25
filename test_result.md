@@ -1083,6 +1083,28 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: |
+      FRONTEND TESTING REQUEST: Verify Marker Creation in Active Navigation
+      
+      CRITICAL FINDINGS FROM PREVIOUS TEST:
+      - riderMarkerRef.current is consistently NULL
+      - Marker is created in loadMap() at line 595-608
+      - Marker ref is set at line 608
+      - Marker is cleared in stopNavigation() at line 1191
+      
+      TESTING SCENARIO:
+      1. Create/accept an active delivery order
+      2. Verify loadMap() is called (check for console log at line 609)
+      3. Monitor if marker ref stays set or gets cleared
+      4. Check if real-time update useEffect can access the marker
+      
+      SPECIFIC CHECKS:
+      - Does "✅ [LOADMAP] Rider marker created and stored in ref: SUCCESS" appear?
+      - Does riderMarkerRef.current stay set after loadMap()?
+      - Is the marker visible on the map?
+      - Does the real-time update useEffect detect the marker?
+      
+  - agent: "main"
+    message: |
       FRONTEND TESTING REQUEST: Real-Time Marker Movement Investigation
       
       ISSUE: Rider marker not moving, spotlight not rotating, map not tilting
