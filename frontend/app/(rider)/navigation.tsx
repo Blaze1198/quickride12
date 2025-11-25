@@ -1396,6 +1396,68 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
     }
   }, [userLocation, isNavigating]);
 
+  // Update rider marker position in real-time (works for both navigation and idle modes)
+  useEffect(() => {
+    if (!userLocation || !mapInstanceRef.current || !riderMarkerRef.current) return;
+    
+    const google = (window as any).google;
+    if (!google || !google.maps) return;
+    
+    const newPosition = new google.maps.LatLng(userLocation.latitude, userLocation.longitude);
+    
+    // Calculate bearing if we have a previous location
+    let bearing = currentBearing;
+    if (previousLocationRef.current) {
+      const prevLatLng = new google.maps.LatLng(
+        previousLocationRef.current.latitude,
+        previousLocationRef.current.longitude
+      );
+      bearing = google.maps.geometry.spherical.computeHeading(prevLatLng, newPosition);
+      setCurrentBearing(bearing);
+    }
+    previousLocationRef.current = userLocation;
+    
+    // Smoothly animate marker to new position
+    const oldPosition = riderMarkerRef.current.getPosition();
+    if (oldPosition) {
+      // Animate marker movement over 1 second
+      const steps = 30; // Number of animation steps
+      const latStep = (newPosition.lat() - oldPosition.lat()) / steps;
+      const lngStep = (newPosition.lng() - oldPosition.lng()) / steps;
+      
+      let currentStep = 0;
+      const animationInterval = setInterval(() => {
+        currentStep++;
+        const interpolatedLat = oldPosition.lat() + (latStep * currentStep);
+        const interpolatedLng = oldPosition.lng() + (lngStep * currentStep);
+        const interpolatedPosition = new google.maps.LatLng(interpolatedLat, interpolatedLng);
+        
+        riderMarkerRef.current.setPosition(interpolatedPosition);
+        
+        // Also update rotation
+        const icon = riderMarkerRef.current.getIcon();
+        if (icon && typeof icon === 'object' && bearing !== 0) {
+          riderMarkerRef.current.setIcon({
+            ...icon,
+            rotation: bearing,
+          });
+        }
+        
+        if (currentStep >= steps) {
+          clearInterval(animationInterval);
+        }
+      }, 1000 / steps); // Complete animation in ~1 second
+    } else {
+      // No old position, just set directly
+      riderMarkerRef.current.setPosition(newPosition);
+    }
+    
+    // Smoothly pan map to follow rider (only if not in active navigation mode)
+    if (!isNavigating && mapInstanceRef.current) {
+      mapInstanceRef.current.panTo(newPosition);
+    }
+  }, [userLocation, currentBearing, isNavigating]);
+
   // Initialize idle map (no active job) - MOVED TO TOP TO FIX HOOKS ERROR
   useEffect(() => {
     // Clear map instance when transitioning states
