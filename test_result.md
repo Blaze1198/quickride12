@@ -189,9 +189,9 @@ backend:
 frontend:
   - task: "Google Maps Native Styling for Rider Navigation"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/app/(rider)/navigation.tsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: true
     status_history:
