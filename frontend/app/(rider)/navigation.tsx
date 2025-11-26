@@ -1574,10 +1574,14 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
         
         // Recalculate route from current position to destination
         if (currentJob && currentJob.data) {
-          const { restaurant_location, customer_location } = currentJob.data;
-          const destination = orderStatus === 'picked_up' 
+          const { restaurant_location, customer_location, status } = currentJob.data;
+          
+          // Determine destination based on job status
+          const destination = status === 'picked_up' 
             ? { lat: customer_location.latitude, lng: customer_location.longitude }
             : { lat: restaurant_location.latitude, lng: restaurant_location.longitude };
+          
+          console.log(`📍 Rerouting to: ${status === 'picked_up' ? 'Customer' : 'Restaurant'}`);
           
           // Recalculate route
           fetchRouteFromDirectionsAPI(
