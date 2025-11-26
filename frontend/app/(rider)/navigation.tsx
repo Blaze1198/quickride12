@@ -1627,13 +1627,13 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
           riderMarkerRef.current.setPosition(interpolatedPosition);
         }
         
-        // Update marker rotation
-        if (riderMarkerRef.current) {
+        // Update marker rotation using GPS heading (Google Maps arrow symbol)
+        if (riderMarkerRef.current && bearing !== undefined) {
           const icon = riderMarkerRef.current.getIcon();
-          if (icon && typeof icon === 'object' && bearing !== 0) {
+          if (icon && typeof icon === 'object') {
             riderMarkerRef.current.setIcon({
               ...icon,
-              rotation: bearing,
+              rotation: bearing, // Rotate the arrow to match GPS heading
             });
           }
         }
