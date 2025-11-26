@@ -217,18 +217,11 @@ function RiderNavigationContent() {
 
   // Separate effect for sending location updates to backend
   useEffect(() => {
-    if (!userLocation) return; // Only need userLocation, not currentJob
-    
-    // Send initial location update
+    if (!userLocation || !user || user.role !== 'rider') return;
+
+    // Send location update immediately when location changes
     updateRiderLocation();
-    
-    // Send location updates every 2 seconds for high sensitivity
-    const updateInterval = setInterval(() => {
-      updateRiderLocation();
-    }, 2000);
-    
-    return () => clearInterval(updateInterval);
-  }, [userLocation?.latitude, userLocation?.longitude]); // Update when location changes
+  }, [userLocation, user]);
 
   // Real-time map tracking - Update rider position, rotate camera, and center map
   useEffect(() => {
