@@ -913,14 +913,14 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
 
     const directionsService = new google.maps.DirectionsService();
     
-    // Create renderer with grey/faded styling for planned route (will be behind the traveled path)
+    // Create renderer with Google Maps blue highlight for planned route
     const directionsRenderer = new google.maps.DirectionsRenderer({
       suppressMarkers: true, // We'll keep our custom markers
       polylineOptions: {
-        strokeColor: '#BDBDBD', // Grey color for planned route
-        strokeWeight: 6, // Slightly thinner than traveled path
-        strokeOpacity: 0.6, // Semi-transparent
-        zIndex: 1000, // Below the traveled path (2000)
+        strokeColor: '#4285F4', // Google Maps blue highlight
+        strokeWeight: 8, // Thick highlighted line
+        strokeOpacity: 1.0, // Full opacity
+        zIndex: 1000, // High z-index
         geodesic: true, // Follow earth's curvature
       },
       preserveViewport: true, // Don't auto-zoom/pan when route is rendered
