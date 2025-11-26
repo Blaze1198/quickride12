@@ -1553,12 +1553,12 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
     }
     previousLocationRef.current = userLocation;
     
-    // Check if rider has deviated from the planned route (Google Maps rerouting logic)
-    if (currentRoutePathRef.current.length > 0 && mapInstanceRef.current) {
+    // REAL-TIME REROUTING: Check if rider has deviated from the planned route
+    if (currentRoutePathRef.current.length > 0 && mapInstanceRef.current && currentJob) {
       const now = Date.now();
       const timeSinceLastReroute = now - lastRerouteTimeRef.current;
       
-      // Check if rider is far from the route (more than 50 meters)
+      // Check if rider is far from the route (more than 30 meters for sensitivity)
       let closestDistance = Infinity;
       for (const routePoint of currentRoutePathRef.current) {
         const distance = google.maps.geometry.spherical.computeDistanceBetween(newPosition, routePoint);
@@ -1567,29 +1567,35 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
         }
       }
       
-      // If more than 50m off route and at least 10 seconds since last reroute, recalculate
-      if (closestDistance > 50 && timeSinceLastReroute > 10000) {
-        console.log(`🔄 OFF ROUTE! Distance from route: ${closestDistance.toFixed(0)}m - Recalculating...`);
+      // Real-time rerouting: If more than 30m off route and at least 3 seconds since last reroute
+      if (closestDistance > 30 && timeSinceLastReroute > 3000) {
+        console.log(`🔄 REROUTING! Distance from route: ${closestDistance.toFixed(0)}m`);
         lastRerouteTimeRef.current = now;
         
-        // Recalculate route from current position to destination
-        if (currentJob && currentJob.data) {
-          const { restaurant_location, customer_location, status } = currentJob.data;
-          
-          // Determine destination based on job status
-          const destination = status === 'picked_up' 
-            ? { lat: customer_location.latitude, lng: customer_location.longitude }
-            : { lat: restaurant_location.latitude, lng: restaurant_location.longitude };
-          
-          console.log(`📍 Rerouting to: ${status === 'picked_up' ? 'Customer' : 'Restaurant'}`);
-          
-          // Recalculate route
-          fetchRouteFromDirectionsAPI(
-            { lat: userLocation.latitude, lng: userLocation.longitude },
-            destination,
-            mapInstanceRef.current
-          );
+        const { restaurant_location, customer_location, status } = currentJob.data;
+        const destination = status === 'picked_up' 
+          ? { lat: customer_location.latitude, lng: customer_location.longitude }
+          : { lat: restaurant_location.latitude, lng: restaurant_location.longitude };
+        
+        console.log(`📍 Recalculating route to: ${status === 'picked_up' ? 'Customer' : 'Restaurant'}`);
+        
+        // Clear old route renderers before recalculating
+        if (directionsRenderersRef.current && directionsRenderersRef.current.length > 0) {
+          directionsRenderersRef.current.forEach(renderer => {
+            if (renderer) {
+              renderer.setMap(null); // Remove from map
+            }
+          });
+          directionsRenderersRef.current = []; // Clear array
+          console.log('🗑️ Cleared old route polylines');
         }
+        
+        // Recalculate route with fresh directions
+        fetchRouteFromDirectionsAPI(
+          { lat: userLocation.latitude, lng: userLocation.longitude },
+          destination,
+          mapInstanceRef.current
+        );
       }
     }
     
