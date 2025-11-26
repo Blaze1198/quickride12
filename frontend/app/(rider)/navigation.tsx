@@ -1548,6 +1548,28 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
     }
     previousLocationRef.current = userLocation;
     
+    // Add current position to traveled path
+    traveledPathRef.current.push(newPosition);
+    console.log(`🛣️ Traveled path length: ${traveledPathRef.current.length} points`);
+    
+    // Update or create the traveled polyline (highlighted blue line)
+    if (traveledPolylineRef.current) {
+      // Update existing polyline with new path
+      traveledPolylineRef.current.setPath(traveledPathRef.current);
+    } else {
+      // Create new traveled polyline
+      traveledPolylineRef.current = new google.maps.Polyline({
+        path: traveledPathRef.current,
+        map: mapInstanceRef.current,
+        strokeColor: '#4285F4', // Google Maps blue
+        strokeOpacity: 1.0,
+        strokeWeight: 8, // Thick highlighted line
+        zIndex: 2000, // Above everything else
+        geodesic: true,
+      });
+      console.log('✅ Created traveled path polyline');
+    }
+    
     // Smoothly animate marker to new position
     const oldPosition = riderMarkerRef.current.getPosition();
     if (oldPosition) {
