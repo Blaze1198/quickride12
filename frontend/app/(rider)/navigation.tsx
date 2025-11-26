@@ -1571,8 +1571,8 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
         }
       }
       
-      // Real-time rerouting: If more than 30m off route and at least 3 seconds since last reroute
-      if (closestDistance > 30 && timeSinceLastReroute > 3000) {
+      // DEVIATION DETECTION: If more than 50m off route and at least 5 seconds since last reroute
+      if (closestDistance > 50 && timeSinceLastReroute > 5000) {
         console.log(`🔄 REROUTING! Distance from route: ${closestDistance.toFixed(0)}m`);
         lastRerouteTimeRef.current = now;
         
