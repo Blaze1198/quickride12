@@ -991,9 +991,16 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
         console.log(`✅ Route loaded: ${distanceKm} km, ${durationMins} mins, ${leg.steps.length} steps`);
         
         // Store navigation steps for potential turn-by-turn display
-        setNavigationSteps(leg.steps);
-        if (leg.steps.length > 0) {
-          setCurrentStep(leg.steps[0]);
+        const steps = leg.steps || [];
+        setNavigationSteps(steps);
+        
+        // Store the route path for deviation detection
+        const routePath = route.overview_path || [];
+        currentRoutePathRef.current = routePath;
+        console.log(`📌 Stored ${routePath.length} points for route deviation detection`);
+        
+        if (steps.length > 0) {
+          setCurrentStep(steps[0]);
         }
         
         // Call completion callback
