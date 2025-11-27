@@ -1627,18 +1627,21 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
     // Update position immediately
     riderMarkerRef.current.setPosition(newPosition);
     
-    // Update marker rotation instantly using GPS heading or calculated bearing
+    // Update marker rotation instantly - ALWAYS update for responsive arrow direction
+    // Priority: Use GPS heading from device if available (most accurate), otherwise use calculated bearing
     const rotationAngle = userLocation.heading !== null && userLocation.heading !== undefined 
       ? userLocation.heading 
       : bearing;
     
-    if (riderMarkerRef.current && rotationAngle !== undefined && rotationAngle !== 0) {
+    // ALWAYS update rotation when we have a valid angle (including 0° for north)
+    if (riderMarkerRef.current && rotationAngle !== undefined && rotationAngle !== null) {
       const icon = riderMarkerRef.current.getIcon();
       if (icon && typeof icon === 'object') {
         riderMarkerRef.current.setIcon({
           ...icon,
           rotation: rotationAngle, // Use GPS heading if available, else calculated bearing
         });
+        console.log(`🎯 Arrow rotation updated: ${rotationAngle.toFixed(1)}°`);
       }
     }
     
