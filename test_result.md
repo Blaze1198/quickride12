@@ -3147,9 +3147,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "GPS Tracking Speed and Accuracy Optimization"
-    - "3D Navigation View - Google Maps Style"
-  stuck_tasks: []
+    - "GPS Tracking Speed and Accuracy Optimization" (Frontend - Cannot be tested by testing agent)
+    - "3D Navigation View - Google Maps Style" (Frontend - Cannot be tested by testing agent)
+  stuck_tasks:
+    - "Map Verification Modal in Checkout"
   test_all: false
   test_priority: "high_first"
 
