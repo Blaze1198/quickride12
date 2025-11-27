@@ -2,7 +2,7 @@
 
 ## ✅ YOUR WEB APP IS ALREADY LIVE!
 
-**Access your app here:** https://deliverymap-dev.preview.emergentagent.com
+**Access your app here:** https://gps-pilot.preview.emergentagent.com
 
 ### What's Working NOW:
 - ✅ Customer app (browse restaurants, order food)
@@ -12,7 +12,7 @@
 - ✅ Google login + Email/Password login
 
 ### Test it RIGHT NOW:
-1. Open: https://deliverymap-dev.preview.emergentagent.com
+1. Open: https://gps-pilot.preview.emergentagent.com
 2. Login as admin:
    - Email: `admin@quickbite.com`
    - Password: `admin123`
@@ -60,7 +60,7 @@ You'll need:
 ## ❓ Quick Questions:
 
 **Q: Can people use my app now?**
-Yes! Share this link: https://deliverymap-dev.preview.emergentagent.com
+Yes! Share this link: https://gps-pilot.preview.emergentagent.com
 
 **Q: Will it work on phones?**
 Yes! Opens in phone browser, works like an app.

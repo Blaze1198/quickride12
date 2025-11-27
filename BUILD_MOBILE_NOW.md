@@ -4,7 +4,7 @@
 
 1. ✅ Created `eas.json` - Build configuration
 2. ✅ Updated `app.json` - App branding & permissions
-3. ✅ Your web app is live at: https://deliverymap-dev.preview.emergentagent.com
+3. ✅ Your web app is live at: https://gps-pilot.preview.emergentagent.com
 
 ## 📱 Next Steps - Build Your Mobile Apps!
 
@@ -315,7 +315,7 @@ Good luck! You got this! 💪
 ## 📝 **Summary:**
 
 **NOW:**
-- ✅ Web app: https://deliverymap-dev.preview.emergentagent.com
+- ✅ Web app: https://gps-pilot.preview.emergentagent.com
 
 **IN 30 MINUTES:**
 - ✅ Android APK installed on your phone
