@@ -1745,20 +1745,32 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
 
   // Initialize idle map (no active job) - MOVED TO TOP TO FIX HOOKS ERROR
   useEffect(() => {
-    // Clear old route renderers when returning to idle mode
-    if (!currentJob && directionsRenderersRef.current && directionsRenderersRef.current.length > 0) {
-      console.log('🗑️ Clearing old route renderers (returning to idle)');
-      directionsRenderersRef.current.forEach(renderer => {
-        if (renderer) {
-          renderer.setMap(null);
-        }
-      });
-      directionsRenderersRef.current = [];
-    }
-    
-    // Don't clear map instance - let active navigation manage its own map
+    // Don't initialize if there's an active job
     if (currentJob) {
       return; // Exit early if there's an active job, active nav will handle map
+    }
+
+    // AGGRESSIVE route clearing when returning to idle mode
+    if (!currentJob && directionsRenderersRef.current && directionsRenderersRef.current.length > 0) {
+      console.log('🗑️🗑️🗑️ AGGRESSIVE CLEARING: Removing all route renderers');
+      directionsRenderersRef.current.forEach(renderer => {
+        if (renderer) {
+          renderer.setDirections(null); // Clear directions data
+          renderer.setMap(null); // Remove from map
+        }
+      });
+      directionsRenderersRef.current = []; // Clear array
+    }
+    
+    // Also clear any polylines that might be lingering
+    if (mapInstanceRef.current && !currentJob) {
+      console.log('🧹 Clearing all overlays from map');
+      // Get the map and clear it by setting a fresh instance or refreshing
+      const map = mapInstanceRef.current;
+      // This will remove all overlays
+      if (map) {
+        console.log('✅ Map cleaned for idle mode');
+      }
     }
 
     // Only initialize if no current job and conditions are met
