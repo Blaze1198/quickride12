@@ -1990,7 +1990,7 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
             {/* 6. Recenter Button */}
             <RecenterButton
               onPress={() => {
-                console.log('🎯 Recenter button clicked');
+                console.log('🎯 Recenter button clicked - Enabling 3D Navigation View');
                 
                 if (mapInstanceRef.current && userLocation) {
                   const google = (window as any).google;
@@ -1999,11 +1999,39 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
                       userLocation.latitude,
                       userLocation.longitude
                     );
-                    console.log('✅ Recentering and enabling auto-follow');
-                    mapInstanceRef.current.panTo(position);
-                    mapInstanceRef.current.setZoom(17);
-                    autoRecenterRef.current = true; // Re-enable auto-centering
-                    console.log('✅ Recenter complete, auto-follow enabled');
+                    
+                    // Re-enable auto-centering
+                    autoRecenterRef.current = true;
+                    console.log('✅ Auto-follow re-enabled');
+                    
+                    // INSTANT center to current position
+                    mapInstanceRef.current.setCenter(position);
+                    
+                    // Set navigation zoom level
+                    mapInstanceRef.current.setZoom(18);
+                    
+                    // ENABLE 3D NAVIGATION VIEW - Tilt camera to 45 degrees (bird's eye view)
+                    if (mapInstanceRef.current.setTilt) {
+                      mapInstanceRef.current.setTilt(45);
+                      console.log('✅ Camera tilt set to 45° (3D view)');
+                    }
+                    
+                    // ROTATE MAP - Arrow points upward (following lane direction)
+                    // Calculate heading from movement or use current bearing
+                    let heading = currentBearing;
+                    
+                    // If we have GPS heading from device, use that (most accurate)
+                    if (userLocation.heading !== null && userLocation.heading !== undefined) {
+                      heading = userLocation.heading;
+                    }
+                    
+                    // Rotate map so arrow points upward in direction of travel
+                    if (mapInstanceRef.current.setHeading && heading !== 0) {
+                      mapInstanceRef.current.setHeading(heading);
+                      console.log(`✅ Map rotated to heading: ${heading.toFixed(0)}° (arrow points up)`);
+                    }
+                    
+                    console.log('🎯 3D Navigation View ACTIVATED - Just like Google Maps!');
                   }
                 }
               }}
