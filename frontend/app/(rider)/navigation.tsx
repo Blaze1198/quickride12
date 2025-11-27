@@ -94,31 +94,32 @@ function RiderNavigationContent() {
     }
   }, [isNavigating]);
 
+  // Fetch nearby orders function (accessible globally)
+  const fetchNearbyOrders = async () => {
+    if (!currentJob && user?.role === 'rider') {
+      try {
+        const response = await api.get('/riders/nearby-orders?radius=10');
+        const newOrders = response.data.orders || [];
+        
+        // Check if there are new orders compared to previous state
+        if (nearbyOrders.length > 0 && newOrders.length > nearbyOrders.length) {
+          console.log('🆕 New order available!');
+          // Optionally expand bottom sheet to show new order
+          if (bottomSheetRef.current) {
+            bottomSheetRef.current.snapToIndex(1); // Snap to middle position
+          }
+        }
+        
+        setNearbyOrders(newOrders);
+      } catch (error: any) {
+        if (error?.response?.status === 401 || error?.response?.status === 403) return;
+        console.error('Error fetching nearby orders:', error);
+      }
+    }
+  };
+
   // Fetch nearby orders when on idle screen
   useEffect(() => {
-    const fetchNearbyOrders = async () => {
-      if (!currentJob && user?.role === 'rider') {
-        try {
-          const response = await api.get('/riders/nearby-orders?radius=10');
-          const newOrders = response.data.orders || [];
-          
-          // Check if there are new orders compared to previous state
-          if (nearbyOrders.length > 0 && newOrders.length > nearbyOrders.length) {
-            console.log('🆕 New order available!');
-            // Optionally expand bottom sheet to show new order
-            if (bottomSheetRef.current) {
-              bottomSheetRef.current.snapToIndex(1); // Snap to middle position
-            }
-          }
-          
-          setNearbyOrders(newOrders);
-        } catch (error: any) {
-          if (error?.response?.status === 401 || error?.response?.status === 403) return;
-          console.error('Error fetching nearby orders:', error);
-        }
-      }
-    };
-
     fetchNearbyOrders();
     // Poll for new orders every 5 seconds for real-time updates
     const interval = setInterval(fetchNearbyOrders, 5000);
