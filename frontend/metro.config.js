@@ -22,4 +22,16 @@ config.cacheStores = [
 // Reduce the number of workers to decrease resource usage
 config.maxWorkers = 2;
 
+// Add web support for react-native-maps
+config.resolver.resolveRequest = (context, moduleName, platform) => {
+  if (moduleName === 'react-native-maps' && platform === 'web') {
+    return context.resolveRequest(
+      context,
+      'react-native-web-maps',
+      platform
+    );
+  }
+  return context.resolveRequest(context, moduleName, platform);
+};
+
 module.exports = config;
