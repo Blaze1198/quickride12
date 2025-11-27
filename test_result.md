@@ -1194,7 +1194,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Real-time Marker Movement with Spotlight"
+    - "Old Routes Remaining After Delivery Completion"
+    - "Continue Button Not Properly Clearing Routes"
   stuck_tasks:
     - "Map Verification Modal in Checkout"
   test_all: false
