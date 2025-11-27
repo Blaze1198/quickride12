@@ -10,7 +10,7 @@
       "android": {
         "gradleCommand": ":app:assembleDebug",
         "buildType": "apk",
-        "kotlinVersion": "1.9.24"
+        "kotlinVersion": "1.9.25"
       }
     },
     "preview": {
