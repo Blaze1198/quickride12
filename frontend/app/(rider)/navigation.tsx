@@ -1620,40 +1620,26 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
       }
     }
     
-    // Smoothly animate marker to new position
+    // INSTANT marker update (no animation for Google Maps-like responsiveness)
     const oldPosition = riderMarkerRef.current.getPosition();
-    if (oldPosition) {
-      const steps = 15;
-      const latStep = (newPosition.lat() - oldPosition.lat()) / steps;
-      const lngStep = (newPosition.lng() - oldPosition.lng()) / steps;
-      
-      let animStep = 0;
-      const animationInterval = setInterval(() => {
-        animStep++;
-        
-        if (animStep > steps) {
-          clearInterval(animationInterval);
-          return;
-        }
-        
-        const interpolatedLat = oldPosition.lat() + (latStep * animStep);
-        const interpolatedLng = oldPosition.lng() + (lngStep * animStep);
-        const interpolatedPosition = new google.maps.LatLng(interpolatedLat, interpolatedLng);
-        
-        if (riderMarkerRef.current) {
-          riderMarkerRef.current.setPosition(interpolatedPosition);
-        }
-        
-        // Update marker rotation using GPS heading (Google Maps arrow symbol)
-        if (riderMarkerRef.current && bearing !== undefined) {
-          const icon = riderMarkerRef.current.getIcon();
-          if (icon && typeof icon === 'object') {
-            riderMarkerRef.current.setIcon({
-              ...icon,
-              rotation: bearing, // Rotate the arrow to match GPS heading
-            });
-          }
-        }
+    
+    // Update position immediately
+    riderMarkerRef.current.setPosition(newPosition);
+    
+    // Update marker rotation instantly using GPS heading or calculated bearing
+    const rotationAngle = userLocation.heading !== null && userLocation.heading !== undefined 
+      ? userLocation.heading 
+      : bearing;
+    
+    if (riderMarkerRef.current && rotationAngle !== undefined && rotationAngle !== 0) {
+      const icon = riderMarkerRef.current.getIcon();
+      if (icon && typeof icon === 'object') {
+        riderMarkerRef.current.setIcon({
+          ...icon,
+          rotation: rotationAngle, // Use GPS heading if available, else calculated bearing
+        });
+      }
+    }
         
         // Update spotlight cone
         if (directionConeRef.current && bearing !== 0) {
