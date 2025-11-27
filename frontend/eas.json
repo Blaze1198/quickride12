@@ -9,8 +9,7 @@
       "node": "22.11.0",
       "android": {
         "gradleCommand": ":app:assembleDebug",
-        "buildType": "apk",
-        "kotlinVersion": "1.9.25"
+        "buildType": "apk"
       }
     },
     "preview": {
