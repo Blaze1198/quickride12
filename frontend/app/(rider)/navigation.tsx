@@ -228,7 +228,7 @@ function RiderNavigationContent() {
     updateRiderLocation();
   }, [userLocation, user]);
 
-  // Real-time map tracking - Update rider position, rotate camera, and center map
+  // Real-time map tracking - Update rider position, rotate camera, and center map (OPTIMIZED FOR SPEED)
   useEffect(() => {
     if (!userLocation || !mapInstanceRef.current || !isNavigating) return;
 
@@ -251,19 +251,14 @@ function RiderNavigationContent() {
       // Calculate heading
       const heading = google.maps.geometry.spherical.computeHeading(prevPos, currPos);
       
-      // Only pan to rider if auto-recenter is enabled
-      console.log('   Checking autoRecenterRef.current:', autoRecenterRef.current);
+      // INSTANT centering - no delay for maximum speed tracking
       if (autoRecenterRef.current) {
-        // Mark as programmatic so it doesn't trigger user interaction listeners
+        // Use setCenter for INSTANT positioning (no animation)
         mapInstanceRef.current.set('programmatic_center', true);
-        mapInstanceRef.current.panTo(currentPosition);
-        setTimeout(() => {
-          if (mapInstanceRef.current) {
-            mapInstanceRef.current.set('programmatic_center', false);
-          }
-        }, 100);
+        mapInstanceRef.current.setCenter(currentPosition);
+        mapInstanceRef.current.set('programmatic_center', false);
       } else {
-        console.log('   ⏸️ Auto-recenter disabled - skipping pan');
+        console.log('   ⏸️ Auto-recenter disabled - skipping center');
       }
       
       // Set camera heading (rotation) to face direction of travel
