@@ -1,19 +1,39 @@
-import React from 'react';
-import { Platform } from 'react-native';
+import React, { lazy, Suspense } from 'react';
+import { Platform, View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 
-// Platform-specific navigation implementation
-// Web uses Google Maps JS API, Native uses react-native-maps
+// Lazy load platform-specific implementations
+// This prevents react-native-maps from being imported on web
+const WebNavigation = lazy(() => import('./navigation.web'));
+const NativeNavigation = lazy(() => import('./navigation.native'));
 
-let RiderNavigationComponent: any;
-
-if (Platform.OS === 'web') {
-  // Web implementation with Google Maps JavaScript API
-  RiderNavigationComponent = require('./navigation.web').default;
-} else {
-  // Native implementation with react-native-maps
-  RiderNavigationComponent = require('./navigation.native').default;
-}
+const LoadingScreen = () => (
+  <View style={styles.loading}>
+    <ActivityIndicator size="large" color="#4285F4" />
+    <Text style={styles.loadingText}>Loading navigation...</Text>
+  </View>
+);
 
 export default function RiderNavigationScreen() {
-  return <RiderNavigationComponent />;
+  const NavigationComponent = Platform.OS === 'web' ? WebNavigation : NativeNavigation;
+  
+  return (
+    <Suspense fallback={<LoadingScreen />}>
+      <NavigationComponent />
+    </Suspense>
+  );
 }
+
+const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#666',
+  },
+});
+
