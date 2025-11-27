@@ -172,11 +172,11 @@ function RiderNavigationContent() {
       fetchCurrentJob();
     }, 10000);
     
-    // Start continuous GPS tracking with watchPosition for real-time updates
+    // Start continuous GPS tracking with watchPosition for MAXIMUM SPEED real-time updates
     let watchId: number | null = null;
     
     if (typeof navigator !== 'undefined' && navigator.geolocation) {
-      console.log('🛰️ Starting HIGH-FREQUENCY GPS tracking...');
+      console.log('🛰️ Starting MAXIMUM-SPEED GPS tracking...');
       
       watchId = navigator.geolocation.watchPosition(
         (position) => {
@@ -203,10 +203,10 @@ function RiderNavigationContent() {
           console.error('❌ GPS Error:', error.message);
         },
         {
-          enableHighAccuracy: true, // Force GPS (not WiFi/cell tower)
-          maximumAge: 0, // NEVER use cached position - always fresh
-          timeout: 10000, // Allow 10 seconds for GPS lock
-          // These settings force the browser to use GPS at highest frequency
+          enableHighAccuracy: true, // Force GPS hardware (not WiFi/cell tower)
+          maximumAge: 0, // NEVER use cached position - always get fresh GPS data
+          timeout: 5000, // Reduced timeout for faster GPS lock (5 seconds instead of 10)
+          // Maximum speed settings - updates as fast as GPS hardware allows
         }
       );
     }
