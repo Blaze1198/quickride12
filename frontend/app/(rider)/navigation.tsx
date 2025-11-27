@@ -172,41 +172,63 @@ function RiderNavigationContent() {
       fetchCurrentJob();
     }, 10000);
     
-    // Start continuous GPS tracking with watchPosition for MAXIMUM SPEED real-time updates
+    // Start continuous GPS tracking with watchPosition for MAXIMUM SPEED and ACCURACY
     let watchId: number | null = null;
     
     if (typeof navigator !== 'undefined' && navigator.geolocation) {
-      console.log('🛰️ Starting MAXIMUM-SPEED GPS tracking...');
+      console.log('🛰️ Starting HIGH-ACCURACY GPS tracking...');
       
       watchId = navigator.geolocation.watchPosition(
         (position) => {
+          const accuracy = position.coords.accuracy;
+          
+          // GPS ACCURACY FILTER: Only accept readings with good accuracy
+          // Mobile GPS: typically 5-20m outdoors, 20-50m indoors
+          // Reject readings with accuracy worse than 50 meters
+          if (accuracy > 50) {
+            console.log(`⚠️ GPS accuracy too low (${accuracy.toFixed(0)}m) - waiting for better signal...`);
+            return; // Skip this reading and wait for better accuracy
+          }
+          
           const location = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
             speed: position.coords.speed, // Speed in m/s
             heading: position.coords.heading, // Direction in degrees
-            accuracy: position.coords.accuracy, // Accuracy in meters
+            accuracy: accuracy, // Accuracy in meters
             timestamp: position.timestamp, // GPS timestamp
           };
           
-          console.log('📍 GPS:', {
+          // Log GPS quality indicator
+          let qualityIcon = '🟢'; // Good
+          if (accuracy > 20) qualityIcon = '🟡'; // Medium
+          if (accuracy > 35) qualityIcon = '🟠'; // Fair
+          
+          console.log(`📍 GPS ${qualityIcon}:`, {
             lat: location.latitude.toFixed(6),
             lng: location.longitude.toFixed(6),
             speed: location.speed ? `${(location.speed * 3.6).toFixed(1)} km/h` : 'N/A',
             heading: location.heading ? `${location.heading.toFixed(0)}°` : 'N/A',
-            accuracy: `${location.accuracy.toFixed(0)}m`
+            accuracy: `${accuracy.toFixed(0)}m`
           });
           
           setUserLocation(location);
         },
         (error) => {
           console.error('❌ GPS Error:', error.message);
+          if (error.code === 1) {
+            console.error('⚠️ Location permission denied - please enable GPS permissions');
+          } else if (error.code === 2) {
+            console.error('⚠️ Position unavailable - check if GPS is enabled on your device');
+          } else if (error.code === 3) {
+            console.error('⚠️ GPS timeout - trying again...');
+          }
         },
         {
           enableHighAccuracy: true, // Force GPS hardware (not WiFi/cell tower)
           maximumAge: 0, // NEVER use cached position - always get fresh GPS data
-          timeout: 5000, // Reduced timeout for faster GPS lock (5 seconds instead of 10)
-          // Maximum speed settings - updates as fast as GPS hardware allows
+          timeout: 10000, // Allow 10 seconds for high-accuracy GPS lock
+          // These settings optimize for accuracy over speed
         }
       );
     }
