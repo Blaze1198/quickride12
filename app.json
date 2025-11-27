@@ -1,0 +1,84 @@
+{
+  "expo": {
+    "name": "QuickRide",
+    "slug": "quickride-ph",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "quickride",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FF6B6B"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.quickride.ph",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "QuickRide needs your location to show nearby restaurants and track deliveries.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "QuickRide needs continuous access to your location to track your delivery route and provide accurate navigation.",
+        "NSLocationAlwaysUsageDescription": "QuickRide needs continuous access to your location to track your delivery route and provide accurate navigation.",
+        "NSCameraUsageDescription": "QuickRide needs camera access to upload restaurant photos.",
+        "UIBackgroundModes": ["location"]
+      },
+      "config": {
+        "googleMapsApiKey": "AIzaSyA0m1oRlXLQWjxacqjEJ6zJW3WvmOWvQkQ"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#FF6B6B"
+      },
+      "package": "com.quickride.ph",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "CAMERA"
+      ],
+      "edgeToEdgeEnabled": true,
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyA0m1oRlXLQWjxacqjEJ6zJW3WvmOWvQkQ"
+        }
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "QuickRide needs continuous access to your location to track your delivery route and provide accurate navigation.",
+          "locationAlwaysPermission": "QuickRide needs continuous access to your location to track your delivery route and provide accurate navigation.",
+          "locationWhenInUsePermission": "QuickRide needs your location to show nearby restaurants and track deliveries.",
+          "isIosBackgroundLocationEnabled": true,
+          "isAndroidBackgroundLocationEnabled": true
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#000"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "EXPO_PUBLIC_GOOGLE_MAPS_API_KEY": "AIzaSyA0m1oRlXLQWjxacqjEJ6zJW3WvmOWvQkQ",
+      "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "pk.eyJ1Ijoiam9zZXBoMTE5OCIsImEiOiJjbWhzbmtsa2QxbGh1MmlxNjVwOTJ0ZTdmIn0.HAhJGAQCJhH8VcLJJpCpvQ"
+    }
+  }
+}
