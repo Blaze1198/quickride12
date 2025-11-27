@@ -1575,9 +1575,23 @@ const fetchRouteFromDirectionsAPI = async (origin: any, destination: any, map: a
       // DEVIATION DETECTION: If more than 50m off route and at least 5 seconds since last reroute
       if (closestDistance > 50 && timeSinceLastReroute > 5000) {
         console.log(`🔄 REROUTING! Distance from route: ${closestDistance.toFixed(0)}m`);
+        
+        // Safety check: Ensure currentJob.data exists before accessing
+        if (!currentJob || !currentJob.data) {
+          console.log('⚠️ Cannot reroute - no current job data');
+          return;
+        }
+        
         lastRerouteTimeRef.current = now;
         
         const { restaurant_location, customer_location, status } = currentJob.data;
+        
+        // Safety check: Ensure locations exist
+        if (!restaurant_location || !customer_location) {
+          console.log('⚠️ Cannot reroute - missing location data');
+          return;
+        }
+        
         const destination = status === 'picked_up' 
           ? { lat: customer_location.latitude, lng: customer_location.longitude }
           : { lat: restaurant_location.latitude, lng: restaurant_location.longitude };
