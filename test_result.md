@@ -444,8 +444,8 @@ frontend:
           AUTHENTICATION TESTING EVIDENCE:
           ❌ Direct navigation to /(rider)/navigation consistently redirects to /login
           ❌ Sign In button accessible but login form authentication fails
-          ❌ User redirected from https://gps-pilot.preview.emergentagent.com/(rider)/navigation
-          ❌ Final redirect destination: https://gps-pilot.preview.emergentagent.com/login
+          ❌ User redirected from https://quickride-maps-1.preview.emergentagent.com/(rider)/navigation
+          ❌ Final redirect destination: https://quickride-maps-1.preview.emergentagent.com/login
           ❌ Navigation component never mounts due to auth barrier
           
           CRITICAL QUESTIONS ANSWERED (As Requested):

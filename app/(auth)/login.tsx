@@ -15,7 +15,7 @@ import api, { setAuthToken } from '../../utils/api';
 import { Ionicons } from '@expo/vector-icons';
 
 const AUTH_URL = 'https://auth.emergentagent.com';
-const REDIRECT_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://gps-pilot.preview.emergentagent.com';
+const REDIRECT_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://quickride-maps-1.preview.emergentagent.com';
 
 export default function LoginScreen() {
   const router = useRouter();
