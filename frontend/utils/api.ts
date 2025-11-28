@@ -1,5 +1,7 @@
 import axios from 'axios';
 import Constants from 'expo-constants';
+import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://quickride-maps-1.preview.emergentagent.com';
 
@@ -25,26 +27,38 @@ export const setAuthToken = (token: string | null) => {
   }
 };
 
-// Function to restore token from localStorage
-const restoreAuthToken = () => {
-  if (typeof window !== 'undefined' && window.localStorage) {
-    const storedToken = localStorage.getItem('sessionToken');
+// Function to restore token from storage (platform-specific)
+const restoreAuthToken = async () => {
+  try {
+    let storedToken: string | null = null;
+    
+    if (Platform.OS === 'web' && typeof window !== 'undefined' && window.localStorage) {
+      storedToken = localStorage.getItem('sessionToken');
+    } else {
+      // Use AsyncStorage for native platforms
+      storedToken = await AsyncStorage.getItem('sessionToken');
+    }
+    
     if (storedToken && !authToken) {
       setAuthToken(storedToken);
-      console.log('🔄 Auth token restored from localStorage');
+      console.log('🔄 Auth token restored from storage');
     }
+  } catch (error) {
+    console.error('❌ Error restoring auth token:', error);
   }
 };
 
-// Restore token on module load
-restoreAuthToken();
+// Restore token on module load only on web
+if (Platform.OS === 'web') {
+  restoreAuthToken();
+}
 
 // Add request interceptor to ensure token is always present
 api.interceptors.request.use(
-  (config) => {
-    // If no auth header but we have token in localStorage, restore it
+  async (config) => {
+    // If no auth header but we might have token in storage, restore it
     if (!config.headers.Authorization) {
-      restoreAuthToken();
+      await restoreAuthToken();
     }
     return config;
   },
@@ -53,8 +67,8 @@ api.interceptors.request.use(
   }
 );
 
-// Multiple event listeners for better browser compatibility
-if (typeof window !== 'undefined') {
+// Event listeners only for web platform
+if (Platform.OS === 'web' && typeof window !== 'undefined') {
   // Primary: visibilitychange (modern browsers)
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) {
