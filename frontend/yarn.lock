@@ -4771,7 +4771,7 @@ expo-web-browser@~14.2.0:
 
 expo@^54.0.25:
   version "54.0.25"
-  resolved "https://registry.npmjs.org/expo/-/expo-54.0.25.tgz"
+  resolved "https://registry.yarnpkg.com/expo/-/expo-54.0.25.tgz#2108c7a299c52415e4ede4a5b0c3c6d25ccd191e"
   integrity sha512-+iSeBJfHRHzNPnHMZceEXhSGw4t5bNqFyd/5xMUoGfM+39rO7F72wxiLRpBKj0M6+0GQtMaEs+eTbcCrO7XyJQ==
   dependencies:
     "@babel/runtime" "^7.20.0"
