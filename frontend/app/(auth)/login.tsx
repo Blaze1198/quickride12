@@ -7,6 +7,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Linking,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -23,10 +24,10 @@ export default function LoginScreen() {
   const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
-    // Check for session_id in URL
+    // Check for session_id in URL (web only)
     const checkSessionId = async () => {
       try {
-        if (typeof window !== 'undefined') {
+        if (Platform.OS === 'web' && typeof window !== 'undefined') {
           const hash = window.location.hash;
           const params = new URLSearchParams(hash.substring(1));
           const sessionId = params.get('session_id');
