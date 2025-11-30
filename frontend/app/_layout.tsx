@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { useAuthStore } from '../store/authStore';
 import { setAuthToken } from '../utils/api';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, Platform } from 'react-native';
 import { NavigationThemeProvider } from '../components/NavigationThemeProvider';
 
 export default function RootLayout() {
@@ -17,8 +17,8 @@ export default function RootLayout() {
         // First, load persisted auth data from AsyncStorage
         await initializeAuth();
         
-        // Check URL for session_id from Emergent Auth
-        if (typeof window !== 'undefined') {
+        // Check URL for session_id from Emergent Auth (web only)
+        if (Platform.OS === 'web' && typeof window !== 'undefined') {
           const hash = window.location.hash;
           const params = new URLSearchParams(hash.substring(1));
           const sessionId = params.get('session_id');
